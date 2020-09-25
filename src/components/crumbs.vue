@@ -9,14 +9,18 @@
 
 <script>
 export default {
-    data(){
-        return {
-            activeName:''
-        }
-    },
-    created(){
-        this.activeName = window.sessionStorage.getItem("activeName")
-    }
-    
-}
+  data() {
+    return {
+      activeName: "",
+    };
+  },
+  created() {
+    this.activeName = window.sessionStorage.getItem("activeName");
+  },
+};
 </script>
+<style lang="scss" scoped>
+.crumbs{
+  margin-bottom: 20px;
+}
+</style>

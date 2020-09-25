@@ -1,0 +1,536 @@
+{
+    "data": {
+        "success": true,
+        "message": "操作成功！",
+        "code": 200,
+        "result": [
+            {
+                "id": 1,
+                "firstMenuId": null,
+                "menuLevel": 1,
+                "menuImage": null,
+                "menuName": "管理中心",
+                "menuUrl": null,
+                "statusId": 1,
+                "menuChildrenVo": [
+                    {
+                        "id": 2,
+                        "firstMenuId": 1,
+                        "menuLevel": 2,
+                        "menuImage": null,
+                        "menuName": "控制台",
+                        "menuUrl": "controlPanel",
+                        "statusId": 2,
+                        "menuChildrenVo": []
+                    }
+                ]
+            },
+            {
+                "id": 4,
+                "firstMenuId": null,
+                "menuLevel": 1,
+                "menuImage": null,
+                "menuName": "等级分佣",
+                "menuUrl": null,
+                "statusId": 4,
+                "menuChildrenVo": [
+                    {
+                        "id": 5,
+                        "firstMenuId": 4,
+                        "menuLevel": 2,
+                        "menuImage": null,
+                        "menuName": "佣金管理",
+                        "menuUrl": "Agent_Level",
+                        "statusId": 5,
+                        "menuChildrenVo": []
+                    }
+                ]
+            },
+            {
+                "id": 7,
+                "firstMenuId": null,
+                "menuLevel": 1,
+                "menuImage": null,
+                "menuName": "素材管理",
+                "menuUrl": null,
+                "statusId": 7,
+                "menuChildrenVo": [
+                    {
+                        "id": 8,
+                        "firstMenuId": 7,
+                        "menuLevel": 2,
+                        "menuImage": null,
+                        "menuName": "模板中心",
+                        "menuUrl": "material_classification",
+                        "statusId": 8,
+                        "menuChildrenVo": []
+                    },
+                    {
+                        "id": 46,
+                        "firstMenuId": 7,
+                        "menuLevel": 2,
+                        "menuImage": null,
+                        "menuName": "商学院管理",
+                        "menuUrl": "businessCollege",
+                        "statusId": 46,
+                        "menuChildrenVo": []
+                    },
+                    {
+                        "id": 55,
+                        "firstMenuId": 7,
+                        "menuLevel": 2,
+                        "menuImage": null,
+                        "menuName": "文案管理",
+                        "menuUrl": "copywriter",
+                        "statusId": 55,
+                        "menuChildrenVo": []
+                    }
+                ]
+            },
+            {
+                "id": 9,
+                "firstMenuId": null,
+                "menuLevel": 1,
+                "menuImage": null,
+                "menuName": "营销功能",
+                "menuUrl": null,
+                "statusId": 9,
+                "menuChildrenVo": [
+                    {
+                        "id": 10,
+                        "firstMenuId": 9,
+                        "menuLevel": 2,
+                        "menuImage": null,
+                        "menuName": "0元购",
+                        "menuUrl": null,
+                        "statusId": 10,
+                        "menuChildrenVo": [
+                            {
+                                "id": 11,
+                                "firstMenuId": 10,
+                                "menuLevel": 3,
+                                "menuImage": null,
+                                "menuName": "购买零元购列表",
+                                "menuUrl": "functionSet",
+                                "statusId": 11
+                            },
+                            {
+                                "id": 12,
+                                "firstMenuId": 10,
+                                "menuLevel": 3,
+                                "menuImage": null,
+                                "menuName": "零元购列表",
+                                "menuUrl": "commodity",
+                                "statusId": 12
+                            },
+                            {
+                                "id": 13,
+                                "firstMenuId": 10,
+                                "menuLevel": 3,
+                                "menuImage": null,
+                                "menuName": "商品列表",
+                                "menuUrl": "qualification",
+                                "statusId": 13
+                            }
+                        ]
+                    },
+                    {
+                        "id": 42,
+                        "firstMenuId": 9,
+                        "menuLevel": 2,
+                        "menuImage": null,
+                        "menuName": "组团邀约",
+                        "menuUrl": null,
+                        "statusId": 42,
+                        "menuChildrenVo": [
+                            {
+                                "id": 43,
+                                "firstMenuId": 42,
+                                "menuLevel": 3,
+                                "menuImage": null,
+                                "menuName": "商品列表",
+                                "menuUrl": "productList",
+                                "statusId": 43
+                            },
+                            {
+                                "id": 44,
+                                "firstMenuId": 42,
+                                "menuLevel": 3,
+                                "menuImage": null,
+                                "menuName": "组团邀约商品列表",
+                                "menuUrl": "clusterProductList",
+                                "statusId": 44
+                            },
+                            {
+                                "id": 45,
+                                "firstMenuId": 42,
+                                "menuLevel": 3,
+                                "menuImage": null,
+                                "menuName": "组团邀约记录列表",
+                                "menuUrl": "inviteRecord",
+                                "statusId": 45
+                            }
+                        ]
+                    },
+                    {
+                        "id": 47,
+                        "firstMenuId": 9,
+                        "menuLevel": 2,
+                        "menuImage": null,
+                        "menuName": "熊金币",
+                        "menuUrl": null,
+                        "statusId": 47,
+                        "menuChildrenVo": [
+                            {
+                                "id": 48,
+                                "firstMenuId": 47,
+                                "menuLevel": 3,
+                                "menuImage": null,
+                                "menuName": "熊金币设置",
+                                "menuUrl": "coin_setting",
+                                "statusId": 48
+                            },
+                            {
+                                "id": 49,
+                                "firstMenuId": 47,
+                                "menuLevel": 3,
+                                "menuImage": null,
+                                "menuName": "熊金币收支明细",
+                                "menuUrl": "coin_record",
+                                "statusId": 49
+                            },
+                            {
+                                "id": 50,
+                                "firstMenuId": 47,
+                                "menuLevel": 3,
+                                "menuImage": null,
+                                "menuName": "熊金币兑换记录",
+                                "menuUrl": "coin_exchange",
+                                "statusId": 50
+                            },
+                            {
+                                "id": 52,
+                                "firstMenuId": 47,
+                                "menuLevel": 3,
+                                "menuImage": null,
+                                "menuName": "熊金币商品列表",
+                                "menuUrl": "coin_goodsList",
+                                "statusId": 52
+                            },
+                            {
+                                "id": 53,
+                                "firstMenuId": 47,
+                                "menuLevel": 3,
+                                "menuImage": null,
+                                "menuName": "熊金币兑换列表",
+                                "menuUrl": "coin_gift_exchange",
+                                "statusId": 53
+                            },
+                            {
+                                "id": 54,
+                                "firstMenuId": 47,
+                                "menuLevel": 3,
+                                "menuImage": null,
+                                "menuName": "用户礼物",
+                                "menuUrl": "coin_buy",
+                                "statusId": 54
+                            }
+                        ]
+                    },
+                    {
+                        "id": 51,
+                        "firstMenuId": 9,
+                        "menuLevel": 2,
+                        "menuImage": null,
+                        "menuName": "收货地址管理",
+                        "menuUrl": "address_administration",
+                        "statusId": 51,
+                        "menuChildrenVo": []
+                    },
+                    {
+                        "id": 59,
+                        "firstMenuId": 9,
+                        "menuLevel": 2,
+                        "menuImage": null,
+                        "menuName": "活动公告",
+                        "menuUrl": "announcement",
+                        "statusId": null,
+                        "menuChildrenVo": []
+                    }
+                ]
+            },
+            {
+                "id": 15,
+                "firstMenuId": null,
+                "menuLevel": 1,
+                "menuImage": null,
+                "menuName": "会员管理",
+                "menuUrl": null,
+                "statusId": 15,
+                "menuChildrenVo": [
+                    {
+                        "id": 16,
+                        "firstMenuId": 15,
+                        "menuLevel": 2,
+                        "menuImage": null,
+                        "menuName": "会员管理",
+                        "menuUrl": "member_management",
+                        "statusId": 16,
+                        "menuChildrenVo": []
+                    }
+                ]
+            },
+            {
+                "id": 18,
+                "firstMenuId": null,
+                "menuLevel": 1,
+                "menuImage": null,
+                "menuName": "订单管理",
+                "menuUrl": null,
+                "statusId": 18,
+                "menuChildrenVo": [
+                    {
+                        "id": 19,
+                        "firstMenuId": 18,
+                        "menuLevel": 2,
+                        "menuImage": null,
+                        "menuName": "淘宝订单",
+                        "menuUrl": "Taobao_orders",
+                        "statusId": 19,
+                        "menuChildrenVo": []
+                    },
+                    {
+                        "id": 20,
+                        "firstMenuId": 18,
+                        "menuLevel": 2,
+                        "menuImage": null,
+                        "menuName": "拼多多订单",
+                        "menuUrl": "Pinduoduo_order",
+                        "statusId": 20,
+                        "menuChildrenVo": []
+                    },
+                    {
+                        "id": 21,
+                        "firstMenuId": 18,
+                        "menuLevel": 2,
+                        "menuImage": null,
+                        "menuName": "京东订单",
+                        "menuUrl": "Jingdong_orders",
+                        "statusId": 21,
+                        "menuChildrenVo": []
+                    }
+                ]
+            },
+            {
+                "id": 27,
+                "firstMenuId": null,
+                "menuLevel": 1,
+                "menuImage": null,
+                "menuName": "财务管理",
+                "menuUrl": null,
+                "statusId": 27,
+                "menuChildrenVo": [
+                    {
+                        "id": 28,
+                        "firstMenuId": 27,
+                        "menuLevel": 2,
+                        "menuImage": null,
+                        "menuName": "会员提现设置",
+                        "menuUrl": "Platform_account",
+                        "statusId": 28,
+                        "menuChildrenVo": []
+                    },
+                    {
+                        "id": 29,
+                        "firstMenuId": 27,
+                        "menuLevel": 2,
+                        "menuImage": null,
+                        "menuName": "会员提现管理",
+                        "menuUrl": "Member_withdrawal_management",
+                        "statusId": 29,
+                        "menuChildrenVo": []
+                    },
+                    {
+                        "id": 30,
+                        "firstMenuId": 27,
+                        "menuLevel": 2,
+                        "menuImage": null,
+                        "menuName": "公司账户资金记录",
+                        "menuUrl": "AccountMoney",
+                        "statusId": 30,
+                        "menuChildrenVo": []
+                    },
+                    {
+                        "id": 31,
+                        "firstMenuId": 27,
+                        "menuLevel": 2,
+                        "menuImage": null,
+                        "menuName": "用户余额变动明细",
+                        "menuUrl": "remaining_sum",
+                        "statusId": 31,
+                        "menuChildrenVo": []
+                    }
+                ]
+            },
+            {
+                "id": 32,
+                "firstMenuId": null,
+                "menuLevel": 1,
+                "menuImage": null,
+                "menuName": "数据统计",
+                "menuUrl": null,
+                "statusId": 32,
+                "menuChildrenVo": [
+                    {
+                        "id": 33,
+                        "firstMenuId": 32,
+                        "menuLevel": 2,
+                        "menuImage": null,
+                        "menuName": "商品成交榜",
+                        "menuUrl": "Trade_list",
+                        "statusId": 33,
+                        "menuChildrenVo": []
+                    },
+                    {
+                        "id": 34,
+                        "firstMenuId": 32,
+                        "menuLevel": 2,
+                        "menuImage": null,
+                        "menuName": "核心数据统计",
+                        "menuUrl": "Core_data",
+                        "statusId": 34,
+                        "menuChildrenVo": []
+                    }
+                ]
+            },
+            {
+                "id": 35,
+                "firstMenuId": null,
+                "menuLevel": 1,
+                "menuImage": null,
+                "menuName": "广场审核",
+                "menuUrl": null,
+                "statusId": 35,
+                "menuChildrenVo": [
+                    {
+                        "id": 36,
+                        "firstMenuId": 35,
+                        "menuLevel": 2,
+                        "menuImage": null,
+                        "menuName": "广场瞬间审核",
+                        "menuUrl": "SquareAudit",
+                        "statusId": 36,
+                        "menuChildrenVo": []
+                    }
+                ]
+            },
+            {
+                "id": 37,
+                "firstMenuId": null,
+                "menuLevel": 1,
+                "menuImage": null,
+                "menuName": "举报管理",
+                "menuUrl": null,
+                "statusId": 37,
+                "menuChildrenVo": [
+                    {
+                        "id": 38,
+                        "firstMenuId": 37,
+                        "menuLevel": 2,
+                        "menuImage": null,
+                        "menuName": "举报管理",
+                        "menuUrl": "reportManagement",
+                        "statusId": 38,
+                        "menuChildrenVo": []
+                    }
+                ]
+            },
+            {
+                "id": 39,
+                "firstMenuId": null,
+                "menuLevel": 1,
+                "menuImage": null,
+                "menuName": "反馈中心",
+                "menuUrl": null,
+                "statusId": 39,
+                "menuChildrenVo": [
+                    {
+                        "id": 58,
+                        "firstMenuId": 39,
+                        "menuLevel": 2,
+                        "menuImage": null,
+                        "menuName": "意见反馈",
+                        "menuUrl": "Feedback",
+                        "statusId": 58,
+                        "menuChildrenVo": []
+                    }
+                ]
+            },
+            {
+                "id": 57,
+                "firstMenuId": null,
+                "menuLevel": 1,
+                "menuImage": null,
+                "menuName": "超级管理员",
+                "menuUrl": "",
+                "statusId": 57,
+                "menuChildrenVo": [
+                    {
+                        "id": 41,
+                        "firstMenuId": 57,
+                        "menuLevel": 2,
+                        "menuImage": null,
+                        "menuName": "管理员列表",
+                        "menuUrl": "Administrator_list",
+                        "statusId": 41,
+                        "menuChildrenVo": []
+                    },
+                    {
+                        "id": 56,
+                        "firstMenuId": 57,
+                        "menuLevel": 2,
+                        "menuImage": null,
+                        "menuName": "管理权限",
+                        "menuUrl": "administrator",
+                        "statusId": 56,
+                        "menuChildrenVo": []
+                    }
+                ]
+            }
+        ],
+        "timestamp": 1600218294137
+    },
+    "status": 200,
+    "statusText": "OK",
+    "headers": {
+        "connection": "close",
+        "content-encoding": "gzip",
+        "content-type": "application/json;charset=UTF-8",
+        "date": "Wed, 16 Sep 2020 01:04:54 GMT",
+        "transfer-encoding": "chunked",
+        "vary": "accept-encoding",
+        "x-powered-by": "Express"
+    },
+    "config": {
+        "url": "jeecg-boot/menu/menu/queryMenuByUserId",
+        "method": "get",
+        "params": {
+            "userId": "1285750833905909761"
+        },
+        "headers": {
+            "Accept": "application/json, text/plain, */*"
+        },
+        "baseURL": "/api",
+        "transformRequest": [
+            null
+        ],
+        "transformResponse": [
+            null
+        ],
+        "timeout": 0,
+        "xsrfCookieName": "XSRF-TOKEN",
+        "xsrfHeaderName": "X-XSRF-TOKEN",
+        "maxContentLength": -1
+    },
+    "request": {}
+}
