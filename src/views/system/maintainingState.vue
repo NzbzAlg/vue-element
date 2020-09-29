@@ -1,6 +1,6 @@
 <template>
     <div class="maintainingState">
-        维护状态
+        维护开关
     </div>
 </template>
 

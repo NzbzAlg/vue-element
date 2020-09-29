@@ -21,6 +21,8 @@ import InventoryDetail from "@/views/warehouse/inventory/inventoryDetail.vue"
 import FBAinventory from "@/views/warehouse/inventory/FBAinventory.vue"
 //仓库 => 库存 => 库存预警
 import InventoryWarning from "@/views/warehouse/inventory/inventoryWarning.vue"
+//仓库 => 库存 => FBA预估
+import FBAestimate from "@/views/warehouse/inventory/FBAestimate.vue"
 //仓库 => 质检 => 质检单
 import QualityTestingSheet from "@/views/warehouse/qualityTesting/qualityTestingSheet.vue"
 //仓库 => 出入库 => 入库单
@@ -218,9 +220,9 @@ import VATReportTwo from "@/views/financialData/information/VATReportTwo.vue"
 //财务数据 => 数据 => VAT报表三
 import VATReportThree from "@/views/financialData/information/VATReportThree.vue"
 //财务数据 => 报表 => 入库单
-import ReportGodownEntry from "@/views/financialData/reportForms/reportGodownEntry.vue"
+import FinancialReceipt from "@/views/financialData/reportForms/financialReceipt.vue"
 //财务数据 => 报表 => 调拨单
-import ReportTransferSlip from "@/views/financialData/reportForms/reportTransferSlip.vue"
+import FinancialTransfer from "@/views/financialData/reportForms/financialTransfer.vue"
 
 //工具类 => 考勤核算
 import AttendanceAccounting from "@/views/utilityClass/attendanceAccounting.vue"
@@ -308,6 +310,12 @@ const routes = [
         name:"inventoryWarning",
         path:"/inventoryWarning",
         component:InventoryWarning
+      },
+      //仓库 => 库存 => FBA预估
+      {
+        name:"FBAestimate",
+        path:"/FBAestimate",
+        component:FBAestimate
       },
       //仓库 => 质检 => 质检单
       {
@@ -883,15 +891,15 @@ const routes = [
       },
       //财务数据 => 报表 => 入库单
       {
-        name:"reportGodownEntry",
-        path:"/reportGodownEntry",
-        component:ReportGodownEntry
+        name:"financialReceipt",
+        path:"/financialReceipt",
+        component:FinancialReceipt
       },
       //财务数据 => 报表 => 调拨单
       {
-        name:"reportTransferSlip",
-        path:"/reportTransferSlip",
-        component:ReportTransferSlip
+        name:"financialTransfer",
+        path:"/financialTransfer",
+        component:FinancialTransfer
       },
 
       //工具类 => 考勤核算

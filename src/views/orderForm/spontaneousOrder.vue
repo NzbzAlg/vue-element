@@ -3,37 +3,125 @@
     <!-- 面包屑 -->
     <Crumbs></Crumbs>
     <!-- 头部 -->
-    <div class="title">
-      <div class="title_left">
-        <div>
-          <el-input placeholder="请输入查询内容" v-model="dropDown" class="input-with-select">
-            <el-select v-model="select" slot="prepend" placeholder="请选择">
+    <div class="drop" v-show="isShow">
+      <el-form ref="form" :model="form" label-width="120px">
+        <el-col :span="6">
+          <el-form-item label="发货模式">
+            <el-select
+              v-model="value"
+              placeholder="请选择发货模式查询"
+              style="width: 100%"
+            >
               <el-option
-                v-for="item in dropDownValue"
+                v-for="item in state"
                 :key="item.id"
-                :label="item.name"
-                :value="item.id"
+                :label="item.label"
+                :value="item"
               ></el-option>
             </el-select>
-          </el-input>
-        </div>
-        <div style="margin-left:20px">
-          <el-date-picker
-            v-model="value"
-            type="daterange"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-          ></el-date-picker>
-          <el-select v-model="value" placeholder="请选择店铺查询" style="margin-left:20px">
-            <el-option v-for="item in state" :key="item.id" :label="item.label" :value="item"></el-option>
-          </el-select>
-          <el-select v-model="value" placeholder="请选择状态查询" style="margin-left:20px">
-            <el-option v-for="item in state" :key="item.id" :label="item.label" :value="item"></el-option>
-          </el-select>
-          <el-button type="primary" style="margin-left:20px">查询</el-button>
-        </div>
-      </div>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item label="店铺">
+            <el-select
+              v-model="value"
+              placeholder="请选择店铺查询"
+              style="width: 100%"
+            >
+              <el-option
+                v-for="item in state"
+                :key="item.id"
+                :label="item.label"
+                :value="item"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item label="状态">
+            <el-select
+              v-model="value"
+              placeholder="请选择状态查询"
+              style="width: 100%"
+            >
+              <el-option
+                v-for="item in state"
+                :key="item.id"
+                :label="item.label"
+                :value="item"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item label="订单号">
+            <el-input
+              v-model="form.name"
+              placeholder="请输入订单号查询"
+            ></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item label="买家姓名">
+            <el-input
+              v-model="form.name"
+              placeholder="请输入买家姓名查询"
+            ></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item label="买家邮箱">
+            <el-input
+              v-model="form.name"
+              placeholder="请输入买家邮箱查询"
+            ></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item label="ASIN">
+            <el-input
+              v-model="form.name"
+              placeholder="请输入ASIN查询"
+            ></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item label="Title">
+            <el-input
+              v-model="form.name"
+              placeholder="请输入Title查询"
+            ></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item label="SellerSKU">
+            <el-input
+              v-model="form.name"
+              placeholder="请输入SellerSKU查询"
+            ></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item label="下单时间">
+            <el-date-picker
+              v-model="value"
+              type="daterange"
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              style="width: 100%"
+            ></el-date-picker>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item>
+            <el-button type="primary">搜索</el-button>
+          </el-form-item>
+        </el-col>
+      </el-form>
+    </div>
+    <div class="title">
+      <el-button icon="el-icon-search" @click="dropDisplays"></el-button>
     </div>
     <!-- 表格 -->
     <div class="content">
@@ -121,36 +209,7 @@ export default {
     return {
       dropDown: "", //下拉框input值
       select: "",
-      dropDownValue: [
-        {
-          id: 1,
-          name: "订单号",
-        },
-        {
-          id: 2,
-          name: "买家姓名",
-        },
-        {
-          id: 3,
-          name: "买家邮箱",
-        },
-        {
-          id: 4,
-          name: "ASIN",
-        },
-        {
-          id: 5,
-          name: "Title",
-        },
-        {
-          id: 6,
-          name: "SellerSKU",
-        },
-        {
-          id: 7,
-          name: "SKU",
-        },
-      ],
+      isShow: false,
       remarkPop: false, //备注弹窗
       goDeliveryPop: false, //去发货弹窗
       value: "",
@@ -218,6 +277,9 @@ export default {
     goDelivery() {
       this.goDeliveryPop = true;
     },
+    dropDisplays() {
+      this.isShow = !this.isShow;
+    },
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);
     },
@@ -229,19 +291,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.title {
-  width: 100%;
-  height: 40px;
+.title{
   margin-bottom: 20px;
-  .title_left {
-    float: left;
-    div {
-      float: left;
-    }
-  }
-  .title_right {
-    float: right;
-  }
+}
+.drop {
+  width: 100%;
+  height: 186px;
 }
 .paging {
   float: right;

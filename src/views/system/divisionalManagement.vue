@@ -5,19 +5,36 @@
     </div>
     <!-- 列表数据 -->
     <div class="content">
-      <el-table :data="department" border style="width: 100%">
-        <el-table-column prop="name" label="部门名称" width="300" align="center"></el-table-column>
+      <el-table :data="department" border style="width: 100%" stripe>
+        <el-table-column
+          prop="name"
+          label="部门名称"
+          width="300"
+          align="center"
+        ></el-table-column>
         <el-table-column label="操作" align="center">
           <template slot-scope="scope">
-            <el-button type="primary" size="mini" @click="examinePop(scope.row)">查看部门角色</el-button>
-            <el-button type="primary" size="mini" @click="editorialDepartment(scope.row)">编辑部门名称</el-button>
-            <el-button type="primary" size="mini" @click="newDepartmentRoles(scope.row)">新增部门角色</el-button>
+            <el-button type="primary" size="mini" @click="examinePop(scope.row)"
+              >查看部门角色</el-button
+            >
+            <el-button
+              type="primary"
+              size="mini"
+              @click="editorialDepartment(scope.row)"
+              >编辑部门名称</el-button
+            >
+            <el-button
+              type="primary"
+              size="mini"
+              @click="newDepartmentRoles(scope.row)"
+              >新增部门角色</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
     </div>
     <!-- 添加部门弹窗 -->
-    <el-dialog title="提示" :visible.sync="addDepartmentPop" width="30%">
+    <el-dialog title="添加部门" :visible.sync="addDepartmentPop" width="30%">
       <el-form :model="departmentForm">
         <el-row>
           <el-col>
@@ -29,7 +46,9 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="addDepartmentPop = false">取 消</el-button>
-        <el-button type="primary" @click="addDepartmentDetermine">确 定</el-button>
+        <el-button type="primary" @click="addDepartmentDetermine"
+          >确 定</el-button
+        >
       </span>
     </el-dialog>
     <!-- 编辑部门弹窗 -->
@@ -45,7 +64,9 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="editorialDepartmentPop = false">取 消</el-button>
-        <el-button type="primary" @click="editDepartmentDetermine">确 定</el-button>
+        <el-button type="primary" @click="editDepartmentDetermine"
+          >确 定</el-button
+        >
       </span>
     </el-dialog>
     <!-- 新增部门角色弹窗 -->
@@ -61,30 +82,55 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="newDepartmentRolesPop = false">取 消</el-button>
-        <el-button type="primary" @click="newDepartmentDetermine">确 定</el-button>
+        <el-button type="primary" @click="newDepartmentDetermine"
+          >确 定</el-button
+        >
       </span>
     </el-dialog>
-    <!-- 查看账号弹窗 -->
-    <el-dialog title="提示" :visible.sync="dialogVisible" width="50%">
+    <!--  查看部门角色弹窗 -->
+    <el-dialog title="查看部门角色" :visible.sync="dialogVisible" width="50%">
       <el-table :data="departmentDetails" border style="width: 100%">
-        <el-table-column prop="groupname" label="角色" align="center" width="200"></el-table-column>
+        <el-table-column
+          prop="groupname"
+          label="角色"
+          align="center"
+          width="200"
+        ></el-table-column>
         <el-table-column label="操作" align="center">
           <template slot-scope="scope">
-            <el-button type="primary" @click="roleStore(scope.row)">角色店铺</el-button>
-            <el-button type="primary" @click="roleWarehouse(scope.row)">角色仓库</el-button>
-            <el-button type="primary" @click="roleMenu(scope.row)">角色菜单</el-button>
-            <el-button type="primary" @click="rolePermission(scope.row)">角色权限</el-button>
-            <el-button type="success" @click="editRoleName(scope.row)">编辑角色名称</el-button>
+            <el-button type="primary" @click="roleStore(scope.row)"
+              >角色店铺</el-button
+            >
+            <el-button type="primary" @click="roleWarehouse(scope.row)"
+              >角色仓库</el-button
+            >
+            <el-button type="primary" @click="roleMenu(scope.row)"
+              >角色菜单</el-button
+            >
+            <el-button type="primary" @click="rolePermission(scope.row)"
+              >角色权限</el-button
+            >
+            <el-button type="success" @click="editRoleName(scope.row)"
+              >编辑角色名称</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+        <el-button type="primary" @click="dialogVisible = false"
+          >确 定</el-button
+        >
       </span>
     </el-dialog>
     <!-- 查看角色店铺弹窗 -->
-    <el-dialog title="提示" :visible.sync="roleStorePop" width="50%">
+    <el-dialog title="角色店铺" :visible.sync="roleStorePop" width="50%">
+      <el-input
+        placeholder="输入关键字进行过滤"
+        v-model="filterStoreText"
+        style="margin-bottom: 20px"
+      >
+      </el-input>
       <el-tree
         :data="roleStoreList"
         show-checkbox
@@ -93,15 +139,24 @@
         :props="defaultProps"
         :default-checked-keys="roleStoreTable"
         :default-expand-all="true"
+        :filter-node-method="filterRoleStore"
       ></el-tree>
       <span slot="footer" class="dialog-footer">
         <!-- <button @click="getCheckedKeys"></button> -->
         <el-button @click="roleStorePop = false">取 消</el-button>
-        <el-button type="primary" @click="characterConfirmation">确 定</el-button>
+        <el-button type="primary" @click="characterConfirmation"
+          >确 定</el-button
+        >
       </span>
     </el-dialog>
     <!-- 查看角色仓库弹窗 -->
-    <el-dialog title="提示" :visible.sync="roleWarehousePop" width="50%">
+    <el-dialog title="角色仓库" :visible.sync="roleWarehousePop" width="50%">
+      <el-input
+        placeholder="输入关键字进行过滤"
+        v-model="filterWarehouseText"
+        style="margin-bottom: 20px"
+      >
+      </el-input>
       <el-tree
         :data="roleWarehouseList"
         show-checkbox
@@ -110,14 +165,23 @@
         :props="roleWarehouseProps"
         :default-checked-keys="roleWarehouseTable"
         :default-expand-all="true"
+        :filter-node-method="filterRoleWarehouse"
       ></el-tree>
       <span slot="footer" class="dialog-footer">
         <el-button @click="roleWarehousePop = false">取 消</el-button>
-        <el-button type="primary" @click="roleWarehouseConfirmation">确 定</el-button>
+        <el-button type="primary" @click="roleWarehouseConfirmation"
+          >确 定</el-button
+        >
       </span>
     </el-dialog>
     <!-- 查看角色菜单弹窗 -->
-    <el-dialog title="提示" :visible.sync="roleMenuPop" width="50%">
+    <el-dialog title="角色菜单" :visible.sync="roleMenuPop" width="50%">
+      <el-input
+        placeholder="输入关键字进行过滤"
+        v-model="filterMenuText"
+        style="margin-bottom: 20px"
+      >
+      </el-input>
       <el-tree
         :data="roleMenuList"
         show-checkbox
@@ -126,15 +190,24 @@
         :props="roleMenuProps"
         :default-checked-keys="roleMenuTable"
         :default-expand-all="true"
-      :check-strictly="true"
+        :check-strictly="true"
+        :filter-node-method="filterMenuList"
       ></el-tree>
       <span slot="footer" class="dialog-footer">
         <el-button @click="roleMenuPop = false">取 消</el-button>
-        <el-button type="primary" @click="roleMenuConfirmation">确 定</el-button>
+        <el-button type="primary" @click="roleMenuConfirmation"
+          >确 定</el-button
+        >
       </span>
     </el-dialog>
     <!-- 查看角色权限弹窗 -->
-    <el-dialog title="提示" :visible.sync="rolePermissionPop" width="50%">
+    <el-dialog title="角色权限" :visible.sync="rolePermissionPop" width="50%">
+      <el-input
+        placeholder="输入关键字进行过滤"
+        v-model="filterPermissionText"
+        style="margin-bottom: 20px"
+      >
+      </el-input>
       <el-tree
         :data="rolePermissionList"
         show-checkbox
@@ -143,15 +216,19 @@
         :props="rolePermissionProps"
         :default-checked-keys="rolePermissionTable"
         :default-expand-all="true"
+        :check-strictly="true"
+        :filter-node-method="filterPermissionList"
       ></el-tree>
       <!-- :check-strictly="true" -->
       <span slot="footer" class="dialog-footer">
         <el-button @click="rolePermissionPop = false">取 消</el-button>
-        <el-button type="primary" @click="rolePermissionConfirmation">确 定</el-button>
+        <el-button type="primary" @click="rolePermissionConfirmation"
+          >确 定</el-button
+        >
       </span>
     </el-dialog>
     <!-- 编辑角色名称弹窗 -->
-    <el-dialog title="提示" :visible.sync="editRoleNamePop" width="30%">
+    <el-dialog title="编辑角色名称" :visible.sync="editRoleNamePop" width="30%">
       <el-form :model="editRoleNameForm">
         <el-row>
           <el-col>
@@ -164,7 +241,9 @@
       <!-- :check-strictly="true" -->
       <span slot="footer" class="dialog-footer">
         <el-button @click="editRoleNamePop = false">取 消</el-button>
-        <el-button type="primary" @click="editRoleNameConfirmation">确 定</el-button>
+        <el-button type="primary" @click="editRoleNameConfirmation"
+          >确 定</el-button
+        >
       </span>
     </el-dialog>
     <!-- 分页 -->
@@ -173,10 +252,10 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page="currentPage1"
-        :page-sizes="[100, 200, 300, 400]"
-        :page-size="100"
+        :page-sizes="[10, 20, 30, 40]"
+        :page-size="10"
         layout="total, sizes, prev, pager, next, jumper"
-        :total="400"
+        :total="departmentLength"
       ></el-pagination>
     </div>
   </div>
@@ -186,6 +265,11 @@
 export default {
   data() {
     return {
+      filterStoreText: "",
+      filterWarehouseText: "",
+      filterMenuText:"",
+      filterPermissionText:"",
+      departmentLength: 0,
       addDepartmentPop: false, //添加部门弹窗
       departmentForm: {
         username: "",
@@ -244,10 +328,35 @@ export default {
   mounted() {
     this.getList();
   },
+  // 监听Tree搜索框
+  watch: {
+    filterStoreText(val) {
+      this.$refs.tree.filter(val);
+    },
+    filterWarehouseText(val) {
+      this.$refs.tree.filter(val);
+    },
+    filterMenuText(val){
+      this.$refs.tree.filter(val);
+    },
+    filterPermissionText(val){
+      this.$refs.tree.filter(val);
+    }
+  },
   methods: {
-    //   getCheckedKeys(){
-    //       console.log(this.$refs.tree.getCheckedKeys());
-    //   },
+    // 列表
+    getList() {
+      this.$http.post(`api/admin/department_list`).then((res) => {
+        const { code, data } = res.data;
+        if (code == 200) {
+          this.department = res.data.data;
+          console.log(this.department.length);
+          this.departmentLength = this.department.length;
+        } else {
+          this.$message.error(res.data.message);
+        }
+      });
+    },
     //   添加部门
     addDepartment() {
       this.addDepartmentPop = true;
@@ -269,7 +378,7 @@ export default {
           }
         });
     },
-    // 编辑部门
+    // 编辑部门名称
     editorialDepartment(row) {
       console.log(row.id);
       this.id = row.id;
@@ -285,7 +394,7 @@ export default {
           }
         });
     },
-    // 编辑部门确定
+    // 编辑部门名称确定
     editDepartmentDetermine() {
       this.$http
         .post(
@@ -325,22 +434,22 @@ export default {
           }
         });
     },
+    // 查看部门角色弹窗
     examinePop(row) {
       this.dialogVisible = true;
       this.$http.post(`api/admin/get_group?id=${row.id}`).then((res) => {
         const { code, data } = res.data;
-        // if (code == 200) {
-        //   console.log(111);
-        // } else {
-        //   console.log(2222);
-        // }
-        this.departmentDetails = res.data.data;
+        if (code == 200) {
+          this.departmentDetails = res.data.data;
+        } else {
+          this.$message.error(res.data.message);
+        }
       });
     },
-    getList() {
-      this.$http.post(`api/admin/department_list`).then((res) => {
-        this.department = res.data.data;
-      });
+    // 查看角色店铺input框过滤
+    filterRoleStore(value, roleStoreList) {
+      if (!value) return true;
+      return roleStoreList.shopname.indexOf(value) !== -1;
     },
     // 查看角色店铺
     roleStore(row) {
@@ -378,6 +487,11 @@ export default {
         }
       });
     },
+    // 查看角色仓库input框过滤
+    filterRoleWarehouse(value, roleWarehouseList) {
+      if (!value) return true;
+      return roleWarehouseList.name.indexOf(value) !== -1;
+    },
     // 查看角色仓库
     roleWarehouse(row) {
       this.id = row.id;
@@ -414,6 +528,11 @@ export default {
         }
       });
     },
+    // 查看角色菜单input框过滤
+    filterMenuList(value, rolePermissionList) {
+      if (!value) return true;
+      return rolePermissionList.menu.indexOf(value) !== -1;
+    },
     // 查看角色菜单
     roleMenu(row) {
       this.id = row.id;
@@ -426,22 +545,20 @@ export default {
           let temporaryArray = [];
           for (var i = 0; i < arr.length; i++) {
             if (arr[i].check != 0) {
-               temporaryArray.push(arr[i].id);
-            } 
-            let tem2=arr[i].menuChildrenVo;
+              temporaryArray.push(arr[i].id);
+            }
+            let tem2 = arr[i].menuChildrenVo;
             for (let index = 0; index < tem2.length; index++) {
-                if (tem2[index].check != 0) {
-                  temporaryArray.push(tem2[index].id);
-                }
-              let tem3=tem2[index].menuChildrenVo;
+              if (tem2[index].check != 0) {
+                temporaryArray.push(tem2[index].id);
+              }
+              let tem3 = tem2[index].menuChildrenVo;
               for (let index1 = 0; index1 < tem3.length; index1++) {
                 if (tem3[index1].check != 0) {
                   temporaryArray.push(tem3[index1].id);
                 }
-                
               }
             }
-
           }
           this.roleMenuTable = temporaryArray;
         });
@@ -466,6 +583,11 @@ export default {
         }
       });
     },
+    // 查看角色权限input框过滤
+    filterPermissionList(value, rolePermissionList) {
+      if (!value) return true;
+      return rolePermissionList.menuname.indexOf(value) !== -1;
+    },
     // 角色权限
     rolePermission(row) {
       this.id = row.id;
@@ -477,20 +599,33 @@ export default {
           let arr = res.data.data;
           var temporaryArray = [];
           for (var i = 0; i < arr.length; i++) {
-            if (arr[i].check == 0) {
-              console.log("000");
-            } else {
+            if (arr[i].check != 0) {
               temporaryArray.push(arr[i].id);
+            }
+            let tem2 = arr[i].menuChildrenVo;
+            for (let index = 0; index < tem2.length; index++) {
+              if (tem2[index].check != 0) {
+                temporaryArray.push(tem2[index].id);
+              }
+              let tem3 = tem2[index].menuChildrenVo;
+              for (let index1 = 0; index1 < tem3.length; index1++) {
+                if (tem3[index1].check != 0) {
+                  temporaryArray.push(tem3[index1].id);
+                }
+              }
             }
           }
           this.rolePermissionTable = temporaryArray;
+          console.log('rolePermissionTable',this.rolePermissionTable)
         });
     },
     // 查看角色权限确定
     rolePermissionConfirmation() {
       this.pageId = this.$refs.tree.getCheckedKeys();
+      this.pageId1 = this.$refs.tree.getHalfCheckedKeys();
+      let idsArr = [...new Set(this.pageId1), ...new Set(this.pageId)];
       let info = {
-        arr: this.pageId,
+        arr: idsArr,
         id: this.id,
       };
       this.$http.post(`api/admin/insertgroup_approval`, info).then((res) => {
@@ -498,7 +633,7 @@ export default {
         if (code == 200) {
           this.$message.success(res.data.message);
           this.getList();
-          this.roleWarehousePop = false;
+          this.rolePermissionPop = false;
         } else {
           this.$message.error(res.data.message);
         }
@@ -519,16 +654,20 @@ export default {
     },
     // 编辑角色名称确定
     editRoleNameConfirmation() {
-      this.$http.post(`api/admin/up_dedepartment?id=${this.id}&name=${this.editRoleNameForm.data}`).then((res) => {
-        const { code, data } = res.data;
-        if (code == 200) {
-          this.$message.success(res.data.message);
-        //   this.getList();
-        //   this.roleWarehousePop = false;
-        } else {
-          this.$message.error(res.data.message);
-        }
-      });
+      this.$http
+        .post(
+          `api/admin/up_dedepartment?id=${this.id}&name=${this.editRoleNameForm.data}`
+        )
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == 200) {
+            this.$message.success(res.data.message);
+            //   this.getList();
+            //   this.roleWarehousePop = false;
+          } else {
+            this.$message.error(res.data.message);
+          }
+        });
     },
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);

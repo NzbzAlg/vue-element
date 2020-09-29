@@ -6,7 +6,7 @@
           <el-input
             v-model="form.username"
             placeholder="请输入用户名"
-            style="width:300px;margin-left:95px;margin-top:70px;"
+            style="width: 300px; margin-left: 95px; margin-top: 70px"
             prefix-icon="el-icon-user"
           ></el-input>
         </el-form-item>
@@ -15,12 +15,17 @@
             v-model="form.password"
             type="password"
             placeholder="请输入密码"
-            style="width:300px;margin-left:95px;margin-top:10px"
+            style="width: 300px; margin-left: 95px; margin-top: 10px"
             prefix-icon="el-icon-unlock"
           ></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="onSubmit" style="margin-left:150px;margin-top:20px;">登录</el-button>
+          <el-button
+            type="primary"
+            @click="onSubmit"
+            style="margin-left: 150px; margin-top: 20px"
+            >登录</el-button
+          >
           <el-button @click="reset">重置</el-button>
         </el-form-item>
       </el-form>
@@ -50,6 +55,9 @@ export default {
       },
     };
   },
+  mounted() {
+    window.addEventListener("keydown", this.keyDown);
+  },
   methods: {
     // 登录
     onSubmit() {
@@ -63,8 +71,11 @@ export default {
           if (code == 200) {
             console.log(res.data.data.token);
             this.$router.push("/home");
-            window.sessionStorage.setItem("info",JSON.stringify(res.data.data.userInfo[0])); //存储登录信息
-            window.sessionStorage.setItem("token",res.data.data.token); //存储token
+            window.sessionStorage.setItem(
+              "info",
+              JSON.stringify(res.data.data.userInfo[0])
+            ); //存储登录信息
+            window.sessionStorage.setItem("token", res.data.data.token); //存储token
             this.$message({
               message: "登陆成功",
               type: "success",
@@ -125,6 +136,13 @@ export default {
       // this.$http.post("sys/user/login",this.form).then(res=>{
 
       // })
+    },
+    // 键盘回车事件
+    keyDown(e) {
+      //如果是回车则执行登录方法
+      if (e.keyCode == 13) {
+        this.onSubmit();
+      }
     },
     // 重置按钮
     reset() {

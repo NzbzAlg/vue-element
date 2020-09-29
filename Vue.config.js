@@ -34,8 +34,8 @@ module.exports = {
         hotOnly: false,
         proxy: {          
             "/api":{
-                target:"http://192.168.10.189:82",//测试服
-                // target:"http://118.31.72.130",//测试服
+                target:"http://192.168.10.200:82",//测试服
+                // target:"http://www.eterp.cn",//正式服
                 changeOrigin:true,
                 pathRewrite:{
                     "^/api":""
