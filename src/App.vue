@@ -5,6 +5,9 @@
 </template>
 
 <style lang="scss">
+#app{
+  overflow-x: hidden;
+}
 .el-form-item__error {
   color: #f56c6c;
   font-size: 12px;

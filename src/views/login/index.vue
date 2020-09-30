@@ -69,13 +69,12 @@ export default {
         this.$http.post(`api/login/login`, info).then((res) => {
           const { code, data } = res.data;
           if (code == 200) {
-            console.log(res.data.data.token);
-            this.$router.push("/home");
             window.sessionStorage.setItem(
               "info",
               JSON.stringify(res.data.data.userInfo[0])
             ); //存储登录信息
             window.sessionStorage.setItem("token", res.data.data.token); //存储token
+            this.$router.push("/home");
             this.$message({
               message: "登陆成功",
               type: "success",

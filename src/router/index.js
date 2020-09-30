@@ -1,5 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
 import Login from "@/views/login/index.vue"
 import Home from "@/views/index.vue"
 // 管理中心 => 控制台
@@ -945,11 +947,21 @@ const routes = [
 const router = new VueRouter({
   routes
 })
-// router.beforeEach( (to, from, next) => {
-//   if( to.path === '/login' ) return next()
-//   const tokenStr = window.sessionStorage.getItem('token')
-//   if( !tokenStr ) return next( '/login' )
-//   next()
-// } )
+router.beforeEach( (to, from, next) => {
+  if( to.path === '/login' ) return next()
+  const tokenStr = window.sessionStorage.getItem('token')
+  if( !tokenStr ) return next( '/login' )
+  next()
+} )
+// Nprogress.js进度条
+NProgress.inc(0.2)
+NProgress.configure({ easing: 'ease', speed: 700, showSpinner: false })
+router.beforeEach((to, from, next) => {
+  NProgress.start()
+  next()
+})
 
+router.afterEach(() => {
+  NProgress.done()
+})
 export default router

@@ -83,12 +83,12 @@
       <el-form :model="editAccountForm" label-width="120px">
         <el-row>
           <el-col>
-            <el-form-item label="输入新账号：">
+            <el-form-item label="输入新账号：" :required="true">
               <el-input v-model="editAccountForm.username"></el-input>
             </el-form-item>
           </el-col>
           <el-col>
-            <el-form-item label="员工编号：">
+            <el-form-item label="员工编号：" :required="true">
               <el-input v-model="editAccountForm.code"></el-input>
             </el-form-item>
           </el-col>
@@ -110,12 +110,12 @@
             </el-form-item>
           </el-col>
           <el-col>
-            <el-form-item label="输入名字：">
+            <el-form-item label="输入名字：" :required="true">
               <el-input v-model="editAccountForm.name" disabled></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="部门：">
+            <el-form-item label="部门：" :required="true">
               <el-select
                 v-model="editAccountForm.department"
                 placeholder="请选择部门"
@@ -260,6 +260,8 @@ export default {
       this.id = row.id;
       this.d_id = row.d_id;
       this.groupid = row.groupid;
+      this.department = row.department;//部门
+      this.group = row.group;//角色
       this.$http.post(`api/admin/getoneuser_by_id?id=${row.id}`).then((res) => {
         const { code, data } = res.data;
         if (code == 200) {
@@ -276,18 +278,14 @@ export default {
         this.$message.error("账号不能为空");
       } else if (this.editAccountForm.code == "") {
         this.$message.error("员工编号不能为空");
-      } else if (this.departmentDropId == "") {
-        this.$message.error("选择部门不能为空");
-      } else if (this.roleDId == "") {
-        this.$message.error("选择角色不能为空");
       } else {
         let info = {
           id: this.id,
-          d_id: this.departmentDropId,
-          groupid: this.roleDId,
-          username: this.editAccountForm.username,
-          userpwd: this.editAccountForm.userNewpwd,
-          code: this.editAccountForm.code,
+          d_id: this.departmentDropId == "" ? this.d_id : this.departmentDropId,//部门
+          groupid: this.roleDId == "" ? this.groupid : this.roleDId,//角色
+          username: this.editAccountForm.username,//新账号
+          userpwd: this.editAccountForm.userNewpwd,//新密码
+          code: this.editAccountForm.code,//员工编号
         };
         this.$http.post(`api/admin/changinfo`, info).then((res) => {
           const { code, data } = res.data;

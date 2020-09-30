@@ -67,25 +67,25 @@
     </div>
     <!-- 添加店铺弹窗 -->
     <el-dialog title="添加店铺" :visible.sync="addAccountPop" width="35%">
-      <el-form :model="addAccountForm" label-width="140px">
+      <el-form :model="addAccountForm" label-width="145px">
         <el-row>
           <el-col>
-            <el-form-item label="店铺名：">
+            <el-form-item label="店铺名：" :required="true">
               <el-input v-model="addAccountForm.shopname"></el-input>
             </el-form-item>
           </el-col>
           <el-col>
-            <el-form-item label="卖家编号：">
+            <el-form-item label="卖家编号：" :required="true">
               <el-input v-model="addAccountForm.seller_code"></el-input>
             </el-form-item>
           </el-col>
           <el-col>
-            <el-form-item label="MWS Auth Token">
+            <el-form-item label="MWS Auth Token" :required="true">
               <el-input v-model="addAccountForm.token"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="站点：">
+            <el-form-item label="站点：" :required="true">
               <el-select
                 v-model="addAccountForm.country"
                 placeholder="请选择站点"
@@ -101,7 +101,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="部门：">
+            <el-form-item label="部门：" :required="true">
               <el-select
                 v-model="addAccountForm.department"
                 placeholder="请选择部门"
@@ -125,25 +125,25 @@
     </el-dialog>
     <!-- 修改信息弹窗 -->
     <el-dialog title="修改信息" :visible.sync="editAccountPop" width="35%">
-      <el-form :model="editAccountForm" label-width="140px">
+      <el-form :model="editAccountForm" label-width="145px">
         <el-row>
           <el-col>
-            <el-form-item label="店铺名：">
+            <el-form-item label="店铺名：" :required="true">
               <el-input v-model="editAccountForm.shopname"></el-input>
             </el-form-item>
           </el-col>
           <el-col>
-            <el-form-item label="卖家编号：">
+            <el-form-item label="卖家编号：" :required="true">
               <el-input v-model="editAccountForm.seller_code"></el-input>
             </el-form-item>
           </el-col>
           <el-col>
-            <el-form-item label="MWS Auth Token">
+            <el-form-item label="MWS Auth Token" :required="true">
               <el-input v-model="editAccountForm.token"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="站点：">
+            <el-form-item label="站点：" :required="true">
               <el-select
                 v-model="editAccountForm.country"
                 placeholder="请选择站点"
@@ -159,7 +159,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="部门：">
+            <el-form-item label="部门：" :required="true">
               <el-select
                 v-model="editAccountForm.department"
                 placeholder="请选择部门"
@@ -282,6 +282,8 @@ export default {
     // 修改弹窗
     editAccount(row) {
       this.id = row.id;
+      this.countryid = row.countryid
+      this.d_id = row.d_id
       this.editAccountPop = true;
       this.$http.post(`api/admin/getshop_by_id?id=${this.id}`).then((res) => {
         const { code, data } = res.data;
@@ -302,12 +304,11 @@ export default {
         shopname: this.editAccountForm.shopname,
         token: this.editAccountForm.token,
         seller_code: this.editAccountForm.seller_code,
-        countryid:
-          this.siteId != "" ? this.siteId : this.editAccountForm.countryid,
+        countryid:this.siteId != "" ? this.siteId : this.countryid,
         d_id:
           this.departmentId != ""
             ? this.departmentId
-            : this.editAccountForm.d_id,
+            : this.d_id,
       };
       this.$http.post(`api/admin/updateshop`, info).then((res) => {
         const { code, data } = res.data;

@@ -6,10 +6,10 @@
     <div class="drop" v-show="isShow">
       <el-form ref="form" :model="form" label-width="120px">
         <el-col :span="6">
-          <el-form-item label="部门">
+          <el-form-item label="店铺">
             <el-select
               v-model="value"
-              placeholder="请选择部门查询"
+              placeholder="请选择店铺查询"
               style="width: 100%"
             >
               <el-option
@@ -23,14 +23,8 @@
         </el-col>
         <el-col :span="6">
           <el-form-item label="时间">
-            <el-date-picker
-              v-model="value"
-              type="daterange"
-              range-separator="至"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-              style="width: 100%"
-            ></el-date-picker>
+            <el-date-picker v-model="value" type="date" placeholder="选择日期">
+            </el-date-picker>
           </el-form-item>
         </el-col>
         <el-col :span="6">
@@ -45,11 +39,7 @@
     </div>
     <!-- 表格 -->
     <div class="content">
-      <el-table
-        :data="tableData"
-        border
-        style="width: 100%"
-      >
+      <el-table :data="tableData" border style="width: 100%">
         <el-table-column
           prop="date"
           label="店铺"

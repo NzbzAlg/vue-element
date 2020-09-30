@@ -38,7 +38,11 @@
       <el-form :model="departmentForm">
         <el-row>
           <el-col>
-            <el-form-item label="部门名称：" label-width="90px">
+            <el-form-item
+              label="部门名称："
+              label-width="95px"
+              :required="true"
+            >
               <el-input v-model="departmentForm.username"></el-input>
             </el-form-item>
           </el-col>
@@ -267,8 +271,8 @@ export default {
     return {
       filterStoreText: "",
       filterWarehouseText: "",
-      filterMenuText:"",
-      filterPermissionText:"",
+      filterMenuText: "",
+      filterPermissionText: "",
       departmentLength: 0,
       addDepartmentPop: false, //添加部门弹窗
       departmentForm: {
@@ -336,12 +340,12 @@ export default {
     filterWarehouseText(val) {
       this.$refs.tree.filter(val);
     },
-    filterMenuText(val){
+    filterMenuText(val) {
       this.$refs.tree.filter(val);
     },
-    filterPermissionText(val){
+    filterPermissionText(val) {
       this.$refs.tree.filter(val);
-    }
+    },
   },
   methods: {
     // 列表
@@ -363,20 +367,24 @@ export default {
     },
     // 添加部门确定
     addDepartmentDetermine() {
-      this.$http
-        .post(
-          `api/admin/insertdedepartment?name=${this.departmentForm.username}`
-        )
-        .then((res) => {
-          const { code, data } = res.data;
-          if (code == 200) {
-            this.$message.success(res.data.message);
-            this.addDepartmentPop = false;
-            this.getList();
-          } else {
-            this.$message.error(res.data.message);
-          }
-        });
+      if (this.departmentForm.username == "") {
+        this.$message.error("部门名称不能为空");
+      } else {
+        this.$http
+          .post(
+            `api/admin/insertdedepartment?name=${this.departmentForm.username}`
+          )
+          .then((res) => {
+            const { code, data } = res.data;
+            if (code == 200) {
+              this.$message.success(res.data.message);
+              this.addDepartmentPop = false;
+              this.getList();
+            } else {
+              this.$message.error(res.data.message);
+            }
+          });
+      }
     },
     // 编辑部门名称
     editorialDepartment(row) {
@@ -436,6 +444,7 @@ export default {
     },
     // 查看部门角色弹窗
     examinePop(row) {
+      this.examineId = row.id
       this.dialogVisible = true;
       this.$http.post(`api/admin/get_group?id=${row.id}`).then((res) => {
         const { code, data } = res.data;
@@ -616,7 +625,7 @@ export default {
             }
           }
           this.rolePermissionTable = temporaryArray;
-          console.log('rolePermissionTable',this.rolePermissionTable)
+          console.log("rolePermissionTable", this.rolePermissionTable);
         });
     },
     // 查看角色权限确定
@@ -662,8 +671,17 @@ export default {
           const { code, data } = res.data;
           if (code == 200) {
             this.$message.success(res.data.message);
-            //   this.getList();
-            //   this.roleWarehousePop = false;
+            this.getList();
+            // 调用查看部门角色接口，刷新查看部门角色弹窗
+            this.$http.post(`api/admin/get_group?id=${this.examineId}`).then((res) => {
+              const { code, data } = res.data;
+              if (code == 200) {
+                this.departmentDetails = res.data.data;
+              } else {
+                this.$message.error(res.data.message);
+              }
+            });
+            this.editRoleNamePop = false;
           } else {
             this.$message.error(res.data.message);
           }
