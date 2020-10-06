@@ -1,7 +1,7 @@
 <template>
   <div class="divisionalManagement">
     <div class="title">
-      <el-button type="primary" @click="addDepartment">添加部门</el-button>
+      <el-button type="primary" @click="addDepartment" size="small">添加部门</el-button>
     </div>
     <!-- 列表数据 -->
     <div class="content">
@@ -250,18 +250,6 @@
         >
       </span>
     </el-dialog>
-    <!-- 分页 -->
-    <div class="paging">
-      <el-pagination
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page="currentPage1"
-        :page-sizes="[10, 20, 30, 40]"
-        :page-size="10"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="departmentLength"
-      ></el-pagination>
-    </div>
   </div>
 </template>
 
@@ -686,12 +674,6 @@ export default {
             this.$message.error(res.data.message);
           }
         });
-    },
-    handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
-    },
-    handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
     },
   },
 };

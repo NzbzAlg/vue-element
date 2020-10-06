@@ -17,8 +17,8 @@
           <span>
             <i class="el-icon-user"></i> 登录账户:{{ info.username }}
           </span>
-          <span> <i class="el-icon-setting"></i> 修改密码 </span>
-          <span @click="quit">
+          <span style="cursor: pointer;"> <i class="el-icon-setting"></i> 修改密码 </span>
+          <span @click="quit" style="cursor: pointer;">
             <i class="el-icon-switch-button"></i> 退出
           </span>
         </div>
@@ -139,9 +139,10 @@ export default {
         {
           menu: "关键词分析",
           path: "keywordAnalysis",
-          close: null,
+          close:null
         },
       ],
+      // editableTabs:JSON.parse(window.sessionStorage.getItem('editableTabs')) ,
       activeIndex: "keywordAnalysis",
       isCollapse: false,
       activePath: "",
@@ -160,6 +161,7 @@ export default {
         116: "el-icon-bank-card",
         135: "el-icon-suitcase-1",
       },
+      // 
       list: JSON.parse(window.sessionStorage.getItem("menulist")),
     };
   },
@@ -223,10 +225,9 @@ export default {
       this.editableTabsValue = itemChild.menuUrl;
       this.activeIndex = itemChild.menuUrl;
     },
-
     //添加tab
     addTab(itemChild) {
-      console.log("itemChild", itemChild.menu);
+      console.log('itemChild',itemChild)
       this.targetclickname = itemChild;
       //如果已经打开了，则不添加
       for (let i = 0; i < this.editableTabs.length; i++) {
@@ -238,10 +239,11 @@ export default {
       this.editableTabs.push({
         menu: itemChild.menu,
         path: itemChild.menuUrl,
-        name: itemChild.name,
-        close: true,
+        close:true
       });
+      // window.sessionStorage.setItem("editableTabs", JSON.stringify(this.editableTabs)); //存储editableTabs
       this.editableTabsValue = newTabName;
+      
     },
     //点击tab,切换导航颜色
     changetab(targetName) {
@@ -255,6 +257,7 @@ export default {
       });
       this.editableTabsValue = activeName;
       this.activePath = activeName;
+      console.log(this.activePath)
     },
     //关闭tab
     removeTab(targetName) {
@@ -338,6 +341,7 @@ export default {
       line-height: 60px;
       color: #fff;
       margin-right: 20px;
+      font-size: 15px;
     }
   }
   .headerBottom {

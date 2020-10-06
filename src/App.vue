@@ -5,8 +5,20 @@
 </template>
 
 <style lang="scss">
-#app{
+#app {
   overflow-x: hidden;
+}
+.el-tooltip__popper {
+  font-size: 14px;
+  max-width: 10%;
+}
+.el-tooltip__popper.is-dark {
+  background: #e8bb76;
+  color: #fff;
+}
+.el-table td,
+.el-table th {
+  padding: 8px 0 !important;
 }
 .el-form-item__error {
   color: #f56c6c;
@@ -35,11 +47,12 @@
 // .el-select .el-input {
 //   width: 160px !important;
 // }
-.el-input-group__append .el-button,
-.el-input-group__append .el-input,
-.el-input-group__prepend .el-button,
-.el-input-group__prepend .el-input {
-  font-size: inherit;
-  width: 90px;
-}
+// .el-input-group__append .el-button,
+// .el-input-group__append .el-input,
+// .el-input-group__prepend .el-button,
+// .el-input-group__prepend .el-input {
+//   font-size: inherit;
+//   width: 90px;
+// }
+
 </style>
