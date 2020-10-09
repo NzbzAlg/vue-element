@@ -3,7 +3,7 @@
     <!-- 面包屑 -->
     <Crumbs></Crumbs>
     <!-- 头部 -->
-    <div class="drop" v-show="isShow">
+    <!-- <div class="drop" v-show="isShow">
       <el-form ref="form" :model="form" label-width="120px">
         <el-col :span="6">
           <el-form-item label="sku：">
@@ -61,6 +61,73 @@
       <el-button type="success" size="small" @click="purchaseOrders"
         >生成采购单</el-button
       >
+    </div> -->
+    <div class="title">
+      <div class="drop">
+        <div class="dropButton">
+          <el-button
+            icon="el-icon-search"
+            @click="dropDisplays"
+            size="small"
+          ></el-button>
+          <el-button type="primary" @click="addPurchase" size="small"
+            >添加采购单</el-button
+          >
+          <el-button type="success" size="small" @click="purchaseOrders"
+            >生成采购单</el-button
+          >
+        </div>
+        <div class="dropSearch" v-show="isShow">
+          <el-form ref="form" :model="form" label-width="120px">
+            <el-col :span="6">
+              <el-form-item label="sku：">
+                <el-input
+                  placeholder="请输入sku查询"
+                  v-model="form.sku"
+                  clearable
+                >
+                </el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label="接收部门：">
+                <el-select
+                  v-model="form.department"
+                  placeholder="请选择接收部门查询"
+                  style="width: 100%"
+                >
+                  <el-option
+                    v-for="item in department"
+                    :key="item.id"
+                    :label="item.label"
+                    :value="item.id"
+                  ></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label="创建时间：">
+                <el-date-picker
+                  v-model="dataTime"
+                  type="daterange"
+                  value-format="yyyy-MM-dd"
+                  range-separator="至"
+                  start-placeholder="开始日期"
+                  end-placeholder="结束日期"
+                  style="width: 100%"
+                ></el-date-picker>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item>
+                <el-button type="primary" size="small" @click="grabble"
+                  >搜索</el-button
+                >
+              </el-form-item>
+            </el-col>
+          </el-form>
+        </div>
+      </div>
     </div>
     <!-- 表格 -->
     <div class="content">
@@ -1048,10 +1115,19 @@ export default {
 <style lang="scss" scoped>
 .title {
   margin-bottom: 20px;
-}
-.drop {
-  width: 100%;
-  height: 65px;
+  height: 30px;
+  .drop {
+    width: 100%;
+    .dropButton {
+      width: 15%;
+      float: left;
+      margin-top: 5px;
+    }
+    .dropSearch {
+      width: 85%;
+      float: right;
+    }
+  }
 }
 .paging {
   float: right;

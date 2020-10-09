@@ -4,16 +4,81 @@
     <Crumbs></Crumbs>
     <!-- 头部 -->
     <div class="title">
-      <el-button type="primary" @click="productPop">录入产品</el-button>
-      <el-select v-model="value" placeholder="请选择国家查询" style="margin-left:20px">
-        <el-option v-for="item in state" :key="item.id" :label="item.label" :value="item"></el-option>
-      </el-select>
-      <el-select v-model="value" placeholder="请选择店铺查询" style="margin-left:20px">
-        <el-option v-for="item in state" :key="item.id" :label="item.label" :value="item"></el-option>
-      </el-select>
-      <el-input placeholder="请输入asin查询" style="width:210px;margin-left:20px"></el-input>
-      <el-input placeholder="请输入标题查询" style="width:210px;margin-left:20px"></el-input>
-      <el-button type="primary" style="margin-left:20px">查询</el-button>
+      <div class="drop">
+        <div class="dropButton">
+          <el-button
+            icon="el-icon-search"
+            @click="dropDisplays"
+            size="small"
+          ></el-button>
+          <el-button type="primary" @click="productPop" size="small">录入产品</el-button>
+        </div>
+        <div class="dropSearch" v-show="isShow">
+          <el-form ref="form" :model="form" label-width="90px">
+            <el-col :span="6">
+              <el-form-item label="asin：">
+                <el-input
+                  placeholder="请输入asin查询"
+                  v-model="form.name"
+                  clearable
+                >
+                </el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label="标题：">
+                <el-input
+                  placeholder="请输入标题查询"
+                  v-model="form.name"
+                  clearable
+                >
+                </el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label="国家：">
+                <el-select
+                  v-model="form.departmentPull"
+                  placeholder="请选择国家查询"
+                  style="width: 100%"
+                  clearable
+                >
+                  <el-option
+                    v-for="item in state"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id"
+                  ></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label="店铺：">
+                <el-select
+                  v-model="form.status"
+                  placeholder="请选择店铺查询"
+                  style="width: 100%"
+                  clearable
+                >
+                  <el-option
+                    v-for="item in state"
+                    :key="item.id"
+                    :label="item.label"
+                    :value="item.id"
+                  ></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item>
+                <el-button type="primary" size="small"
+                  >搜索</el-button
+                >
+              </el-form-item>
+            </el-col>
+          </el-form>
+        </div>
+      </div>
     </div>
     <!-- 表格 -->
     <div class="content">
@@ -96,10 +161,14 @@ export default {
   },
   data() {
     return {
+      isShow: false,
       value: "",
       currentPage1: 1,
       dialogVisible: false,
       productForm: {},
+      form:{
+        name:''
+      },
       tableData: [
         {
           date: "2016-05-02",
@@ -131,6 +200,9 @@ export default {
     };
   },
   methods: {
+    dropDisplays() {
+      this.isShow = !this.isShow;
+    },
     //   录入产品弹窗
     productPop() {
       this.dialogVisible = true;
@@ -147,8 +219,21 @@ export default {
 
 <style lang="scss" scoped>
 .title {
-  margin-bottom: 20px;
-}
+    margin-bottom: 20px;
+    height: 30px;
+    .drop {
+      width: 100%;
+      .dropButton {
+        width: 10%;
+        float: left;
+        margin-top: 5px;
+      }
+      .dropSearch {
+        width: 90%;
+        float: right;
+      }
+    }
+  }
 .paging {
   float: right;
   margin-top: 20px;

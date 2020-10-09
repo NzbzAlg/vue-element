@@ -4,8 +4,8 @@ import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import Login from "@/views/login/index.vue"
 import Home from "@/views/index.vue"
-// 管理中心 => 控制台
-import User from "@/views/home/user.vue"
+// 管理中心 => 数据看板
+import DataBoard from "@/views/home/dataBoard.vue"
 //分析 => 排名分析 => 关键词分析
 import KeywordAnalysis from "@/views/analyse/rankingAnalysis/keywordAnalysis.vue"
 //分析 => 市场分析 => 市场分析表
@@ -257,11 +257,11 @@ const routes = [
     component:Home,
     // redirect:"/home",
     children:[
-      //管理中心 => 控制台
+      //控制台 => 数据看板
       {
-        name:"user",
-        path:"/user",
-        component:User
+        name:"dataBoard",
+        path:"/dataBoard",
+        component:DataBoard
       },
 
       //分析 => 排名分析 => 关键词分析

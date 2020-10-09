@@ -8,31 +8,98 @@
           <img
             src="../assets/image/logo.png"
             alt=""
-            style="width: 48px; height: 48px"
+            style="width: 36px; height: 36px"
           />
-          <h1>紫缘天下</h1>
+          <p>紫缘管理系统</p>
         </div>
         <!-- 个人信息 -->
         <div class="information">
-          <span>
-            <i class="el-icon-user"></i> 登录账户:{{ info.username }}
-          </span>
-          <span style="cursor: pointer;"> <i class="el-icon-setting"></i> 修改密码 </span>
-          <span @click="quit" style="cursor: pointer;">
-            <i class="el-icon-switch-button"></i> 退出
-          </span>
+          <div class="crumbs">
+          </div>
+          <div class="userinfo">
+            <span>
+              <i class="el-icon-user"></i> 登录账户:{{ info.username }}
+            </span>
+            <!-- 系统通知 -->
+            <el-popover
+              placement="top-start"
+              title="通知"
+              width="200"
+              trigger="click"
+            >
+              <el-divider></el-divider>
+              <div>
+                <p>
+                  <i class="el-icon-success" sColor></i
+                  ><a href="#">这是第一条通知</a>
+                </p>
+                <p><i class="el-icon-warning" wColor></i>这是第一条警告通知</p>
+              </div>
+              <el-divider></el-divider>
+              <div class="btn-ground">
+                <el-button type="primary" size="mini">全部已读</el-button>
+                <el-button type="danger" size="mini">清空</el-button>
+              </div>
+              <p slot="reference" multiBtn @click="MQBox">
+                <el-tooltip
+                  class="item"
+                  effect="dark"
+                  content="系统通知"
+                  placement="bottom"
+                >
+                  <i class="el-icon-message-solid badge"></i>
+                </el-tooltip>
+              </p>
+            </el-popover>
+            <!-- 刷新页面 -->
+            <el-tooltip
+              class="item"
+              effect="dark"
+              content="刷新页面"
+              placement="bottom"
+            >
+              <p multiBtn @click="$router.go(0)">
+                <i class="el-icon-refresh"></i>
+              </p>
+            </el-tooltip>
+            <!-- 个人信息 -->
+            <el-dropdown
+              trigger="hover"
+              placement="bottom"
+              @command="handleCommand"
+            >
+              <p class="el-dropdown-link" multiBtn>
+                <el-avatar
+                  src="https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif?imageView2/1/w/80/h/80"
+                ></el-avatar>
+              </p>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item command="updatePass"
+                  >修改密码</el-dropdown-item
+                >
+                <el-dropdown-item command="logout">退出登录</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+
+            <!-- <span style="cursor: pointer">
+              <i class="el-icon-setting"></i> 修改密码
+            </span>
+            <span @click="quit" style="cursor: pointer">
+              <i class="el-icon-switch-button"></i> 退出
+            </span> -->
+          </div>
         </div>
       </div>
       <!-- 头部下 -->
       <div class="headerBottom">
         <el-tabs
-          v-model="editableTabsValue"
+          v-model="activePath"
           @tab-click="changetab"
           @tab-remove="removeTab"
           type="card"
         >
           <el-tab-pane
-            v-for="item in editableTabs"
+            v-for="item in editableTabss"
             :key="item.name"
             :label="item.menu"
             :name="item.path"
@@ -74,14 +141,13 @@
                     itemChild.menuChildrenVo && itemChild.menuChildrenVo.length
                   "
                   :index="itemChild.id + ''"
-                  :key="itemChild.menuUrl"
-                  @click="
-                    saveNavState(itemChild.menuUrl), activeName(itemChild.menu)
-                  "
+                  :key="itemChild.menuUrl" 
                 >
                   <template slot="title">
-                    <i :class="itemChild.icon"></i>
-                    <span>{{ itemChild.menu }}</span>
+                    <div>
+                      <i :class="itemChild.icon"></i>
+                      <span>{{ itemChild.menu }}</span>
+                    </div>
                   </template>
                   <!-- 三级菜单 -->
                   <el-menu-item
@@ -134,16 +200,10 @@ export default {
   },
   data() {
     return {
-      editableTabsValue: "keywordAnalysis",
-      editableTabs: [
-        {
-          menu: "关键词分析",
-          path: "keywordAnalysis",
-          close:null
-        },
-      ],
-      // editableTabs:JSON.parse(window.sessionStorage.getItem('editableTabs')) ,
-      activeIndex: "keywordAnalysis",
+      activePath: "",
+      editableTabs: [],
+      editableTabss: [],
+      editableTabss: JSON.parse(window.sessionStorage.getItem("editableTabs")),
       isCollapse: false,
       activePath: "",
       info: JSON.parse(window.sessionStorage.getItem("info")), //取username
@@ -160,8 +220,8 @@ export default {
         107: "el-icon-refresh",
         116: "el-icon-bank-card",
         135: "el-icon-suitcase-1",
+        162: "el-icon-data-line",
       },
-      // 
       list: JSON.parse(window.sessionStorage.getItem("menulist")),
     };
   },
@@ -170,6 +230,37 @@ export default {
     this.activePath = window.sessionStorage.getItem("activePath");
   },
   methods: {
+    handleCommand(command) {
+      if (command === "updatePass") {
+        // this.$router.push({
+        //   path: "/updatePass",
+        // });
+      } else if (command == "logout") {
+        this.$confirm("确定要退出登录吗?", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        })
+          .then(() => {
+            // //清除token
+            sessionStorage.removeItem("token");
+            //清除path
+            sessionStorage.removeItem("activePath");
+            //清除二级菜单
+            sessionStorage.removeItem("activeName");
+            // 清除存储信息
+            sessionStorage.removeItem("info");
+            this.$router.push("/login");
+          })
+          .catch(() => {
+            this.$message({
+              type: "info",
+              message: "已取消",
+            });
+          });
+      }
+    },
+    MQBox() {},
     getList() {
       this.$http
         .get(`api/login/get_menu`, {
@@ -222,12 +313,10 @@ export default {
     },
     goTo(itemChild) {
       this.addTab(itemChild);
-      this.editableTabsValue = itemChild.menuUrl;
-      this.activeIndex = itemChild.menuUrl;
+      this.activePath = itemChild.menuUrl;
     },
     //添加tab
     addTab(itemChild) {
-      console.log('itemChild',itemChild)
       this.targetclickname = itemChild;
       //如果已经打开了，则不添加
       for (let i = 0; i < this.editableTabs.length; i++) {
@@ -239,30 +328,32 @@ export default {
       this.editableTabs.push({
         menu: itemChild.menu,
         path: itemChild.menuUrl,
-        close:true
+        close: true,
       });
-      // window.sessionStorage.setItem("editableTabs", JSON.stringify(this.editableTabs)); //存储editableTabs
-      this.editableTabsValue = newTabName;
-      
+      this.editableTabss = this.editableTabs;
+      this.activePath = newTabName;
+      window.sessionStorage.setItem(
+        "editableTabs",
+        JSON.stringify(this.editableTabss)
+      ); //存储editableTabs
     },
     //点击tab,切换导航颜色
     changetab(targetName) {
       this.targetclickname = targetName.name;
-      let tabs = this.editableTabs;
+      let tabs = this.editableTabss;
       let activeName = targetName.name;
       tabs.forEach((tab, index) => {
         if (tab.path === targetName.name) {
           this.$router.push(tab.path);
         }
       });
-      this.editableTabsValue = activeName;
       this.activePath = activeName;
-      console.log(this.activePath)
+      window.sessionStorage.setItem("activePath", this.activePath);
     },
     //关闭tab
     removeTab(targetName) {
-      let tabs = this.editableTabs;
-      let activeName = this.editableTabsValue;
+      let tabs = this.editableTabss;
+      let activeName = this.activePath;
       if (activeName === targetName) {
         tabs.forEach((tab, index) => {
           if (tab.path === targetName) {
@@ -276,8 +367,11 @@ export default {
       }
       this.targetclickname = activeName;
       this.activePath = activeName;
-      this.editableTabsValue = activeName;
-      this.editableTabs = tabs.filter((tab) => tab.path !== targetName);
+      
+      this.editableTabss = tabs.filter((tab) => tab.path !== targetName);
+      //解决刷新消失
+      window.sessionStorage.setItem("editableTabs",JSON.stringify(this.editableTabss));
+      window.sessionStorage.setItem("activePath", this.activePath);
     },
   },
 };
@@ -306,55 +400,105 @@ export default {
 }
 
 .el-header {
-  height: 101px !important;
-  background: #fff;
+  height: 105px !important;
   position: fixed;
   top: 0;
   width: 100%;
   z-index: 999;
   padding: 0 0px 0 0;
-  box-sizing:border-box;
+  box-sizing: border-box;
   .headetTop {
     height: 60px;
     background: #303133;
+    display: flex;
+    justify-content: space-between;
     .header_logo {
-      width: 11.1%;
-      height: 100%;
-      background: #35363a;
+      width: 11%;
+      height: 99%;
       display: flex;
       justify-content: center;
       float: left;
+      border-bottom: 1px solid #333;
+      box-shadow: 0 0 3px 2px #000000;
       img {
         vertical-align: middle;
         float: left;
-        margin-top: 5px;
+        margin-top: 11px;
       }
-      h1 {
+      p {
         float: left;
         line-height: 60px;
-        color: #fff;
+        color: #c0c4cc;
         margin-left: 10px;
       }
     }
     .information {
-      float: right;
+      width: 88%;
+      height: 60px;
       line-height: 60px;
       color: #fff;
       margin-right: 20px;
       font-size: 15px;
+      .crumbs {
+        float: left;
+        height: 100%;
+        .el-breadcrumb {
+          line-height: 60px;
+          margin-left: 20px;
+        }
+        /deep/.el-breadcrumb__inner {
+          color: #a6a6a6 !important;
+        }
+      }
+      .userinfo {
+        float: right;
+        p[multiBtn] {
+          width: 38px;
+          max-width: 38px;
+          height: 38px;
+          max-height: 38px;
+          font-size: 18px;
+          border-radius: 38px;
+          margin: 2px;
+          cursor: pointer;
+          display: inline-flex;
+          vertical-align: middle;
+        }
+
+        [multiBtn] i {
+          line-height: 38px;
+          margin: 0 auto;
+        }
+
+        [multiBtn]:hover {
+          box-shadow: 0 0 6px #b3b3b3 inset;
+          transition: all 0.5s ease;
+        }
+        .badge:after {
+          content: "";
+          position: absolute;
+          width: 8px;
+          height: 8px;
+          background-color: #e60000;
+          border-radius: 10px;
+        }
+      }
     }
   }
   .headerBottom {
     width: 89%;
-    height: 41px;
+    height: 43px;
     // background: darksalmon;
     float: right;
+    box-shadow: 0 1px 3px 0 #595959;
+    background: #fff;
   }
 }
 .el-aside {
-  background-color: rgb(48, 49, 51);
+  background-color: #303133;
   z-index: 1000;
   margin-top: 60px;
+  box-shadow: 0 3px 3px 2px #000000;
 }
 .el-main {
   background: #f0f2f5;

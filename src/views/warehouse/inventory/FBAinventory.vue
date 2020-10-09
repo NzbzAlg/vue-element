@@ -67,7 +67,7 @@
     </div>
     <!-- 列表数据 -->
     <div class="content">
-      <el-table :data="tableData" border style="width: 100%" height="720">
+      <el-table :data="tableData" border style="width: 100%" height="618">
         <el-table-column label="查看" align="center" type="expand">
           <template slot-scope="scope">
             <div style="margin-bottom:10px">
@@ -83,6 +83,13 @@
               </div>
             </div>
           </template>
+          <!-- <template slot-scope="props">
+            <el-form label-position="left" inline class="demo-table-expand">
+              <el-form-item label="商品名称">
+                <span>{{ props.row.onway }}</span>
+              </el-form-item>
+            </el-form>
+          </template> -->
         </el-table-column>
         <el-table-column prop="warehouse" label="仓库" align="center"></el-table-column>
         <el-table-column label="图片" align="center">
@@ -137,32 +144,23 @@
         ></el-date-picker>
         <el-button type="primary" style="margin-left:20px" @click="dateQuery">查询</el-button>
       </div>
-      <!-- <div v-for="(item,key,index) in headerMonth">
-
-        {{ index }}. {{ key }} : {{ item }}
-
-        </div> -->
       <el-table :data="salesTableData" style="width: 100%">
         <el-table-column
           v-for="(item,key) in headerMonth"
           :key="key"
-          v-if="key == -1"
           :prop="item.prop"
           :label="item.month"
           align="center"
         >
-          <template slot-scope="scope">
-            <img :src="'http://192.168.10.189:82/'+scope.row.img" alt style="width:20px;height:50px" />
+         <template slot-scope="scope">
+          <!-- 图片有多张的情况 先分隔为数组 然后利用v-for 遍历得到 src  -->
+          <template v-if="item.prop === 'img'">
+              <el-image style="width: 50px; height: 50px; margin-right: 10px;" :src="'http://192.168.10.189:82/'+scope.row.img"></el-image>
           </template>
-        </el-table-column>
-        <el-table-column
-          v-for="(item,key) in headerMonth"
-          :key="key"
-          v-if="key > -1"
-          :prop="item.prop"
-          :label="item.month"
-          align="center"
-        >
+          <template v-else>
+            {{scope.row[item.prop]}}
+          </template>
+          </template>
         </el-table-column>
         <!-- </div> -->
       </el-table>

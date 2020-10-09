@@ -5,17 +5,25 @@
 </template>
 
 <style lang="scss">
+// ::-webkit-scrollbar {
+//     width: 6px;
+//     background-color: #fff;
+// }
+
+// ::-webkit-scrollbar-thumb {
+//     background-color: #fff;
+// }
 #app {
   overflow-x: hidden;
 }
-.el-tooltip__popper {
-  font-size: 14px;
-  max-width: 10%;
-}
-.el-tooltip__popper.is-dark {
-  background: #e8bb76;
-  color: #fff;
-}
+// .el-tooltip__popper {
+//   font-size: 14px;
+//   max-width: 10%;
+// }
+// .el-tooltip__popper.is-dark {
+//   background: #e8bb76;
+//   color: #fff;
+// }
 .el-table td,
 .el-table th {
   padding: 8px 0 !important;
@@ -44,15 +52,52 @@
   overflow: auto;
   padding: 0px 20px !important;
 }
-// .el-select .el-input {
-//   width: 160px !important;
-// }
-// .el-input-group__append .el-button,
-// .el-input-group__append .el-input,
-// .el-input-group__prepend .el-button,
-// .el-input-group__prepend .el-input {
-//   font-size: inherit;
-//   width: 90px;
-// }
-
+.el-tabs{
+  height: 100%;
+}
+.el-tabs__header{
+  border: none!important;
+}
+.el-tabs--card>.el-tabs__header .el-tabs__item.is-active{
+  border: none;
+}
+.el-tabs__item{
+    cursor: pointer;
+    background-color: #d9d9d9;
+    color: #4d4d4d;
+    border: 0px;
+    padding-left: 15px;
+    font-size: 14px;
+    box-shadow: 1px 1px 1px 1px #999999;
+    margin-left: 10px;
+    height: 34px;
+    line-height: 34px;
+    margin-top: 5px;
+    border-radius: 5px;
+}
+.el-tabs--card>.el-tabs__header .el-tabs__nav{
+  border: none;
+}
+.el-tabs__nav-scroll{
+  height: 50px;
+}
+.el-tabs__item.is-active{
+  background: #303133;
+  color: #fff;
+}
+.el-tabs__item.is-active:before {
+    content: ' ';
+    width: 8px;
+    height: 8px;
+    background-color: #00cc00;
+    border-radius: 5px;
+    z-index: 1000;
+    position: absolute;
+    top: 50%;
+    left: 5px;
+    transform: translateY(-50%);
+  }
+.el-tabs__item:hover{
+  color: #fff;
+}
 </style>
