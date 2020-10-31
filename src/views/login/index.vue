@@ -74,7 +74,7 @@ export default {
               JSON.stringify(res.data.data.userInfo[0])
             ); //存储登录信息
             window.sessionStorage.setItem("token", res.data.data.token); //存储token
-            this.$router.push("/home");
+            this.$router.push("/dataBoard");
             this.$message({
               message: "登陆成功",
               type: "success",

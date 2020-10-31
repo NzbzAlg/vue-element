@@ -1,11 +1,12 @@
 <template>
   <div class="divisionalManagement">
-    <!-- <button class="el-tabs__item">aaa</button> -->
-    <div class="title">
-      <el-button type="primary" @click="addDepartment" size="small">添加部门</el-button>
-    </div>
     <!-- 列表数据 -->
-    <div class="content">
+    <div class="table">
+      <div class="table_button">
+        <el-button type="primary" @click="addDepartment" size="small"
+          >添加部门</el-button
+        >
+      </div>
       <el-table :data="department" border style="width: 100%" stripe>
         <el-table-column
           prop="name"
@@ -433,7 +434,7 @@ export default {
     },
     // 查看部门角色弹窗
     examinePop(row) {
-      this.examineId = row.id
+      this.examineId = row.id;
       this.dialogVisible = true;
       this.$http.post(`api/admin/get_group?id=${row.id}`).then((res) => {
         const { code, data } = res.data;
@@ -662,14 +663,16 @@ export default {
             this.$message.success(res.data.message);
             this.getList();
             // 调用查看部门角色接口，刷新查看部门角色弹窗
-            this.$http.post(`api/admin/get_group?id=${this.examineId}`).then((res) => {
-              const { code, data } = res.data;
-              if (code == 200) {
-                this.departmentDetails = res.data.data;
-              } else {
-                this.$message.error(res.data.message);
-              }
-            });
+            this.$http
+              .post(`api/admin/get_group?id=${this.examineId}`)
+              .then((res) => {
+                const { code, data } = res.data;
+                if (code == 200) {
+                  this.departmentDetails = res.data.data;
+                } else {
+                  this.$message.error(res.data.message);
+                }
+              });
             this.editRoleNamePop = false;
           } else {
             this.$message.error(res.data.message);
@@ -681,8 +684,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.title {
-  margin-bottom: 20px;
+.table {
+  width: 100%;
+  height: 100%;
+  background: #fff;
+  box-shadow: 0px 0px 6px #d4d4d4;
+  border-radius: 8px;
+  padding: 20px;
+  box-sizing: border-box;
+  .table_button {
+    margin-bottom: 10px;
+  }
 }
 .paging {
   float: right;

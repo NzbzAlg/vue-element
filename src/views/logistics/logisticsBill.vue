@@ -1,76 +1,208 @@
+
 <template>
   <div class="logisticsBill">
-    <!-- 面包屑 -->
-    <Crumbs></Crumbs>
-    <!-- 头部 -->
+    <!-- 搜索 -->
     <div class="title">
-      <div class="title_left">
-        <div>
-          <el-input placeholder="请输入查询内容" v-model="dropDown" class="input-with-select">
-            <el-select v-model="select" slot="prepend" placeholder="请选择">
+      <el-input
+        v-model="logisticsMode"
+        placeholder="搜索物流方式"
+        clearable
+        size="medium"
+        style="width: 150px"
+      ></el-input>
+      <el-button type="primary" size="medium" style="margin-left: 10px"
+        >搜索</el-button
+      >
+    </div>
+    <!-- 表格 -->
+    <div class="table">
+      <div class="tabItem">
+        <p>
+          <el-button type="primary" size="small" @click="addLogistics"
+            >添加物流方式</el-button
+          >
+        </p>
+      </div>
+      <el-table :data="tableData" border style="width: 100%">
+        <el-table-column
+          prop="number"
+          label="物流方式"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="shipment_name"
+          label="材积计算参数"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="shipment_id"
+          label="时效(天)"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="SKU"
+          label="操作人"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="SKU"
+          label="更新时间"
+          align="center"
+        ></el-table-column>
+        <el-table-column prop="SKU" label="操作" align="center">
+          <template>
+            <el-dropdown split-button size="small" @click="detailList">
+              详情
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item>
+                  <span>删除</span>
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
+    <!-- 详情弹窗 -->
+    <el-dialog title="详情" :visible.sync="detailListPop" width="40%">
+      <el-form label-width="100px">
+        <el-col :span="24">
+          <el-form-item label="物流方式">
+            <el-input style="width: 260px"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="计费类型">
+            <el-select
+              v-model="form.departmentPull"
+              placeholder="请选择"
+              clearable
+              style="width: 100%"
+            >
               <el-option
-                v-for="item in dropDownValue"
+                v-for="item in replenishment"
                 :key="item.id"
                 :label="item.name"
                 :value="item.id"
               ></el-option>
             </el-select>
-          </el-input>
-        </div>
-        <div style="margin-left:20px">
-          <el-select v-model="value" placeholder="请选择类别" filterable style="margin-left:20px;">
-            <el-option v-for="item in state" :key="item.id" :label="item.label" :value="item"></el-option>
-          </el-select>
-          <el-select v-model="value" placeholder="请选择状态" filterable style="margin-left:20px;">
-            <el-option v-for="item in state" :key="item.id" :label="item.label" :value="item"></el-option>
-          </el-select>
-        </div>
-        <el-button type="primary" style="margin-left:20px">查询</el-button>
-      </div>
-    </div>
-    <!-- 表格 -->
-    <div class="content">
-      <el-table :data="tableData" border style="width: 100%" @expand-change="clickDetails">
-        <el-table-column label="查看商品" type="expand">
-          <template>
-            <span style="color:red">商品规格：</span>
-            <el-table :data="tableData" border>
-              <el-table-column prop="goodsSupId" label="图片" align="center"></el-table-column>
-              <el-table-column prop="specsName" label="品名" align="center"></el-table-column>
-              <el-table-column prop="specsOriginPrice" label="sku" align="center"></el-table-column>
-              <el-table-column prop="specsPrice" label="数量" align="center"></el-table-column>
-              <el-table-column prop="specsType" label="总箱数" align="center"></el-table-column>
-              <el-table-column prop="stock" label="总体积" align="center"></el-table-column>
-              <el-table-column prop="stock" label="总重量" align="center"></el-table-column>
-              <el-table-column prop="stock" label="体积重" align="center"></el-table-column>
-              <el-table-column prop="stock" label="预估运费(均摊后单个)" align="center"></el-table-column>
-              <el-table-column prop="stock" label="差额运费(均摊后单个)" align="center"></el-table-column>
-              <el-table-column prop="stock" label="实际运费(均摊后单个)" align="center"></el-table-column>
-              <el-table-column prop="stock" label="耗材(单个)" align="center"></el-table-column>
-            </el-table>
-          </template>
-        </el-table-column>
-        <el-table-column prop="date" label="FBA物流单号" align="center"></el-table-column>
-        <el-table-column prop="date" label="状态" align="center"></el-table-column>
-        <el-table-column prop="name" label="分类" align="center"></el-table-column>
-        <el-table-column prop="name" label="预计到货时间" align="center"></el-table-column>
-        <el-table-column prop="name" label="大船开船时间" align="center"></el-table-column>
-        <el-table-column prop="name" label="实际到货时间" align="center"></el-table-column>
-        <el-table-column prop="name" label="发出仓库" align="center"></el-table-column>
-        <el-table-column prop="name" label="送达仓库" align="center"></el-table-column>
-        <el-table-column prop="name" label="FBA预估运费(分摊)" align="center"></el-table-column>
-        <el-table-column prop="name" label="FBA差额运费(分摊)" align="center"></el-table-column>
-        <el-table-column prop="name" label="FBA实际运费(分摊)" align="center"></el-table-column>
-        <el-table-column prop="name" label="国内物流单号" align="center"></el-table-column>
-        <el-table-column prop="name" label="国内运费(元)" align="center"></el-table-column>
-        <el-table-column prop="name" label="国内均摊运费" align="center"></el-table-column>
-        <el-table-column prop="name" label="总箱数" align="center"></el-table-column>
-        <el-table-column prop="name" label="总体积" align="center"></el-table-column>
-        <el-table-column prop="name" label="总重量" align="center"></el-table-column>
-        <el-table-column prop="name" label="体积重" align="center"></el-table-column>
-        <el-table-column prop="name" label="备注" align="center"></el-table-column>
-      </el-table>
-    </div>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="材积参数">
+            <el-input></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="邮编">
+            <el-input></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="时效">
+            <el-input></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="24">
+          <el-form-item label="运费规则">
+            <el-input placeholder="请输入" style="width: 190px">
+              <template slot="append">kg</template>
+            </el-input>
+            -
+            <el-input placeholder="请输入" style="width: 190px">
+              <template slot="append">kg</template>
+            </el-input>
+            <el-input
+              placeholder="请输入"
+              style="width: 190px; margin-left: 25px"
+            >
+              <template slot="append">CNY/kg</template>
+            </el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="24">
+          <el-form-item label="备注">
+            <el-input type="textarea"></el-input>
+          </el-form-item>
+        </el-col>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="detailListPop = false">取 消</el-button>
+        <el-button type="primary" @click="detailListPop = false"
+          >确 定</el-button
+        >
+      </span>
+    </el-dialog>
+    <!-- 添加物流方式弹窗 -->
+    <el-dialog title="添加物流方式" :visible.sync="addLogisticsPop" width="40%">
+      <el-form label-width="100px">
+        <el-col :span="24">
+          <el-form-item label="物流方式">
+            <el-input style="width: 260px"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="计费类型">
+            <el-select
+              v-model="form.departmentPull"
+              placeholder="请选择"
+              clearable
+              style="width: 100%"
+            >
+              <el-option
+                v-for="item in replenishment"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="材积参数">
+            <el-input></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="邮编">
+            <el-input></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="时效">
+            <el-input></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="24">
+          <el-form-item label="运费规则">
+            <el-input placeholder="请输入" style="width: 190px">
+              <template slot="append">kg</template>
+            </el-input>
+            -
+            <el-input placeholder="请输入" style="width: 190px">
+              <template slot="append">kg</template>
+            </el-input>
+            <el-input
+              placeholder="请输入"
+              style="width: 190px; margin-left: 25px"
+            >
+              <template slot="append">CNY/kg</template>
+            </el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="24">
+          <el-form-item label="备注">
+            <el-input type="textarea"></el-input>
+          </el-form-item>
+        </el-col>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="addLogisticsPop = false">取 消</el-button>
+        <el-button type="primary" @click="addLogisticsPop = false"
+          >确 定</el-button
+        >
+      </span>
+    </el-dialog>
     <!-- 分页 -->
     <div class="paging">
       <el-pagination
@@ -87,91 +219,74 @@
 </template>
 
 <script>
-import Crumbs from "@/components/crumbs";
 export default {
-  components: {
-    Crumbs,
-  },
   data() {
     return {
-      dropDown: "", //下拉框input值
-      select: "",
-      dropDownValue: [
+      logisticsMode:'',//物流方式
+      detailListPop: false, //详情弹窗
+      addLogisticsPop: false, //添加物流方式弹窗
+      currentPage1: 1,
+      value1: "",
+      formInline: {},
+      activeName: "first",
+      isShow: false,
+      form: {
+        name: "",
+        departmentPull: "",
+        status: "",
+      },
+      departmentPull: [],
+      replenishment: [
+        //是否当前补货
         {
           id: 1,
-          name: "物流单号",
+          name: "全部",
         },
         {
           id: 2,
-          name: "品名/SKU",
+          name: "是",
+        },
+        {
+          id: 3,
+          name: "否",
+        },
+        {
+          id: 4,
+          name: "无需提醒",
         },
       ],
-      value: "",
-      currentPage1: 1,
-      activeName: "first",
-      form: {
-        name: "",
-      },
       state: [
+        //状态
         {
           id: 1,
-          label: "全部国家",
+          label: "启用",
+        },
+        {
+          id: 2,
+          label: "禁用",
         },
       ],
       tableData: [
         {
-          date: "2016-05-02",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄",
-        },
-        {
-          date: "2016-05-04",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1517 弄",
-        },
-        {
-          date: "2016-05-01",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1519 弄",
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1516 弄",
+          id: "58259",
+          number: 1,
+          children: [
+            {
+              size: 1,
+            },
+          ],
         },
       ],
     };
   },
   methods: {
-    // 表格详情下拉
-    clickDetails() {
-      console.log(1);
-      // if (row.goodsSupDetails == [] || row.goodsSpecs == []) {
-      //   console.log(1);
-      // } else {
-      //   this.commodityDetails = row.goodsSupDetails;
-      //   this.commercialSpecification = row.goodsSpecs;
-      // }
+    // 详情弹窗
+    detailList() {
+      this.detailListPop = true;
     },
-    // 物流审核
-    logisticsAudit() {
-      this.$confirm("此操作将采购入库单审核进行审核, 是否继续?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-      })
-        .then(() => {
-          this.$message({
-            type: "success",
-            message: "审核成功!",
-          });
-        })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已取消审核",
-          });
-        });
+    // 添加物流方式弹窗
+    addLogistics() {
+      this.addLogisticsPop = true;
     },
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);
@@ -185,24 +300,25 @@ export default {
 
 <style lang="scss" scoped>
 .title {
+  margin-bottom: 15px;
+}
+.table {
   width: 100%;
-  height: 40px;
-  margin-bottom: 20px;
-  .title_left {
-    float: left;
-    div {
-      float: left;
-    }
-  }
-  .title_right {
-    float: right;
+  height: 100%;
+  background: #fff;
+  box-shadow: 0px 0px 6px #d4d4d4;
+  border-radius: 8px;
+  padding: 20px;
+  box-sizing: border-box;
+  .tabItem {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
   }
 }
+
 .paging {
   float: right;
   margin-top: 20px;
 }
-// /deep/.el-select .el-input {
-//   width: 160px !important;
-// }
 </style>

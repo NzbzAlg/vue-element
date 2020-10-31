@@ -1,25 +1,28 @@
 <template>
   <div class="shopAuthorization">
-    <!-- 面包屑 -->
-    <Crumbs></Crumbs>
     <!-- 头部 -->
     <div class="title">
-      <div class="title_left">
-        <el-input
-          placeholder="请输入店铺查询"
-          style="width: 210px"
-          v-model="nameSearch"
-        ></el-input>
-        <el-button type="primary" style="margin-left: 20px" @click="grabble"
-          >查询</el-button
-        >
-      </div>
-      <div class="title_right">
-        <el-button type="primary" @click="addAccount">添加</el-button>
-      </div>
+      <!-- 店铺 -->
+      <el-input
+        placeholder="搜索店铺"
+        clearable
+        style="width: 200px"
+        size="medium"
+        v-model="shop"
+      ></el-input>
+      <el-button
+        type="primary"
+        size="medium"
+        style="margin-left: 10px"
+        @click="grabble"
+        >搜索</el-button
+      >
     </div>
     <!-- 表格 -->
-    <div class="content">
+    <div class="table">
+      <div class="table_button">
+        <el-button type="primary" size="small" @click="addAccount">添加店铺</el-button>
+      </div>
       <el-table :data="tableData" border style="width: 100%" stripe>
         <el-table-column
           prop="shopname"
@@ -193,16 +196,14 @@
 </template>
 
 <script>
-import Crumbs from "@/components/crumbs"; //面包屑
 import pagination from "@/components/pagination"; // 分页
 export default {
   components: {
-    Crumbs,
     pagination,
   },
   data() {
     return {
-      nameSearch: "",
+      shop: "", //店铺
       addAccountPop: false, //添加店铺弹窗
       addAccountForm: {}, //添加店铺数据
       editAccountPop: false, //修改信息弹窗
@@ -228,11 +229,10 @@ export default {
           params: {
             page: this.page,
             limit: this.limit,
-            shopname: this.nameSearch,
+            shopname: this.shop,
           },
         })
         .then((res) => {
-          // console.log(res.data.data)
           const { code, data } = res.data;
           if (code == 200) {
             this.tableData = res.data.data;
@@ -282,8 +282,8 @@ export default {
     // 修改弹窗
     editAccount(row) {
       this.id = row.id;
-      this.countryid = row.countryid
-      this.d_id = row.d_id
+      this.countryid = row.countryid;
+      this.d_id = row.d_id;
       this.editAccountPop = true;
       this.$http.post(`api/admin/getshop_by_id?id=${this.id}`).then((res) => {
         const { code, data } = res.data;
@@ -304,11 +304,8 @@ export default {
         shopname: this.editAccountForm.shopname,
         token: this.editAccountForm.token,
         seller_code: this.editAccountForm.seller_code,
-        countryid:this.siteId != "" ? this.siteId : this.countryid,
-        d_id:
-          this.departmentId != ""
-            ? this.departmentId
-            : this.d_id,
+        countryid: this.siteId != "" ? this.siteId : this.countryid,
+        d_id: this.departmentId != "" ? this.departmentId : this.d_id,
       };
       this.$http.post(`api/admin/updateshop`, info).then((res) => {
         const { code, data } = res.data;
@@ -346,14 +343,18 @@ export default {
 
 <style lang="scss" scoped>
 .title {
+  margin-bottom: 15px;
+}
+.table {
   width: 100%;
-  height: 40px;
-  margin-bottom: 20px;
-  .title_left {
-    float: left;
-  }
-  .title_right {
-    float: right;
+  height: 100%;
+  background: #fff;
+  box-shadow: 0px 0px 6px #d4d4d4;
+  border-radius: 8px;
+  padding: 20px;
+  box-sizing: border-box;
+  .table_button {
+    margin-bottom: 10px;
   }
 }
 </style>

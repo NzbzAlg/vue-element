@@ -1,5 +1,22 @@
 <template>
-  <div class="uesr">
+  <div class="dataBoard">
+    <div class="title">
+      <el-date-picker
+        v-model="date"
+        type="daterange"
+        align="center"
+        unlink-panels
+        range-separator="至"
+        start-placeholder="开始日期"
+        end-placeholder="结束日期"
+        :picker-options="pickerOptions"
+        value-format="yyyy-MM-dd"
+        size="medium"
+        style="width: 255px;"
+        @change="dateChange"
+      >
+      </el-date-picker>
+    </div>
     <!-- 选择店铺 -->
     <!-- <div class="selectStore">
       <el-select v-model="store" placeholder="全部店铺">
@@ -138,7 +155,7 @@
                 class="salesList_size"
                 @click="salesListTab = 2"
                 :class="{ salesList_size_active: salesListTab === 2 }"
-                >父ASIN</span
+                >SKU</span
               >
             </p>
             <p>更多></p>
@@ -570,6 +587,7 @@ export default {
   },
   data() {
     return {
+      date: "", //日期
       msg: 0,
       salesListTab: 0,
       tableData: [
@@ -623,6 +641,38 @@ export default {
           name: "店铺4",
         },
       ],
+      // 日期快捷方式
+      pickerOptions: {
+        shortcuts: [
+          {
+            text: "最近一周",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+              picker.$emit("pick", [start, end]);
+            },
+          },
+          {
+            text: "最近一个月",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+              picker.$emit("pick", [start, end]);
+            },
+          },
+          {
+            text: "最近三个月",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+              picker.$emit("pick", [start, end]);
+            },
+          },
+        ],
+      },
     };
   },
   mounted() {
@@ -636,6 +686,10 @@ export default {
     this.customerAcquisitionChart();
   },
   methods: {
+    dateChange(){
+      console.log(this.date[0])
+      console.log(this.date[1])
+    },
     // 近七天利润费用图表
     profitsSevenDays() {
       let myChart = this.$echarts.init(
@@ -835,15 +889,15 @@ export default {
   padding: 11px 0 !important;
 }
 //选择店铺
-.selectStore {
-  margin-bottom: 25px;
+.title {
+  margin-bottom: 15px;
 }
 // 数据看板
 .content {
   // 报表
   .statement {
     width: 100%;
-    height: 325px;
+    height: 345px;
     // background: saddlebrown;
     display: flex;
     justify-content: space-between;
@@ -1274,7 +1328,7 @@ export default {
   // CPC
   .CPC {
     width: 100%;
-    height: 340px;
+    height: 350px;
     margin-top: 15px;
     display: flex;
     justify-content: space-between;
@@ -1427,7 +1481,7 @@ export default {
               padding: 0 20px;
             }
             p:nth-of-type(1) {
-              margin-top: 25px;
+              margin-top: 15px;
               font-size: 12px;
               color: #333;
             }
@@ -1473,7 +1527,7 @@ export default {
         }
         .storePerformance_content {
           padding: 0 20px;
-          margin-top: 25px;
+          margin-top: 10px;
           .storePerformance_item {
             margin-top: 10px;
             p:nth-of-type(1) {
@@ -1853,7 +1907,7 @@ export default {
                 justify-content: space-between;
                 padding-left: 20px;
                 span:nth-of-type(1) {
-                  color: #FFC533;
+                  color: #ffc533;
                   font-size: 24px;
                 }
               }
@@ -1871,7 +1925,7 @@ export default {
                 justify-content: space-between;
                 padding-left: 20px;
                 span:nth-of-type(1) {
-                  color: #5D62B5;
+                  color: #5d62b5;
                   font-size: 24px;
                 }
               }
@@ -1889,7 +1943,7 @@ export default {
                 justify-content: space-between;
                 padding-left: 20px;
                 span:nth-of-type(1) {
-                  color: #F2726F;
+                  color: #f2726f;
                   font-size: 24px;
                 }
               }

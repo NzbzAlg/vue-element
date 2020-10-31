@@ -14,7 +14,78 @@
         </div>
         <!-- 个人信息 -->
         <div class="information">
-          <div class="crumbs">
+          <div class="switchStore">
+            <div class="switchStore_title">
+              <img
+                src="https://admin.captainbi.com/statics/amzcaptain/img/country/DE.png"
+                alt=""
+              />
+              <span>tomotime_us</span>
+              <span>
+                <i class="el-icon-arrow-down"></i>
+              </span>
+              <div class="hidden_content">
+                <div class="selectStore">
+                  <p>
+                    <span
+                      @click="isActive = 1"
+                      :class="{ dayActive: isActive === 1 }"
+                      >按店铺</span
+                    >
+                    <span
+                      @click="isActive = 2"
+                      :class="{ dayActive: isActive === 2 }"
+                      >按国家</span
+                    >
+                    <span
+                      @click="isActive = 3"
+                      :class="{ dayActive: isActive === 3 }"
+                      >按站点</span
+                    >
+                    <span
+                      @click="isActive = 4"
+                      :class="{ dayActive: isActive === 4 }"
+                      >多选店铺</span
+                    >
+                    <span
+                      @click="isActive = 5"
+                      :class="{ dayActive: isActive === 5 }"
+                      >子账号</span
+                    >
+                  </p>
+                </div>
+                <div class="selectContent" v-show="isActive == 1">
+                  <div class="selectContent_item">
+                    <img
+                      src="https://admin.captainbi.com/statics/amzcaptain/img/country/DE.png"
+                      alt=""
+                    />
+                    <span>tomotime_us</span>
+                  </div>
+                  <div class="selectContent_item">
+                    <img
+                      src="https://admin.captainbi.com/statics/amzcaptain/img/country/DE.png"
+                      alt=""
+                    />
+                    <span>tomotime_us</span>
+                  </div>
+                  <div class="selectContent_item">
+                    <img
+                      src="https://admin.captainbi.com/statics/amzcaptain/img/country/DE.png"
+                      alt=""
+                    />
+                    <span>tomotime_us</span>
+                  </div>
+                  <div class="selectContent_item">
+                    <img
+                      src="https://admin.captainbi.com/statics/amzcaptain/img/country/DE.png"
+                      alt=""
+                    />
+                    <span>tomotime_us</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
           <div class="userinfo">
             <span>
@@ -119,12 +190,13 @@
           :collapse-transition="false"
           router
           :default-active="activePath"
+          @select="handleselect"
         >
           <!-- 一级菜单 -->
-          <template v-for="item in menulist">
+          <template v-for="(item, index) in menulist">
             <el-submenu
               :index="item.id + ''"
-              :key="item.id"
+              :key="index"
               v-show="item.statusId"
               v-if="item.menuChildrenVo"
             >
@@ -135,13 +207,13 @@
                 </div>
               </template>
               <!-- 二级菜单 -->
-              <template v-for="itemChild in item.menuChildrenVo">
+              <template v-for="(itemChild, index) in item.menuChildrenVo">
                 <el-submenu
                   v-if="
                     itemChild.menuChildrenVo && itemChild.menuChildrenVo.length
                   "
                   :index="itemChild.id + ''"
-                  :key="itemChild.menuUrl" 
+                  :key="index"
                 >
                   <template slot="title">
                     <div>
@@ -152,7 +224,7 @@
                   <!-- 三级菜单 -->
                   <el-menu-item
                     v-for="itemChild_Child in itemChild.menuChildrenVo"
-                    :index="itemChild_Child.menuUrl"
+                    :index="itemChild_Child.menuUrl + ''"
                     :key="itemChild_Child.menuUrl"
                     @click="
                       saveNavState(itemChild_Child.menuUrl),
@@ -167,7 +239,7 @@
                 <!-- 判断是否有三级分页 -->
                 <el-menu-item
                   v-else
-                  :index="itemChild.menuUrl"
+                  :index="itemChild.menuUrl + ''"
                   :key="itemChild.menuUrl"
                   @click="
                     saveNavState(itemChild.menuUrl),
@@ -195,17 +267,23 @@
 <script>
 // import Crumbs from "@/components/crumbs";
 export default {
+  inject: ["reload"], // 注入重载的功能（注入依赖）
   components: {
     // Crumbs,
   },
   data() {
     return {
+      isActive: 1,
       activePath: "",
       editableTabs: [],
-      editableTabss: [],
-      editableTabss: JSON.parse(window.sessionStorage.getItem("editableTabs")),
+      editableTabss: [
+        {
+          close: null,
+          menu: "数据看板",
+          path: "dataBoard",
+        },
+      ],
       isCollapse: false,
-      activePath: "",
       info: JSON.parse(window.sessionStorage.getItem("info")), //取username
       menulist: [],
       iconObj: {
@@ -221,6 +299,8 @@ export default {
         116: "el-icon-bank-card",
         135: "el-icon-suitcase-1",
         162: "el-icon-data-line",
+        173: "el-icon-box",
+        200: "el-icon-s-home",
       },
       list: JSON.parse(window.sessionStorage.getItem("menulist")),
     };
@@ -228,8 +308,16 @@ export default {
   created() {
     this.getList();
     this.activePath = window.sessionStorage.getItem("activePath");
+    this.editableTabss = JSON.parse(
+      window.sessionStorage.getItem("editableTabs")
+    );
   },
   methods: {
+    handleselect(index) {
+      if (index === this.activePath) {
+        this.reload();
+      }
+    },
     handleCommand(command) {
       if (command === "updatePass") {
         // this.$router.push({
@@ -367,10 +455,12 @@ export default {
       }
       this.targetclickname = activeName;
       this.activePath = activeName;
-      
       this.editableTabss = tabs.filter((tab) => tab.path !== targetName);
       //解决刷新消失
-      window.sessionStorage.setItem("editableTabs",JSON.stringify(this.editableTabss));
+      window.sessionStorage.setItem(
+        "editableTabs",
+        JSON.stringify(this.editableTabss)
+      );
       window.sessionStorage.setItem("activePath", this.activePath);
     },
   },
@@ -439,15 +529,99 @@ export default {
       color: #fff;
       margin-right: 20px;
       font-size: 15px;
-      .crumbs {
+      .switchStore {
         float: left;
         height: 100%;
-        .el-breadcrumb {
-          line-height: 60px;
-          margin-left: 20px;
+        .switchStore_title {
+          margin-left: 40px;
+          position: relative;
+          img {
+            width: 20px;
+            height: 13px;
+            vertical-align: middle;
+          }
+          span {
+            font-size: 14px;
+            padding-left: 10px;
+          }
+
+          .hidden_content {
+            display: none;
+            width: 400px;
+            // height: 100px;
+            background: #fff;
+            box-shadow: 0 1px 8px #c2c2c2;
+            position: absolute;
+            top: 60px;
+            z-index: 999;
+            .selectStore {
+              // padding:0 20px;
+              p {
+                text-align: center;
+                span {
+                  padding: 7px 10px;
+                  min-width: 50px;
+                  text-align: center;
+                  color: #27b8d0;
+                  border-left: 1px solid #27b8d0;
+                  border-top: 1px solid #27b8d0;
+                  border-bottom: 1px solid #27b8d0;
+                  border-right: 1px solid #27b8d0;
+                  font-size: 12px;
+                  font-weight: normal;
+                  cursor: pointer;
+                }
+                span:hover {
+                  padding: 7px 10px;
+                  min-width: 50px;
+                  text-align: center;
+                  color: #fff;
+                  border-left: 1px solid #27b8d0;
+                  border-top: 1px solid #27b8d0;
+                  border-bottom: 1px solid #27b8d0;
+                  border-right: 1px solid #27b8d0;
+                  font-size: 12px;
+                  font-weight: normal;
+                  cursor: pointer;
+                  background: #27b8d0;
+                }
+                .dayActive {
+                  padding: 7px 10px;
+                  min-width: 50px;
+                  text-align: center;
+                  color: #fff;
+                  border-left: 1px solid #27b8d0;
+                  border-top: 1px solid #27b8d0;
+                  border-bottom: 1px solid #27b8d0;
+                  border-right: 1px solid #27b8d0;
+                  font-size: 12px;
+                  font-weight: normal;
+                  cursor: pointer;
+                  background: #27b8d0;
+                }
+              }
+            }
+            .selectContent {
+              color: #000;
+              padding: 20px;
+              display: flex;
+              justify-content: space-between;
+              flex-wrap: wrap;
+              .selectContent_item {
+                background: #eae7e7;
+                width: 49%;
+                height: 30px;
+                line-height: 30px;
+                margin-top: 5px;
+              }
+            }
+          }
         }
-        /deep/.el-breadcrumb__inner {
-          color: #a6a6a6 !important;
+        .switchStore_title:hover {
+          cursor: pointer;
+          .hidden_content {
+            display: block;
+          }
         }
       }
       .userinfo {
@@ -492,6 +666,54 @@ export default {
     float: right;
     box-shadow: 0 1px 3px 0 #595959;
     background: #fff;
+    /deep/.el-tabs {
+      height: 100%;
+    }
+    /deep/.el-tabs__header {
+      border: none !important;
+    }
+    /deep/.el-tabs--card > .el-tabs__header .el-tabs__item.is-active {
+      border: none;
+    }
+    /deep/.el-tabs__item {
+      cursor: pointer;
+      background-color: #d9d9d9;
+      color: #4d4d4d;
+      border: 0px;
+      padding-left: 15px;
+      font-size: 14px;
+      box-shadow: 1px 1px 1px 1px #999999;
+      margin-left: 10px;
+      height: 34px;
+      line-height: 34px;
+      margin-top: 5px;
+      border-radius: 5px;
+    }
+    /deep/.el-tabs--card > .el-tabs__header .el-tabs__nav {
+      border: none;
+    }
+    /deep/.el-tabs__nav-scroll {
+      height: 50px;
+    }
+    /deep/.el-tabs__item.is-active {
+      background: #303133;
+      color: #fff;
+    }
+    /deep/.el-tabs__item.is-active:before {
+      content: " ";
+      width: 8px;
+      height: 8px;
+      background-color: #00cc00;
+      border-radius: 5px;
+      z-index: 1000;
+      position: absolute;
+      top: 50%;
+      left: 5px;
+      transform: translateY(-50%);
+    }
+    /deep/.el-tabs__item:hover {
+      color: #fff;
+    }
   }
 }
 .el-aside {

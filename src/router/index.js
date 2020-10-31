@@ -21,12 +21,12 @@ import WarehouseList from "@/views/warehouse/inventory/warehouseList.vue"
 import InventoryDetail from "@/views/warehouse/inventory/inventoryDetail.vue"
 //仓库 => 库存 => FBA库存
 import FBAinventory from "@/views/warehouse/inventory/FBAinventory.vue"
-//仓库 => 库存 => 库存预警
-import InventoryWarning from "@/views/warehouse/inventory/inventoryWarning.vue"
-//仓库 => 库存 => FBA预估
-import FBAestimate from "@/views/warehouse/inventory/FBAestimate.vue"
 //仓库 => 质检 => 质检单
 import QualityTestingSheet from "@/views/warehouse/qualityTesting/qualityTestingSheet.vue"
+//仓库 => 质检 => 到货记录
+import ArrivalRecord from "@/views/warehouse/qualityTesting/arrivalRecord.vue"
+//仓库 => 成本补录 => 成本补录单
+import CostRecord from "@/views/warehouse/costInto/costRecord.vue"
 //仓库 => 出入库 => 入库单
 import GodownEntry from "@/views/warehouse/outInPut/godownEntry.vue"
 //仓库 => 出入库 => 出库单
@@ -43,12 +43,35 @@ import ReissueOrder from "@/views/warehouse/outInPut/ReissueOrder.vue"
 import Untreated from "@/views/warehouse/purchaseOrder/untreated.vue"
 //仓库 => 采购订单 => 已处理
 import Processed from "@/views/warehouse/purchaseOrder/processed.vue"
-//仓库 => 采购订单 => 退款单
-import RefundOrder from "@/views/warehouse/purchaseOrder/refundOrder.vue"
 //仓库 => 库存整合 => 整合
 import Conformity from "@/views/warehouse/InventoryIntegration/conformity.vue"
 //仓库 => 库存整合 => 整合单
 import ConformityOrder from "@/views/warehouse/InventoryIntegration/conformityOrder.vue"
+
+//仓库 => FBA库存管理 => FBA看板
+import FBAboard from "@/views/warehouse/inventoryManagement/FBAboard.vue"
+//仓库 => FBA库存管理 => 库存列表
+import InventoryList from "@/views/warehouse/inventoryManagement/InventoryList.vue"
+//仓库 => FBA库存管理 => 冗余库存列表
+import RedundantList from "@/views/warehouse/inventoryManagement/redundantList.vue"
+//仓库 => FBA库存管理 => 成本计算列表
+import CostingList from "@/views/warehouse/inventoryManagement/costingList.vue"
+//仓库 => FBA库存管理 => FBA补货中心
+import ProcurementCenter from "@/views/warehouse/inventoryManagement/procurementCenter.vue"
+//仓库 => FBA库存管理 => FBA配送费异常
+import AbnormalDistribution from "@/views/warehouse/inventoryManagement/abnormalDistribution.vue"
+
+//仓库 => 补货 => 补货建议
+import ReplenishmentProposal from "@/views/warehouse/replenishment/replenishmentProposal.vue"
+
+//仓库 => 货件 => 发货计划
+import ShipmentSchedule from "@/views/warehouse/parcel/shipmentSchedule.vue"
+//仓库 => 货件 => FBA货件
+import FBAparcel from "@/views/warehouse/parcel/FBAparcel.vue"
+//仓库 => 货件 => 发货单
+import DispatchList from "@/views/warehouse/parcel/dispatchList.vue"
+//仓库 => 货件 => 头程分摊
+import FirstLegSplit from "@/views/warehouse/parcel/firstLegSplit.vue"
 
 //商品 => 商品数据管理
 import DataManagement from "@/views/commodity/dataManagement.vue"
@@ -64,8 +87,6 @@ import MaterialsManagement from "@/views/commodity/materialsManagement.vue"
 import BrandManagement from "@/views/commodity/brandManagement.vue"
 //商品 => 分类管理
 import SortManagement from "@/views/commodity/sortManagement.vue"
-//商品 => Listing
-import Listing from "@/views/commodity/Listing.vue"
 //商品 => 供应商
 import Supplier from "@/views/commodity/supplier.vue"
 //商品 => 已删除商品
@@ -73,64 +94,16 @@ import DeletedItem from "@/views/commodity/deletedItem.vue"
 //商品 => 批量上传图
 import BatchMapUpload from "@/views/commodity/batchMapUpload.vue"
 
-//采购 => 采购计划 => 直接采购
-import DirectProcurement from "@/views/purchase/procurementPlan/directProcurement.vue"
-//采购 => 采购单 => 全部
-import All from "@/views/purchase/purchaseNote/all.vue"
-//采购 => 采购单 => 已驳回
-import HasBeenRejected from "@/views/purchase/purchaseNote/hasBeenRejected.vue"
-//采购 => 采购单 => 待审核
-import ToAudit from "@/views/purchase/purchaseNote/toAudit.vue"
-//采购 => 采购单 => 待付款
-import Obligation from "@/views/purchase/purchaseNote/obligation.vue"
-//采购 => 采购单 => 已完成
-import OffStocks from "@/views/purchase/purchaseNote/offStocks.vue"
-//采购 => 合同采购 => 驳回的需求
-import RejectedDemand from "@/views/purchase/contractPurchase/rejectedDemand.vue"
-//采购 => 合同采购 => 销量预估
-import SalesForecast from "@/views/purchase/contractPurchase/salesForecast.vue"
-//采购 => 合同采购 => 已生成需求
-import GeneratedRequirement from "@/views/purchase/contractPurchase/generatedRequirement.vue"
-//采购 => 合同采购 => 采购需求
-import ProcurementRequirement from "@/views/purchase/contractPurchase/procurementRequirement.vue"
-//采购 => 合同采购 => 出货计划
-import ShippingPlan from "@/views/purchase/contractPurchase/shippingPlan.vue"
-//采购 => 合同采购 => 厂家出货统计
-import ShipmentStatistics from "@/views/purchase/contractPurchase/shipmentStatistics.vue"
-//采购 => 合同采购 => 驳回的采购
-import RejectedPurchase from "@/views/purchase/contractPurchase/rejectedPurchase.vue"
-//采购 => 合同采购 => 出货明细
-import DeliveryList from "@/views/purchase/contractPurchase/deliveryList.vue"
-//采购 => 合同采购 => 出货明细表
-import ShippingSchedule from "@/views/purchase/contractPurchase/shippingSchedule.vue"
-//采购 => 合同采购 => 完成出货计划
-import FulfilmentPlan from "@/views/purchase/contractPurchase/fulfilmentPlan.vue"
-//采购 => 合同采购表 => 采购汇总
-import PurchaseSummary from "@/views/purchase/contractPurchaseSchedule/purchaseSummary.vue"
-//采购 => 合同采购表 => 采购单价趋势图
-import PurchasePriceChart from "@/views/purchase/contractPurchaseSchedule/purchasePriceChart.vue"
-//采购 => 合同采购表 => 采购单价趋势
-import PurchasingPriceTrend from "@/views/purchase/contractPurchaseSchedule/purchasingPriceTrend.vue"
-//采购 => 合同采购表 => 采购计划
-import ProcurementPlan from "@/views/purchase/contractPurchaseSchedule/procurementPlan.vue"
-//采购 => 合同采购表 => 待审采购单
-import PurchaseOrder from "@/views/purchase/contractPurchaseSchedule/purchaseOrder.vue"
-//采购 => 合同采购表 => 质检中
-import QualityInspection from "@/views/purchase/contractPurchaseSchedule/qualityInspection.vue"
-//采购 => 合同采购表 => 采购入库单
-import  PurchaseReceipt from "@/views/purchase/contractPurchaseSchedule/purchaseReceipt.vue"
-//采购 => 合同采购表 => 驳回单
-import RejectSingle from "@/views/purchase/contractPurchaseSchedule/rejectSingle.vue"
-//采购 => 合同采购表 => 已完成
-import ContractCompleted from "@/views/purchase/contractPurchaseSchedule/contractCompleted.vue"
-//采购 => 合同采购表 => 采购单汇总
-import SummaryPurchaseOrder from "@/views/purchase/contractPurchaseSchedule/summaryPurchaseOrder.vue"
-//采购 => 测款采购 => 事业部
-import BusinessDivision from "@/views/purchase/measurementPurchasing/businessDivision.vue"
-//采购 => 测款采购 => 产品部
-import ProductDepartment from "@/views/purchase/measurementPurchasing/productDepartment.vue"
-//采购 => 测款采购 => 执行副总
-import ExecutivePresident from "@/views/purchase/measurementPurchasing/executivePresident.vue"
+//采购 => 采购单据 => 采购计划
+import ProcurementPlan from "@/views/purchase/purchasingDocuments/procurementPlan.vue"
+//采购 => 采购单据 => 采购单
+import PurchaseNote from "@/views/purchase/purchasingDocuments/purchaseNote.vue"
+//采购 => 采购单据 => 采购变更单
+import PurchaseChangeForm from "@/views/purchase/purchasingDocuments/purchaseChangeForm.vue"
+//采购 => 采购付款 => 付款记录
+import PaymentRecord from "@/views/purchase/purchasingPayment/paymentRecord.vue"
+//采购 => 供应商协同 => 供应商
+import Distributor from "@/views/purchase/supplierCollaboration/distributor.vue"
 
 //物流 => 物流单汇总
 import LogisticsSummary from "@/views/logistics/logisticsSummary.vue"
@@ -143,12 +116,21 @@ import VoluntarySummary from "@/views/logistics/voluntarySummary.vue"
 //物流 => 其他费用
 import OtherExpenses from "@/views/logistics/otherExpenses.vue"
 
-//订单 => 订单列表
+//销售 => Listing
+import Listing from "@/views/orderForm/listing.vue"
+//销售 => 售后评价
+import SaleEvaluate from "@/views/orderForm/saleEvaluate.vue"
+//销售 => 订单列表
 import OrderList from "@/views/orderForm/orderList.vue"
-//订单 => 自发货订单
-import SpontaneousOrder from "@/views/orderForm/spontaneousOrder.vue"
-//订单 => 待采购订单
-import PendingPurchaseOrder from "@/views/orderForm/pendingPurchaseOrder.vue"
+//销售 => 订单发货
+import SelfShipment from "@/views/orderForm/selfShipment.vue"
+//销售 => 退货订单
+import RefundOrder from "@/views/orderForm/refundOrder.vue"
+//销售 => 移除订单
+import RemovalOrder from "@/views/orderForm/removalOrder.vue"
+//销售 => 客户列表
+import CustomerList from "@/views/orderForm/customerList.vue"
+
 
 //系统 => 用户管理
 import UserManagement from "@/views/system/userManagement.vue"
@@ -165,34 +147,21 @@ import ManagementMenu from "@/views/system/managementMenu.vue"
 //系统 => 店铺权限
 import StorePermissions from "@/views/system/storePermissions.vue"
 
-//测评 => 其他 => QA1
-import QA1 from "@/views/evaluating/rests/QA1.vue"
-//测评 => 其他 => QA2
-import QA2 from "@/views/evaluating/rests/QA2.vue"
-//测评 => 其他 => QA3
-import QA3 from "@/views/evaluating/rests/QA3.vue"
-//测评 => 其他 => SE1
-import SE1 from "@/views/evaluating/rests/SE1.vue"
-//测评 => 其他 => SE2
-import SE2 from "@/views/evaluating/rests/SE2.vue"
-//测评 => 其他 => SE3
-import SE3 from "@/views/evaluating/rests/SE3.vue"
-//测评 => 汇总 => 月账单
-import MonthlyBill from "@/views/evaluating/collect/monthlyBill.vue"
-//测评 => 汇总 => 日账单
-import OnBill from "@/views/evaluating/collect/onBill.vue"
-//测评 => 汇总 => 测评订单
-import EvaluateOrder from "@/views/evaluating/collect/evaluateOrder.vue"
-//测评 => 汇总 => 预付订单
-import OrderAdvance from "@/views/evaluating/collect/orderAdvance.vue"
-//测评 => 汇总 => 其他订单
-import OtherOrders from "@/views/evaluating/collect/otherOrders.vue"
-//测评 => 汇总 => 请款下载
-import PleaseDownload from "@/views/evaluating/collect/pleaseDownload.vue"
-//测评 => 服务商 => 列表
-import FacilitatorList from "@/views/evaluating/facilitator/facilitatorList.vue"
-//测评 => 测评汇总 => 订单汇总
-import OrderSummary from "@/views/evaluating/testSummary/orderSummary.vue"
+//统计 => 进销存报表 => 库存报表
+import StockReport from "@/views/evaluating/rests/stockReport.vue"
+//测评 => 进销存报表 => 采购报表
+import PurchaseReport from "@/views/evaluating/rests/purchaseReport.vue"
+//测评 => 亚马逊报表 => 赔偿
+import Compensate from "@/views/evaluating/collect/compensate.vue"
+//测评 => 亚马逊报表 => 盘存
+import StockTaking from "@/views/evaluating/collect/stockTaking.vue"
+//测评 => 亚马逊报表 => 月仓储费
+import MonthStorageFee from "@/views/evaluating/collect/monthStorageFee.vue"
+//测评 => 亚马逊报表 => 长期仓储费
+import LongStorageFee from "@/views/evaluating/collect/longStorageFee.vue"
+//测评 => 亚马逊报表 => 移除货件
+import ShipmentRemovalReport from "@/views/evaluating/collect/shipmentRemovalReport.vue"
+
 
 //新品流程 => 运营 => 运营流程
 import OperationProcess from "@/views/newProcess/operation/operationProcess.vue"
@@ -225,6 +194,33 @@ import VATReportThree from "@/views/financialData/information/VATReportThree.vue
 import FinancialReceipt from "@/views/financialData/reportForms/financialReceipt.vue"
 //财务数据 => 报表 => 调拨单
 import FinancialTransfer from "@/views/financialData/reportForms/financialTransfer.vue"
+//财务数据 => 店铺财物状况 => 店铺利润报告
+import StoreProfitReport from "@/views/financialData/financialStatusStore/storeProfitReport.vue"
+//财务数据 => 店铺财物状况 => ASIN费用解析(付款)
+import CostAnalysis from "@/views/financialData/financialStatusStore/costAnalysis.vue"
+//财务数据 => 店铺财物状况 => 交易数据
+import TransactionData from "@/views/financialData/financialStatusStore/transactionData.vue"
+//财务数据 => 店铺财物状况 => 运营费用明细
+import OperatingExpenses from "@/views/financialData/financialStatusStore/operatingExpenses.vue"
+//财务数据 => 店铺财物状况 => 利润月报
+import MonthlyProfits from "@/views/financialData/financialStatusStore/monthlyProfits.vue"
+//财务数据 => 店铺财物状况 => 回款记录
+import RemittanceRecord from "@/views/financialData/financialStatusStore/remittanceRecord.vue"
+//财务数据 => 退款管理 => 退款分析
+import AnalysisRefund from "@/views/financialData/refundManagement/analysisRefund.vue"
+//财务数据 => 退款管理 => 退款明细
+import RefundDetail from "@/views/financialData/refundManagement/refundDetail.vue"
+//财务数据 => VAT智算 => VAT报告
+import VatReport from "@/views/financialData/vatWisdom/vatReport.vue"
+//财务数据 => VAT智算 => 报税国家设置
+import CountrySetting from "@/views/financialData/vatWisdom/countrySetting.vue"
+//财务数据 => VAT智算 => VAT手动计算
+import ManualCalculation from "@/views/financialData/vatWisdom/manualCalculation.vue"
+//财务数据 => 设置 => 运营费用设置
+import OperatingSetting from "@/views/financialData/financialSetup/operatingSetting.vue"
+//财务数据 => 设置 => 财务相关设置
+import FinancialRelated from "@/views/financialData/financialSetup/financialRelated.vue"
+
 
 //工具类 => 考勤核算
 import AttendanceAccounting from "@/views/utilityClass/attendanceAccounting.vue"
@@ -307,23 +303,23 @@ const routes = [
         path:"/FBAinventory",
         component:FBAinventory
       },
-      //仓库 => 库存 => 库存预警
-      {
-        name:"inventoryWarning",
-        path:"/inventoryWarning",
-        component:InventoryWarning
-      },
-      //仓库 => 库存 => FBA预估
-      {
-        name:"FBAestimate",
-        path:"/FBAestimate",
-        component:FBAestimate
-      },
       //仓库 => 质检 => 质检单
       {
         name:"qualityTestingSheet",
         path:"/qualityTestingSheet",
         component:QualityTestingSheet
+      },
+      //仓库 => 质检 => 到货记录
+      {
+        name:"arrivalRecord",
+        path:"/arrivalRecord", 
+        component:ArrivalRecord
+      },
+      //仓库 => 成本补录 => 成本补录单
+      {
+        name:"costRecord",
+        path:"/costRecord", 
+        component:CostRecord
       },
       //仓库 => 出入库 => 入库单
       {
@@ -373,12 +369,6 @@ const routes = [
         path:"/processed",
         component:Processed
       },
-      //仓库 => 采购订单 => 退款单
-      {
-        name:"refundOrder",
-        path:"/refundOrder",
-        component:RefundOrder
-      },
       //仓库 => 库存整合 => 整合
       {
         name:"conformity",
@@ -391,6 +381,73 @@ const routes = [
         path:"/conformityOrder",
         component:ConformityOrder
       },
+      //仓库 => FBA库存管理 => FBA看板
+      {
+        name:"FBAboard",
+        path:"/FBAboard",
+        component:FBAboard
+      },
+      //仓库 => FBA库存管理 => 库存列表
+      {
+        name:"InventoryList",
+        path:"/InventoryList",
+        component:InventoryList
+      },
+      //仓库 => FBA库存管理 => 冗余库存列表
+      {
+        name:"redundantList",
+        path:"/redundantList",
+        component:RedundantList
+      },
+      //仓库 => FBA库存管理 => 成本计算列表
+      {
+        name:"costingList",
+        path:"/costingList",
+        component:CostingList
+      },
+      //仓库 => FBA库存管理 => FBA补货中心
+      {
+        name:"procurementCenter",
+        path:"/procurementCenter",
+        component:ProcurementCenter
+      },
+      //仓库 => FBA库存管理 => FBA配送费异常
+      {
+        name:"abnormalDistribution",
+        path:"/abnormalDistribution",
+        component:AbnormalDistribution
+      },
+      //仓库 => 补货 => 补货建议
+      {
+        name:"replenishmentProposal",
+        path:"/replenishmentProposal",
+        component:ReplenishmentProposal
+      },
+      //仓库 => 货件 => 发货计划
+      {
+        name:"shipmentSchedule",
+        path:"/shipmentSchedule",
+        component:ShipmentSchedule
+      },
+      //仓库 => 货件 => FBA货件
+      {
+        name:"FBAparcel",
+        path:"/FBAparcel",
+        component:FBAparcel
+      },
+      //仓库 => 货件 => 发货单
+      {
+        name:"dispatchList",
+        path:"/dispatchList",
+        component:DispatchList
+      },
+      //仓库 => 货件 => 头程分摊
+      {
+        name:"firstLegSplit",
+        path:"/firstLegSplit",
+        component:FirstLegSplit
+      },
+
 
       //商品 => 商品数据管理
       {
@@ -434,12 +491,6 @@ const routes = [
         path:"/sortManagement",
         component:SortManagement
       },
-      //商品 => Listing
-      {
-        name:"Listing",
-        path:"/Listing",
-        component:Listing
-      },
       //商品 => 供应商
       {
         name:"supplier",
@@ -459,181 +510,38 @@ const routes = [
         component:BatchMapUpload
       },
 
-      //采购 => 采购计划 => 直接采购
-      {
-        name:"directProcurement",
-        path:"/directProcurement",
-        component:DirectProcurement
-      },
-      //采购 => 采购单 => 全部
-      {
-        name:"all",
-        path:"/all",
-        component:All
-      },
-      //采购 => 采购单 => 已驳回
-      {
-        name:"hasBeenRejected",
-        path:"/hasBeenRejected",
-        component:HasBeenRejected
-      },
-      //采购 => 采购单 => 待审核
-      {
-        name:"toAudit",
-        path:"/toAudit",
-        component:ToAudit
-      },
-      //采购 => 采购单 => 待付款
-      {
-        name:"obligation",
-        path:"/obligation",
-        component:Obligation
-      },
-      //采购 => 采购单 => 已完成
-      {
-        name:"offStocks",
-        path:"/offStocks",
-        component:OffStocks
-      },
-      //采购 => 合同采购 => 驳回的需求
-      {
-        name:"rejectedDemand",
-        path:"/rejectedDemand",
-        component:RejectedDemand
-      },
-      //采购 => 合同采购 => 销量预估
-      {
-        name:"salesForecast",
-        path:"/salesForecast",
-        component:SalesForecast
-      },
-      //采购 => 合同采购 => 已生成需求
-      {
-        name:"generatedRequirement",
-        path:"/generatedRequirement",
-        component:GeneratedRequirement
-      },
-      //采购 => 合同采购 => 采购需求
-      {
-        name:"procurementRequirement",
-        path:"/procurementRequirement",
-        component:ProcurementRequirement
-      },
-      //采购 => 合同采购 => 出货计划
-      {
-        name:"shippingPlan",
-        path:"/shippingPlan",
-        component:ShippingPlan
-      },
-      //采购 => 合同采购 => 厂家出货统计
-      {
-        name:"shipmentStatistics",
-        path:"/shipmentStatistics",
-        component:ShipmentStatistics
-      },
-      //采购 => 合同采购 => 驳回的采购
-      {
-        name:"rejectedPurchase",
-        path:"/rejectedPurchase",
-        component:RejectedPurchase
-      },
-      //采购 => 合同采购 => 出货明细
-      {
-        name:"deliveryList",
-        path:"/deliveryList",
-        component:DeliveryList
-      },
-      //采购 => 合同采购 => 出货明细表
-      {
-        name:"shippingSchedule",
-        path:"/shippingSchedule",
-        component:ShippingSchedule
-      },
-      //采购 => 合同采购 => 完成出货计划
-      {
-        name:"fulfilmentPlan",
-        path:"/fulfilmentPlan",
-        component:FulfilmentPlan
-      },
-      //采购 => 合同采购表 => 采购汇总
-      {
-        name:"purchaseSummary",
-        path:"/purchaseSummary",
-        component:PurchaseSummary 
-      },
-      //采购 => 合同采购表 => 采购单价趋势图
-      {
-        name:"purchasePriceChart",
-        path:"/purchasePriceChart",
-        component:PurchasePriceChart
-      },
-      //采购 => 合同采购表 => 采购单价趋势
-      {
-        name:"purchasingPriceTrend",
-        path:"/purchasingPriceTrend",
-        component:PurchasingPriceTrend
-      },
-      //采购 => 合同采购表 => 采购计划
+      //采购 => 采购单据 => 采购计划
       {
         name:"procurementPlan",
         path:"/procurementPlan",
         component:ProcurementPlan
       },
-      //采购 => 合同采购表 => 待审采购单
+      //采购 => 采购单据 => 采购单
       {
-        name:"purchaseOrder",
-        path:"/purchaseOrder",
-        component:PurchaseOrder
+        name:"purchaseNote",
+        path:"/purchaseNote",
+        component:PurchaseNote
       },
-      //采购 => 合同采购表 => 质检中
+      //采购 => 采购单据 => 采购变更单
       {
-        name:"qualityInspection",
-        path:"/qualityInspection",
-        component:QualityInspection
+        name:"purchaseChangeForm",
+        path:"/purchaseChangeForm",
+        component:PurchaseChangeForm
       },
-      //采购 => 合同采购表 => 采购入库单
+      //采购 => 采购付款 => 付款记录
       {
-        name:"purchaseReceipt",
-        path:"/purchaseReceipt",
-        component:PurchaseReceipt
+        name:"paymentRecord",
+        path:"/paymentRecord",
+        component:PaymentRecord
       },
-      //采购 => 合同采购表 => 驳回单
+      //采购 => 供应商协同 => 供应商
       {
-        name:"rejectSingle",
-        path:"/rejectSingle",
-        component:RejectSingle
-      },
-      //采购 => 合同采购表 => 已完成
-      {
-        name:"contractCompleted",
-        path:"/contractCompleted",
-        component:ContractCompleted
-      },
-      //采购 => 合同采购表 => 采购单汇总
-      {
-        name:"summaryPurchaseOrder",
-        path:"/summaryPurchaseOrder",
-        component:SummaryPurchaseOrder
-      },
-      //采购 => 测款采购 => 事业部
-      {
-        name:"businessDivision",
-        path:"/businessDivision",
-        component:BusinessDivision
-      },
-      //采购 => 测款采购 => 产品部
-      {
-        name:"productDepartment",
-        path:"/productDepartment",
-        component:ProductDepartment
-      },
-      //采购 => 测款采购 => 执行副总
-      {
-        name:"executivePresident",
-        path:"/executivePresident",
-        component:ExecutivePresident
+        name:"distributor",
+        path:"/distributor",
+        component:Distributor
       },
 
+      
       //物流 => 物流单汇总
       {
         name:"logisticsSummary",
@@ -665,23 +573,47 @@ const routes = [
         component:OtherExpenses
       },
 
-      //订单 => 订单列表
+      //销售 => Listing
+      {
+        name:"listing",
+        path:"/listing",
+        component:Listing
+      },
+      //销售 => 售后评价
+      {
+        name:"saleEvaluate",
+        path:"/saleEvaluate",
+        component:SaleEvaluate
+      },
+      //销售 => 订单列表
       {
         name:"orderList",
         path:"/orderList",
         component:OrderList
       },
-      //订单 => 自发货订单
+      //销售 => 订单发货
       {
-        name:"spontaneousOrder",
-        path:"/spontaneousOrder",
-        component:SpontaneousOrder
+        name:"selfShipment",
+        path:"/selfShipment",
+        component:SelfShipment
       },
-      //订单 => 待采购订单
+      //销售 => 订单退货
       {
-        name:"pendingPurchaseOrder",
-        path:"/pendingPurchaseOrder",
-        component:PendingPurchaseOrder
+        name:"refundOrder",
+        path:"/refundOrder",
+        component:RefundOrder
+      },
+      //销售 => 移除订单
+      {
+        name:"removalOrder",
+        path:"/removalOrder",
+        component:RemovalOrder
+      },
+      //销售 => 客户列表
+      {
+        name:"customerList",
+        path:"/customerList",
+        component:CustomerList
       },
 
       //系统 => 用户管理
@@ -727,90 +659,51 @@ const routes = [
         component:StorePermissions
       },
 
-      //测评 => 其他 => QA1
+      //统计 => 进销存报表 => 库存报表
       {
-        name:"QA1",
-        path:"/QA1",
-        component:QA1
+        name:"stockReport",
+        path:"/stockReport",
+        component:StockReport
       },
-      //测评 => 其他 => QA2
+      //统计 => 进销存报表 => 采购报表
       {
-        name:"QA2",
-        path:"/QA2",
-        component:QA2
+        name:"purchaseReport",
+        path:"/purchaseReport",
+        component:PurchaseReport
       },
-      //测评 => 其他 => QA3
+      //统计 => 亚马逊报表 => 赔偿
       {
-        name:"QA3",
-        path:"/QA3",
-        component:QA3
+        name:"compensate",
+        path:"/compensate",
+        component:Compensate
       },
-      //测评 => 其他 => SE1
+      //测评 => 亚马逊报表 => 盘存
       {
-        name:"SE1",
-        path:"/SE1",
-        component:SE1
+        name:"stockTaking",
+        path:"/stockTaking",
+        component:StockTaking
       },
-      //测评 => 其他 => SE2
+      //测评 => 亚马逊报表 => 月仓储费
       {
-        name:"SE2",
-        path:"/SE2",
-        component:SE2
+        name:"monthStorageFee",
+        path:"/monthStorageFee",
+        component:MonthStorageFee
       },
-      //测评 => 其他 => SE3
+      //测评 => 亚马逊报表 => 长期仓储费
       {
-        name:"SE3",
-        path:"/SE3",
-        component:SE3
+        name:"longStorageFee",
+        path:"/longStorageFee",
+        component:LongStorageFee
       },
-      //测评 => 汇总 => 月账单
+      //测评 => 亚马逊报表 => 移除货件
       {
-        name:"monthlyBill",
-        path:"/monthlyBill",
-        component:MonthlyBill
+        name:"shipmentRemovalReport",
+        path:"/shipmentRemovalReport",
+        component:ShipmentRemovalReport
       },
-      //测评 => 汇总 => 日账单
-      {
-        name:"onBill",
-        path:"/onBill",
-        component:OnBill
-      },
-      //测评 => 汇总 => 测评订单
-      {
-        name:"evaluateOrder",
-        path:"/evaluateOrder",
-        component:EvaluateOrder
-      },
-      //测评 => 汇总 => 预付订单
-      {
-        name:"orderAdvance",
-        path:"/orderAdvance",
-        component:OrderAdvance
-      },
-      //测评 => 汇总 => 其他订单
-      {
-        name:"otherOrders",
-        path:"/otherOrders",
-        component:OtherOrders
-      },
-      //测评 => 汇总 => 请款下载
-      {
-        name:"pleaseDownload",
-        path:"/pleaseDownload",
-        component:PleaseDownload
-      },
-      //测评 => 服务商 => 列表
-      {
-        name:"facilitatorList",
-        path:"/facilitatorList",
-        component:FacilitatorList
-      },
-      //测评 => 测评汇总 => 订单汇总
-      {
-        name:"orderSummary",
-        path:"/orderSummary",
-        component:OrderSummary
-      },
+
+      
+      
 
       //新品流程 => 运营 => 运营流程
       {
@@ -903,6 +796,85 @@ const routes = [
         path:"/financialTransfer",
         component:FinancialTransfer
       },
+      //财务数据 => 店铺财物状况 => 店铺利润报告
+      {
+        name:"storeProfitReport",
+        path:"/storeProfitReport",
+        component:StoreProfitReport
+      },
+      //财务数据 => 店铺财物状况 => ASIN费用解析(付款)
+      {
+        name:"costAnalysis",
+        path:"/costAnalysis",
+        component:CostAnalysis
+      },
+      //财务数据 => 店铺财物状况 => 交易数据
+      {
+        name:"transactionData",
+        path:"/transactionData",
+        component:TransactionData
+      },
+      //财务数据 => 店铺财物状况 => 运营费用明细
+      {
+        name:"operatingExpenses",
+        path:"/operatingExpenses",
+        component:OperatingExpenses
+      },
+      //财务数据 => 店铺财物状况 => 利润月报
+      {
+        name:"monthlyProfits",
+        path:"/monthlyProfits",
+        component:MonthlyProfits
+      },
+      //财务数据 => 店铺财物状况 => 回款记录
+      {
+        name:"remittanceRecord",
+        path:"/remittanceRecord",
+        component:RemittanceRecord
+      },
+      //财务数据 => 退款管理 => 退款分析
+      {
+        name:"analysisRefund",
+        path:"/analysisRefund",
+        component:AnalysisRefund
+      },
+      //财务数据 => 退款管理 => 退款明细
+      {
+        name:"refundDetail",
+        path:"/refundDetail",
+        component:RefundDetail
+      },
+      //财务数据 => VAT智算 => VAT报告
+      {
+        name:"vatReport",
+        path:"/vatReport",
+        component:VatReport
+      },
+      //财务数据 => VAT智算 => 报税国家设置
+      {
+        name:"countrySetting",
+        path:"/countrySetting",
+        component:CountrySetting
+      },
+      //财务数据 => VAT智算 => VAT报告
+      {
+        name:"manualCalculation",
+        path:"/manualCalculation",
+        component:ManualCalculation
+      },
+      //财务数据 => 设置 => 运营费用设置
+      {
+        name:"operatingSetting",
+        path:"/operatingSetting",
+        component:OperatingSetting
+      },
+      //财务数据 => 设置 => 财务相关报告
+      {
+        name:"financialRelated",
+        path:"/financialRelated",
+        component:FinancialRelated
+      },
+
 
       //工具类 => 考勤核算
       {

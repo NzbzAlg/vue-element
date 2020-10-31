@@ -8,7 +8,7 @@
       <!-- 分类 -->
       <div class="classify">
         <div class="oneClassify" v-for="item in categoryListing" :key="item.id">
-          <h3>
+          <h3 style="margin-bottom:15px">
             {{ item.menuname }}
             <el-button type="success" size="mini" @click="addSmallClass(item)"
               >添加小类</el-button

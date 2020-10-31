@@ -4,73 +4,56 @@
     <Crumbs></Crumbs>
     <!-- 头部 -->
     <div class="title">
-      <div class="drop">
-        <div class="dropButton">
-          <el-button
-            icon="el-icon-search"
-            @click="dropDisplays"
-            size="small"
-          ></el-button>
-        </div>
-        <div class="dropSearch" v-show="isShow">
-          <el-form ref="form" :model="form" label-width="90px">
-            <el-col :span="6">
-              <el-form-item label="姓名：">
-                <el-input
-                  placeholder="请输入姓名查询"
-                  v-model="form.name"
-                  clearable
-                >
-                </el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="6">
-              <el-form-item label="部门：">
-                <el-select
-                  v-model="form.departmentPull"
-                  placeholder="请选择部门查询"
-                  style="width: 100%"
-                  clearable
-                >
-                  <el-option
-                    v-for="item in departmentPull"
-                    :key="item.id"
-                    :label="item.name"
-                    :value="item.id"
-                  ></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="6">
-              <el-form-item label="状态：">
-                <el-select
-                  v-model="form.status"
-                  placeholder="请选择状态查询"
-                  style="width: 100%"
-                  clearable
-                >
-                  <el-option
-                    v-for="item in state"
-                    :key="item.id"
-                    :label="item.label"
-                    :value="item.id"
-                  ></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="6">
-              <el-form-item>
-                <el-button type="primary" @click="grabble" size="small"
-                  >搜索</el-button
-                >
-              </el-form-item>
-            </el-col>
-          </el-form>
-        </div>
-      </div>
+      <!-- 部门 -->
+      <el-select
+        v-model="departmentModel"
+        placeholder="部门"
+        clearable
+        filterable
+        size="medium"
+        style="width: 150px"
+      >
+        <el-option
+          v-for="item in departmentSelect"
+          :key="item.id"
+          :label="item.name"
+          :value="item.id"
+        ></el-option>
+      </el-select>
+      <!-- 状态 -->
+      <el-select
+        v-model="state"
+        placeholder="状态"
+        clearable
+        filterable
+        size="medium"
+        style="width: 150px; margin-left: 10px"
+      >
+        <el-option
+          v-for="item in stateDrop"
+          :key="item.id"
+          :label="item.name"
+          :value="item.id"
+        ></el-option>
+      </el-select>
+      <!-- 姓名 -->
+      <el-input
+        placeholder="搜索姓名"
+        filterable
+        style="width: 150px; margin-left: 10px"
+        size="medium"
+        v-model="name"
+      ></el-input>
+      <el-button
+        type="primary"
+        size="medium"
+        style="margin-left: 10px"
+        @click="grabble"
+        >搜索</el-button
+      >
     </div>
     <!-- 表格 -->
-    <div class="content">
+    <div class="table">
       <el-table
         :data="tableData"
         border
@@ -120,14 +103,14 @@
             <el-button
               size="mini"
               type="danger"
-              v-if="scope.row.status == 2"
+              v-if="scope.row.status == 1"
               @click="accountDisabled(scope.row)"
               >禁用</el-button
             >
             <el-button
               size="mini"
               type="success"
-              v-if="scope.row.status == 1"
+              v-if="scope.row.status == 0"
               @click="accountOpening(scope.row)"
               >启用</el-button
             >
@@ -231,28 +214,22 @@ export default {
   },
   data() {
     return {
-      dropDown: "", //下拉框input值
-      select: "",
-      isShow: false,
-      departmentPull: [], //部门下拉框
-      state: [
-        //状态
+      departmentModel: "", //部门
+      // 部门下拉
+      departmentSelect: [],
+      state: "", //状态
+      stateDrop: [
+        //状态下拉
+        {
+          id: 0,
+          name: "启用",
+        },
         {
           id: 1,
-          label: "启用",
-        },
-        {
-          id: 2,
-          label: "禁用",
+          name: "禁用",
         },
       ],
-      form: {
-        name: "",
-        departmentPull: "",
-        status: "",
-      },
-      value: "",
-      nameSearch: "",
+      name: "", //姓名
       editAccountPop: false,
       editAccountForm: {},
       page: 1,
@@ -291,18 +268,17 @@ export default {
           params: {
             page: this.page,
             limit: this.limit,
-            name: this.form.name, //姓名
-            d_id: this.form.departmentPull, //部门
-            status: this.form.status, //状态
+            name: this.name, //姓名
+            d_id: this.departmentModel, //部门
+            status: this.state, //状态
           },
         })
         .then((res) => {
           // console.log(res.data.data)
           const { code, data } = res.data;
           if (code == 200) {
-            console.log(res.data);
             this.tableData = res.data.data.list;
-            this.departmentPull = res.data.data.department;
+            this.departmentSelect = res.data.data.department;
             this.total = res.data.count;
           } else {
             this.$message.error(res.data.message);
@@ -370,7 +346,7 @@ export default {
           userpwd: this.editAccountForm.userNewpwd, //新密码
           code: this.editAccountForm.code, //员工编号
         };
-        this.$http.post(`api/admin/changinfo`, info).then((res) => {
+        this.$http.post(`api/admin/update_user`, info).then((res) => {
           const { code, data } = res.data;
           if (code == 200) {
             this.$message.success(res.data.message);
@@ -415,20 +391,15 @@ export default {
 
 <style lang="scss" scoped>
 .title {
-    margin-bottom: 20px;
-    height: 30px;
-    .drop {
-      width: 100%;
-      .dropButton {
-        width: 5%;
-        float: left;
-        margin-top: 5px;
-      }
-      .dropSearch {
-        width: 95%;
-        float: right;
-      }
-    }
-  }
-
+  margin-bottom: 15px;
+}
+.table {
+  width: 100%;
+  height: 100%;
+  background: #fff;
+  box-shadow: 0px 0px 6px #d4d4d4;
+  border-radius: 8px;
+  padding: 20px;
+  box-sizing: border-box;
+}
 </style>
