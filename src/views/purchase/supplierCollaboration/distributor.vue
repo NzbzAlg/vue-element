@@ -1,7 +1,6 @@
 
 <template>
   <div class="distributor">
-    <!-- 搜索 -->
     <div class="title">
       <!-- 搜索 -->
       <el-input
@@ -9,11 +8,16 @@
         placeholder="搜索供应商、跟进人名称"
         clearable
         size="medium"
-        style="width: 210px;"
+        style="width: 210px"
+        @change="changeSearch"
       ></el-input>
-      <el-button type="primary" size="medium" style="margin-left: 10px"
+      <!-- <el-button
+        type="primary"
+        size="medium"
+        style="margin-left: 10px"
+        @click="grabble"
         >搜索</el-button
-      >
+      > -->
     </div>
     <!-- 表格 -->
     <div class="table">
@@ -21,179 +25,244 @@
         <el-button size="small" type="primary" @click="addSupplier"
           >添加供应商</el-button
         >
-        <el-button size="small" @click="importSupplier">导入供应商</el-button>
+        <!-- <el-button size="small" @click="importSupplier">导入供应商</el-button> -->
       </div>
-      <el-table :data="tableData" border style="width: 100%">
+      <el-table :data="tableData" border style="width: 100%" height="600">
         <el-table-column
-          prop="channel_name"
+          prop="supplier_name"
           label="供应商"
           align="center"
+          width="200"
         ></el-table-column>
         <el-table-column
-          prop="shipment_name"
-          label="网址"
-          align="center"
-        ></el-table-column>
-        <el-table-column
-          prop="shipment_id"
+          prop="supplier_contacts"
           label="联系人"
           align="center"
         ></el-table-column>
         <el-table-column
-          prop="SKU"
+          prop="supplier_contactsnumber"
           label="联系电话"
           align="center"
         ></el-table-column>
-        <el-table-column prop="SKU" label="QQ" align="center"></el-table-column>
         <el-table-column
-          prop="SKU"
+          prop="supplier_qq"
+          label="QQ"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="address"
           label="地址"
           align="center"
         ></el-table-column>
         <el-table-column
-          prop="SKU"
+          prop="supplier_followperson"
           label="跟进人"
           align="center"
         ></el-table-column>
         <el-table-column
-          prop="SKU"
+          prop="desc"
           label="备注"
           align="center"
+          :show-overflow-tooltip="true"
         ></el-table-column>
         <el-table-column
-          prop="SKU"
+          prop="create_time"
           label="创建时间"
           align="center"
         ></el-table-column>
         <el-table-column prop="SKU" label="操作" align="center">
-          <template>
-            <el-dropdown split-button size="small" @click="detailList">
+          <template slot-scope="scope">
+            <!-- <el-dropdown split-button size="small" @click="detailList(scope.row)">
               详情
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item>
                   <span>审核</span>
                 </el-dropdown-item>
-                <el-dropdown-item>
-                  <span>删除</span>
-                </el-dropdown-item>
               </el-dropdown-menu>
-            </el-dropdown>
+            </el-dropdown> -->
+            <el-button size="small" @click="detailList(scope.row)">详情</el-button>
           </template>
         </el-table-column>
       </el-table>
     </div>
     <!-- 详情弹窗 -->
-    <el-dialog title="供应商详情" :visible.sync="detailListPop" width="30%">
-      <div class="detailList">
+    <el-dialog title="供应商详情" :visible.sync="detailListPop" width="40%">
+      <div class="supplier">
         <div class="basicInformation">
           <p>基本信息</p>
-          <el-form label-width="80px">
-            <el-col :span="24" style="height: 46px">
+          <el-form label-width="80px" :model="detailListForm">
+            <el-col :span="24">
+              <el-form-item label="供应商">
+                <el-input v-model="detailListForm.supplier_name"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
               <el-form-item label="级别">
-                <span>★</span>
+                <el-select
+                  v-model="detailListForm.supplier_level"
+                  style="width: 100%"
+                  clearable
+                >
+                  <el-option
+                    v-for="item in rank"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id"
+                  ></el-option>
+                </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="12" style="height: 46px">
+            <el-col :span="12">
               <el-form-item label="规模">
-                <span>少于50人</span>
+                <el-select
+                  v-model="detailListForm.supplier_scale"
+                  style="width: 100%"
+                  clearable
+                >
+                  <el-option
+                    v-for="item in scale"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id"
+                  ></el-option>
+                </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="12" style="height: 46px">
+            <el-col :span="12">
               <el-form-item label="跟进人">
-                <span>超级管理员</span>
+                <!-- <el-input v-model="detailListForm.supplier_followperson"></el-input> -->
+                <el-select
+                  v-model="detailListForm.supplier_followperson"
+                  style="width: 100%"
+                  clearable
+                  filterable
+                >
+                  <el-option
+                    v-for="item in followPeople"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id"
+                  ></el-option>
+                </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="12" style="height: 46px">
+            <el-col :span="12">
               <el-form-item label="联系人">
-                <span>123123123</span>
+                <el-input v-model="detailListForm.supplier_contacts"></el-input>
               </el-form-item>
             </el-col>
-            <el-col :span="12" style="height: 46px">
+            <el-col :span="12">
               <el-form-item label="联系电话">
-                <span>123123123</span>
+                <el-input v-model="detailListForm.supplier_contactsnumber"></el-input>
               </el-form-item>
             </el-col>
-            <el-col :span="12" style="height: 46px">
+            <el-col :span="12">
               <el-form-item label="QQ">
-                <span>123123123</span>
+                <el-input v-model="detailListForm.supplier_qq"></el-input>
               </el-form-item>
             </el-col>
-            <el-col :span="12" style="height: 46px">
+            <el-col :span="12">
               <el-form-item label="邮箱">
-                <span>123123123</span>
+                <el-input v-model="detailListForm.supplier_email"></el-input>
               </el-form-item>
             </el-col>
-            <el-col :span="12" style="height: 46px">
+            <el-col :span="12">
               <el-form-item label="传真">
-                <span>123123123</span>
+                <el-input v-model="detailListForm.supplier_tax"></el-input>
               </el-form-item>
             </el-col>
-            <el-col :span="24" style="height: 46px">
+            <el-col :span="24">
+              <el-form-item label="地址">
+                <el-input v-model="detailListForm.address"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="24">
               <el-form-item label="备注">
-                <span>123123123</span>
+                <el-input type="textarea" v-model="detailListForm.desc" :rows="6"></el-input>
               </el-form-item>
             </el-col>
           </el-form>
         </div>
         <div class="finance">
           <p>财务</p>
-          <el-form label-width="80px">
-            <el-col :span="12" style="height: 46px">
+          <el-form label-width="80px" :model="detailListForm">
+            <el-col :span="12">
               <el-form-item label="结算方式">
-                <span>123123123</span>
+                <el-select
+                  v-model="detailListForm.supplier_settlementmethod"
+                  style="width: 100%"
+                  clearable
+                >
+                  <el-option
+                    v-for="item in clearingForm"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id"
+                  ></el-option>
+                </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="12" style="height: 46px">
+            <el-col :span="12">
               <el-form-item label="支付方式">
-                <span>123123123</span>
+                <el-select
+                  v-model="detailListForm.supplier_paymentmethod"
+                  style="width: 100%"
+                  clearable
+                >
+                  <el-option
+                    v-for="item in modePayment"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id"
+                  ></el-option>
+                </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="12" style="height: 46px">
+            <el-col :span="12">
               <el-form-item label="户名">
-                <span>123123123</span>
+                <el-input v-model="detailListForm.supplier_accountname"></el-input>
               </el-form-item>
             </el-col>
-            <el-col :span="12" style="height: 46px">
+            <el-col :span="12">
               <el-form-item label="开支行">
-                <span>123123123</span>
+                <el-input v-model="detailListForm.supplier_bank"></el-input>
               </el-form-item>
             </el-col>
-            <el-col :span="24" style="height: 46px">
-              <el-form-item label="开户账号">
-                <span>123123123</span>
+            <el-col :span="24">
+              <el-form-item label="卡号">
+                <el-input v-model="detailListForm.supplier_account"></el-input>
               </el-form-item>
             </el-col>
           </el-form>
         </div>
       </div>
-
       <span slot="footer" class="dialog-footer">
         <el-button @click="detailListPop = false">取 消</el-button>
-        <el-button type="primary" @click="detailListPop = false"
+        <el-button type="primary" @click="detailListConfirm"
           >确 定</el-button
         >
       </span>
     </el-dialog>
     <!-- 添加供应商 -->
     <el-dialog title="添加供应商" :visible.sync="addSupplierPop" width="40%">
-      <div class="addSupplier">
+      <div class="supplier">
         <div class="basicInformation">
           <p>基本信息</p>
-          <el-form label-width="80px">
+          <el-form label-width="80px" :model="addSupplierForm">
             <el-col :span="24">
               <el-form-item label="供应商">
-                <el-input></el-input>
+                <el-input v-model="addSupplierForm.supplier_name"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="级别">
                 <el-select
-                  v-model="form.departmentPull"
+                  v-model="addSupplierForm.supplier_level"
                   style="width: 100%"
                   clearable
                 >
                   <el-option
-                    v-for="item in replenishment"
+                    v-for="item in rank"
                     :key="item.id"
                     :label="item.name"
                     :value="item.id"
@@ -204,12 +273,12 @@
             <el-col :span="12">
               <el-form-item label="规模">
                 <el-select
-                  v-model="form.departmentPull"
+                  v-model="addSupplierForm.supplier_scale"
                   style="width: 100%"
                   clearable
                 >
                   <el-option
-                    v-for="item in replenishment"
+                    v-for="item in scale"
                     :key="item.id"
                     :label="item.name"
                     :value="item.id"
@@ -220,12 +289,13 @@
             <el-col :span="12">
               <el-form-item label="跟进人">
                 <el-select
-                  v-model="form.departmentPull"
+                  v-model="addSupplierForm.supplier_followperson"
                   style="width: 100%"
                   clearable
+                  filterable
                 >
                   <el-option
-                    v-for="item in replenishment"
+                    v-for="item in followPeople"
                     :key="item.id"
                     :label="item.name"
                     :value="item.id"
@@ -235,49 +305,53 @@
             </el-col>
             <el-col :span="12">
               <el-form-item label="联系人">
-                <el-input></el-input>
+                <el-input v-model="addSupplierForm.supplier_contacts"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="联系电话">
-                <el-input></el-input>
+                <el-input v-model="addSupplierForm.supplier_contactsnumber"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="QQ">
-                <el-input></el-input>
+                <el-input v-model="addSupplierForm.supplier_qq"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="邮箱">
-                <el-input></el-input>
+                <el-input v-model="addSupplierForm.supplier_email"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="传真">
-                <el-input></el-input>
+                <el-input v-model="addSupplierForm.supplier_tax"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="24">
+              <el-form-item label="地址">
+                <el-input v-model="addSupplierForm.address"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="24">
               <el-form-item label="备注">
-                <el-input type="textarea" :rows="2" placeholder="请输入内容">
-                </el-input>
+                <el-input type="textarea" v-model="addSupplierForm.desc" :rows="6"></el-input>
               </el-form-item>
             </el-col>
           </el-form>
         </div>
         <div class="finance">
           <p>财务</p>
-          <el-form label-width="80px">
+          <el-form label-width="80px" :model="addSupplierForm">
             <el-col :span="12">
               <el-form-item label="结算方式">
                 <el-select
-                  v-model="form.departmentPull"
+                  v-model="addSupplierForm.supplier_settlementmethod"
                   style="width: 100%"
                   clearable
                 >
                   <el-option
-                    v-for="item in replenishment"
+                    v-for="item in clearingForm"
                     :key="item.id"
                     :label="item.name"
                     :value="item.id"
@@ -288,12 +362,12 @@
             <el-col :span="12">
               <el-form-item label="支付方式">
                 <el-select
-                  v-model="form.departmentPull"
+                  v-model="addSupplierForm.supplier_paymentmethod"
                   style="width: 100%"
                   clearable
                 >
                   <el-option
-                    v-for="item in replenishment"
+                    v-for="item in modePayment"
                     :key="item.id"
                     :label="item.name"
                     :value="item.id"
@@ -303,17 +377,17 @@
             </el-col>
             <el-col :span="12">
               <el-form-item label="户名">
-                <el-input></el-input>
+                <el-input v-model="addSupplierForm.supplier_accountname"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="开支行">
-                <el-input></el-input>
+                <el-input v-model="addSupplierForm.supplier_bank"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="24">
               <el-form-item label="卡号">
-                <el-input></el-input>
+                <el-input v-model="addSupplierForm.supplier_account"></el-input>
               </el-form-item>
             </el-col>
           </el-form>
@@ -321,7 +395,7 @@
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="addSupplierPop = false">取 消</el-button>
-        <el-button type="primary" @click="addSupplierPop = false"
+        <el-button type="primary" @click="addSupplierConfirm"
           >确 定</el-button
         >
       </span>
@@ -355,30 +429,116 @@
       </span>
     </el-dialog>
     <!-- 分页 -->
-    <div class="paging">
-      <el-pagination
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page="currentPage1"
-        :page-sizes="[100, 200, 300, 400]"
-        :page-size="100"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="400"
-      ></el-pagination>
-    </div>
+    <pagination
+      :page="page"
+      :total="total"
+      :limit="limit"
+      @handleCurrentChange="handleCurrentChange"
+      @handleSizeChange="handleSizeChange"
+    />
   </div>
 </template>
 
 <script>
+import pagination from "@/components/pagination"; // 分页
 export default {
+  components: {
+    pagination,
+  },
   data() {
     return {
-      supplier:"",//供应商、跟进人
-      currentPage1: 1,
+      supplier: "", //供应商、跟进人
       detailListPop: false, //详情弹窗
+      detailListForm:{},//详情
+      // 详情级别
+      rank:[
+        {
+          id:1,
+          name:'★'
+        },
+        {
+          id:2,
+          name:'★★'
+        },
+        {
+          id:3,
+          name:'★★★'
+        },
+        {
+          id:4,
+          name:'★★★★'
+        },
+        {
+          id:5,
+          name:'★★★★★'
+        },
+      ],
+      // 详情规模
+      scale:[
+        {
+          id:1,
+          name:'少于50人'
+        },
+        {
+          id:2,
+          name:'50-100人'
+        },
+        {
+          id:3,
+          name:'150-500人'
+        },
+        {
+          id:4,
+          name:'500-1000人'
+        },
+        {
+          id:5,
+          name:'1000人以上'
+        },
+      ],
+      // 跟进人
+      followPeople:[],
+      // 详情结算方式
+      clearingForm:[
+        {
+          id:1,
+          name:'款到发货'
+        },
+        {
+          id:2,
+          name:'货到付款'
+        },
+        {
+          id:3,
+          name:'分期付款'
+        },
+        {
+          id:4,
+          name:'定期月结'
+        },
+        {
+          id:5,
+          name:'定期半月结'
+        },
+        {
+          id:6,
+          name:'预存'
+        },
+      ],
+      // 详情支付方式
+      modePayment:[
+        {
+          id:1,
+          name:'网银转账'
+        },
+        {
+          id:2,
+          name:'网上支付'
+        }
+      ],
       addSupplierPop: false, //添加供应商弹窗
+      addSupplierForm:{},//添加供应商
       importSupplierPop: false, //导入供应商弹窗
-      isShow: false,
       form: {
         name: "",
         departmentPull: "",
@@ -404,44 +564,145 @@ export default {
           name: "无需提醒",
         },
       ],
-      state: [
-        //状态
-        {
-          id: 1,
-          label: "启用",
-        },
-        {
-          id: 2,
-          label: "禁用",
-        },
-      ],
-      tableData: [
-        {
-          id: 1,
-          channel_name: "1",
-        },
-      ],
+      tableData: [], //列表数据
+      page: 1,
+      limit: 10,
+      total: 0,
     };
   },
+  mounted() {
+    this.getList();
+  },
   methods: {
+    // 列表
+    getList() {
+      this.$http
+        .get(`supplier/supplier_list`, {
+          params: {
+            page: this.page,
+            limit: this.limit,
+            name: this.supplier,
+          },
+        })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == 200) {
+            this.tableData = res.data.data;
+            this.total = res.data.count;
+          } else {
+            this.$message.error(res.data.message);
+          }
+        });
+    },
+    // 搜索
+    changeSearch() {
+      this.page = 1
+      this.getList();
+    },
     // 编辑弹窗
-    detailList() {
+    detailList(row) {
+      this.id = row.id
       this.detailListPop = true;
+      this.$http.get(`supplier/get_one_supplier?id=${this.id}`).then(res=>{
+        const{code,data} = res.data
+        if(code == 200){
+          this.detailListForm = res.data.data
+          this.followPeople = res.data.data.supplier_followperson_arr
+        }else{
+          this.$message.error(res.data.message)
+        }
+      })
+    },
+    // 编辑确定
+    detailListConfirm(){
+      let info = {
+        id:this.id,
+        supplier_name:this.detailListForm.supplier_name,//供应商
+        supplier_level:this.detailListForm.supplier_level,//级别
+        supplier_scale:this.detailListForm.supplier_scale,//规模
+        supplier_followperson:this.detailListForm.supplier_followperson,//跟进人
+        supplier_contacts:this.detailListForm.supplier_contacts,//联系人
+        supplier_contactsnumber:this.detailListForm.supplier_contactsnumber,//联系电话
+        supplier_qq:this.detailListForm.supplier_qq,//QQ
+        supplier_email:this.detailListForm.supplier_email,//邮箱
+        supplier_tax:this.detailListForm.supplier_tax,//传真
+        address:this.detailListForm.address,//地址
+        desc:this.detailListForm.desc,//备注
+        supplier_settlementmethod:this.detailListForm.supplier_settlementmethod,//结算方式
+        supplier_paymentmethod:this.detailListForm.supplier_paymentmethod,//支付方式
+        supplier_accountname:this.detailListForm.supplier_accountname,//户名
+        supplier_bank:this.detailListForm.supplier_bank,//开支行
+        supplier_account:this.detailListForm.supplier_account,//卡号
+      }
+      this.$http.post(`supplier/new_supplier`,info).then(res=>{
+        const{code,data} = res.data
+        if(code == 200){
+          this.$message.success(res.data.message)
+          this.getList()
+          this.detailListPop = false
+        }else{
+          this.$message.error(res.data.message)
+        }
+      })
     },
     // 添加供应商弹窗
     addSupplier() {
       this.addSupplierPop = true;
+      this.$http.get(`user/get_users`).then(res=>{
+        const{code,data} = res.data
+        if(code == 200){
+          this.followPeople = res.data.data
+        }else{
+          this.$message.error(res.data.message)
+        }
+      })
+
+    },
+    // 添加供应商确定
+    addSupplierConfirm(){
+      let info = {
+        supplier_name:this.addSupplierForm.supplier_name,//供应商
+        supplier_level:this.addSupplierForm.supplier_level,//级别
+        supplier_scale:this.addSupplierForm.supplier_scale,//规模
+        supplier_followperson:this.addSupplierForm.supplier_followperson,//跟进人
+        supplier_contacts:this.addSupplierForm.supplier_contacts,//联系人
+        supplier_contactsnumber:this.addSupplierForm.supplier_contactsnumber,//联系电话
+        supplier_qq:this.addSupplierForm.supplier_qq,//QQ
+        supplier_email:this.addSupplierForm.supplier_email,//邮箱
+        supplier_tax:this.addSupplierForm.supplier_tax,//传真
+        address:this.addSupplierForm.address,//地址
+        desc:this.addSupplierForm.desc,//备注
+        supplier_settlementmethod:this.addSupplierForm.supplier_settlementmethod,//结算方式
+        supplier_paymentmethod:this.addSupplierForm.supplier_paymentmethod,//支付方式
+        supplier_accountname:this.addSupplierForm.supplier_accountname,//户名
+        supplier_bank:this.addSupplierForm.supplier_bank,//开支行
+        supplier_account:this.addSupplierForm.supplier_account,//卡号
+      }
+      this.$http.post(`supplier/new_supplier`,info).then(res=>{
+        const{code,data} = res.data
+        if(code == 200){
+          this.$message.success(res.data.message)
+          this.getList()
+          this.addSupplierPop = false
+        }else{
+          this.$message.error(res.data.message)
+        }
+      })
     },
     // 导入供应商
     importSupplier() {
       this.importSupplierPop = true;
     },
-    // 列表详情
-    handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
-    },
+    // 分页下拉
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
+      this.page = val;
+      this.getList();
+    },
+    // 分页右滚
+    handleSizeChange(val) {
+      this.limit = val;
+      this.page = 1;
+      this.getList();
     },
   },
 };
@@ -463,40 +724,8 @@ export default {
     margin-bottom: 10px;
   }
 }
-// 详情弹窗
-.detailList {
-  .basicInformation {
-    height: 305px;
-    p {
-      color: rgb(51, 51, 51);
-      font-weight: 600;
-      line-height: 14px;
-      margin-bottom: 16px;
-      margin-top: 10px;
-    }
-  }
-  .finance {
-    height: 167px;
-    p {
-      color: rgb(51, 51, 51);
-      font-weight: 600;
-      line-height: 14px;
-      margin-bottom: 16px;
-      margin-top: 10px;
-    }
-  }
-  .site {
-    p {
-      color: rgb(51, 51, 51);
-      font-weight: 600;
-      line-height: 14px;
-      margin-bottom: 16px;
-      margin-top: 10px;
-    }
-  }
-}
-// 添加供应商
-.addSupplier {
+//弹窗
+.supplier {
   .basicInformation {
     p {
       color: rgb(51, 51, 51);
@@ -545,10 +774,5 @@ export default {
       padding-left: 20px;
     }
   }
-}
-
-.paging {
-  float: right;
-  margin-top: 20px;
 }
 </style>

@@ -12,6 +12,7 @@
         filterable
         size="medium"
         style="width: 150px"
+        @change="changeSearch()"
       >
         <el-option
           v-for="item in departmentSelect"
@@ -28,6 +29,7 @@
         filterable
         size="medium"
         style="width: 150px; margin-left: 10px"
+        @change="changeSearch()"
       >
         <el-option
           v-for="item in stateDrop"
@@ -43,22 +45,29 @@
         style="width: 150px; margin-left: 10px"
         size="medium"
         v-model="name"
+        clearable
+        @change="changeSearch()"
       ></el-input>
-      <el-button
+      <!-- <el-button
         type="primary"
         size="medium"
         style="margin-left: 10px"
         @click="grabble"
         >搜索</el-button
-      >
+      > -->
     </div>
     <!-- 表格 -->
     <div class="table">
+      <div class="table_button">
+        <el-button type="primary" size="small" @click="addNewUsers"
+          >新增用户</el-button
+        >
+      </div>
       <el-table
         :data="tableData"
         border
         style="width: 100%"
-        height="638"
+        height="590"
         stripe
       >
         <el-table-column
@@ -118,18 +127,93 @@
         </el-table-column>
       </el-table>
     </div>
+    <!-- 新增用户弹窗 -->
+    <el-dialog title="新增用户" :visible.sync="newUsersPop" width="30%">
+      <el-form :model="newUsersForm" label-width="120px">
+        <el-row>
+          <el-col>
+            <el-form-item label="员工账号：">
+              <el-input v-model="newUsersForm.username"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col>
+            <el-form-item label="员工编号：">
+              <el-input v-model="newUsersForm.code"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col>
+            <el-form-item label="输入新密码：">
+              <el-input
+                v-model="newUsersForm.userNewpwd"
+                show-password
+              ></el-input>
+            </el-form-item>
+          </el-col>
+          <!-- <el-col>
+            <el-form-item label="确认新密码：">
+              <el-input
+                v-model="newUsersForm.userNewpwd1"
+                show-password
+                @change="confirmPassword($event)"
+              ></el-input>
+            </el-form-item>
+          </el-col> -->
+          <el-col>
+            <el-form-item label="输入名字：">
+              <el-input v-model="newUsersForm.name"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="部门：" :required="true">
+              <el-select
+                v-model="newUsersForm.department"
+                placeholder="请选择部门"
+                @change="newDepartment($event)"
+              >
+                <el-option
+                  v-for="item in newUsersDepartment"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="角色：" :required="true">
+              <el-select
+                v-model="newUsersForm.group"
+                placeholder="请选择角色"
+                @change="roleDrop($event)"
+              >
+                <el-option
+                  v-for="item in newRoleList"
+                  :key="item.id"
+                  :label="item.groupname"
+                  :value="item.id"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="newUsersPop = false">取 消</el-button>
+        <el-button type="primary" @click="newUsersConfirm">确 定</el-button>
+      </span>
+    </el-dialog>
     <!-- 修改信息弹窗 -->
     <el-dialog title="修改信息" :visible.sync="editAccountPop" width="30%">
       <el-form :model="editAccountForm" label-width="120px">
         <el-row>
           <el-col>
             <el-form-item label="员工账号：">
-              <el-input v-model="editAccountForm.username" disabled></el-input>
+              <el-input v-model="editAccountForm.username"></el-input>
             </el-form-item>
           </el-col>
           <el-col>
             <el-form-item label="员工编号：">
-              <el-input v-model="editAccountForm.code" disabled></el-input>
+              <el-input v-model="editAccountForm.code"></el-input>
             </el-form-item>
           </el-col>
           <el-col>
@@ -150,7 +234,7 @@
             </el-form-item>
           </el-col>
           <el-col>
-            <el-form-item label="输入名字：" :required="true">
+            <el-form-item label="输入名字：">
               <el-input v-model="editAccountForm.name" disabled></el-input>
             </el-form-item>
           </el-col>
@@ -171,7 +255,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="角色：">
+            <el-form-item label="角色：" :required="true">
               <el-select
                 v-model="editAccountForm.group"
                 placeholder="请选择角色"
@@ -230,26 +314,28 @@ export default {
         },
       ],
       name: "", //姓名
-      editAccountPop: false,
-      editAccountForm: {},
-      page: 1,
-      limit: 13,
-      total: 0,
-      departmentList: [],
-      roleList: [],
       tableData: [], //列表数据
+      newUsersPop: false, //新增用户弹窗
+      newUsersForm: {}, //新增
+      newDepartmentId: "", //新增部门角色id
+      newUsersDepartment: [], //新增部门
+      newRoleList: [], //新增角色
+
+      editAccountPop: false, //编辑弹窗
+      editAccountForm: {}, //编辑
+      departmentList: [], //编辑部门下拉
+      roleList: [], //编辑角色下拉
       departmentDropId: "", //部门id
       roleDId: "", //角色id
-      groupname: "",
+      page: 1,
+      limit: 10,
+      total: 0,
     };
   },
   mounted() {
     this.getList();
   },
   methods: {
-    dropDisplays() {
-      this.isShow = !this.isShow;
-    },
     // 确认密码
     confirmPassword(event) {
       console.log(event.length);
@@ -264,7 +350,7 @@ export default {
     // 列表数据
     getList() {
       this.$http
-        .get(`api/admin/userlist`, {
+        .get(`user/user_list`, {
           params: {
             page: this.page,
             limit: this.limit,
@@ -287,7 +373,7 @@ export default {
     },
     // 账号禁用
     accountDisabled(row) {
-      this.$http.post(`api/admin/disable_user?id=${row.id}`).then((res) => {
+      this.$http.post(`user/disable_user?id=${row.id}`).then((res) => {
         const { code, data } = res.data;
         if (code == 200) {
           this.$message.success(res.data.message);
@@ -299,7 +385,7 @@ export default {
     },
     // 账号启用
     accountOpening(row) {
-      this.$http.post(`api/admin/undisable_user?id=${row.id}`).then((res) => {
+      this.$http.post(`user/undisable_user?id=${row.id}`).then((res) => {
         const { code, data } = res.data;
         if (code == 200) {
           this.$message.success(res.data.message);
@@ -310,8 +396,53 @@ export default {
       });
     },
     // 搜索
-    grabble() {
+    changeSearch() {
       this.getList();
+    },
+    // 新增用户弹窗
+    addNewUsers() {
+      this.newUsersPop = true;
+      this.$http.get(`user/get_dedepartment_data`).then((res) => {
+        const { code, data } = res.data;
+        if (code == 200) {
+          this.newUsersDepartment = res.data.data;
+        } else {
+          this.$message.error(res.data.message);
+        }
+      });
+    },
+    // 新增用户弹窗 - 部门
+    newDepartment(event) {
+      this.newDepartmentId = event;
+      this.$http.post(`user/get_group_by_did?id=${event}`).then((res) => {
+        const { code, data } = res.data;
+        if (code == 200) {
+          this.newRoleList = res.data.data;
+        } else {
+          this.$message.error(res.data.message);
+        }
+      });
+    },
+    //新增用户弹窗确定
+    newUsersConfirm() {
+      let info = {
+        username:this.newUsersForm.username,//员工账号
+        code:this.newUsersForm.code,//员工编号
+        userpwd:this.newUsersForm.userNewpwd,//密码
+        name:this.newUsersForm.name,//姓名
+        d_id:this.newUsersForm.department,//部门
+        groupid:this.newUsersForm.group,//部门
+      };
+      this.$http.post(`user/new_user`, info).then((res) => {
+        const { code, data } = res.data;
+        if (code == 200) {
+          this.$message.success(res.data.message);
+          this.getList();
+          this.newUsersPop = false;
+        } else {
+          this.$message.error(res.data.message);
+        }
+      });
     },
     // 修改信息弹窗
     editAccount(row) {
@@ -321,7 +452,7 @@ export default {
       this.groupid = row.groupid;
       this.department = row.department; //部门
       this.group = row.group; //角色
-      this.$http.post(`api/admin/getoneuser_by_id?id=${row.id}`).then((res) => {
+      this.$http.post(`user/getoneuser_by_id?id=${row.id}`).then((res) => {
         const { code, data } = res.data;
         if (code == 200) {
           this.editAccountForm = res.data.data;
@@ -346,7 +477,7 @@ export default {
           userpwd: this.editAccountForm.userNewpwd, //新密码
           code: this.editAccountForm.code, //员工编号
         };
-        this.$http.post(`api/admin/update_user`, info).then((res) => {
+        this.$http.post(`user/update_user`, info).then((res) => {
           const { code, data } = res.data;
           if (code == 200) {
             this.$message.success(res.data.message);
@@ -361,7 +492,7 @@ export default {
     // 下拉框
     departmentDrop(event) {
       this.departmentDropId = event;
-      this.$http.post(`api/admin/get_group_by_did?id=${event}`).then((res) => {
+      this.$http.post(`user/get_group_by_did?id=${event}`).then((res) => {
         const { code, data } = res.data;
         if (code == 200) {
           this.roleList = res.data.data;
@@ -373,7 +504,6 @@ export default {
     roleDrop(event) {
       this.roleDId = event;
     },
-
     // 分页下拉
     handleCurrentChange(val) {
       this.page = val;
@@ -401,5 +531,8 @@ export default {
   border-radius: 8px;
   padding: 20px;
   box-sizing: border-box;
+  .table_button {
+    margin-bottom: 10px;
+  }
 }
 </style>

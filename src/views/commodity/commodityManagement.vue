@@ -4,13 +4,14 @@
     <!-- 搜索 -->
     <div class="title">
       <!-- 商品类型 -->
-      <el-select
+      <!-- <el-select
         v-model="commodityType"
         placeholder="商品类型"
         clearable
         filterable
         size="medium"
         style="width: 150px"
+        @change="changeSearch"
       >
         <el-option
           v-for="item in commodityTypeDrop"
@@ -18,20 +19,23 @@
           :label="item.name"
           :value="item.id"
         ></el-option>
-      </el-select>
+      </el-select> -->
       <!-- 分类 -->
       <el-select
         v-model="classify"
         placeholder="分类"
         clearable
         filterable
+        multiple
         size="medium"
-        style="width: 150px; margin-left: 10px"
+        style="width: 160px"
+        @visible-change="multipleSearch($event)"
+        @remove-tag="clearChageSearch"
       >
         <el-option
           v-for="item in classifyDrop"
           :key="item.id"
-          :label="item.name"
+          :label="item.category_name"
           :value="item.id"
         ></el-option>
       </el-select>
@@ -41,13 +45,16 @@
         placeholder="品牌"
         clearable
         filterable
+        multiple
         size="medium"
-        style="width: 150px; margin-left: 10px"
+        style="width: 160px; margin-left: 10px"
+        @visible-change="multipleSearch($event)"
+        @remove-tag="clearChageSearch"
       >
         <el-option
           v-for="item in brandDrop"
           :key="item.id"
-          :label="item.name"
+          :label="item.brand_name"
           :value="item.id"
         ></el-option>
       </el-select>
@@ -58,7 +65,8 @@
         clearable
         filterable
         size="medium"
-        style="width: 150px; margin-left: 10px"
+        style="width: 160px; margin-left: 10px"
+        @change="changeSearch"
       >
         <el-option
           v-for="item in stateDrop"
@@ -74,11 +82,12 @@
         class="input-with-select"
         style="width: 275px; margin-left: 10px"
         size="medium"
+        clearable
+        @keyup.enter.native="changeSearch"
+        @clear="clearChageSearch"
       >
         <el-select
           v-model="multipleDrop"
-          clearable
-          filterable
           slot="prepend"
           size="medium"
           style="width: 105px"
@@ -91,9 +100,13 @@
           ></el-option>
         </el-select>
       </el-input>
-      <el-button type="primary" size="medium" style="margin-left: 10px"
+      <!-- <el-button
+        type="primary"
+        size="medium"
+        style="margin-left: 10px"
+        @click="grabble"
         >搜索</el-button
-      >
+      > -->
     </div>
     <!-- 表格 -->
     <div class="table">
@@ -101,1115 +114,124 @@
         <el-button type="primary" size="small" @click="addGoods"
           >添加商品</el-button
         >
-        <el-button size="small" @click="addGoodsJoint">添加组合商品</el-button>
-        <!-- <el-dropdown
-          size="small"
-          split-button
-          trigger="click"
-          style="margin-left: 10px"
-        >
-          导入商品
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item>
-              <span>导入组合商品</span>
-            </el-dropdown-item>
-            <el-dropdown-item>
-              <span>导入更新商品</span>
-            </el-dropdown-item>
-            <el-dropdown-item>
-              <span>导入关联供应商</span>
-            </el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
-        <el-dropdown
-          size="small"
-          split-button
-          trigger="click"
-          style="margin-left: 10px"
-        >
-          批量编辑
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item>
-              <span>批量删除</span>
-            </el-dropdown-item>
-            <el-dropdown-item>
-              <span>批量删除图片</span>
-            </el-dropdown-item>
-            <el-dropdown-item>
-              <span>批量同步listing图片</span>
-            </el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown> -->
-        <el-button size="small" style="margin-left: 10px" @click="brandLabel"
+        <!-- <el-button size="small" @click="addGoodsJoint">添加组合商品</el-button> -->
+        <el-button size="small" @click="exportExcel">导出</el-button>
+        <!-- <el-button size="small" style="margin-left: 10px" @click="brandLabel"
           >打印标签</el-button
-        >
+        > -->
       </div>
       <el-table
         :data="tableData"
         border
         style="width: 100%"
+        height="620"
         ref="multipleTable"
         @selection-change="handleSelectionChange"
+        v-loading="loading"
+        element-loading-text="拼命加载中"
       >
         <el-table-column type="selection" width="55"> </el-table-column>
+        <el-table-column prop="number" label="图片" align="center" width="80">
+          <template slot-scope="scope">
+            <el-popover placement="right" title="" trigger="hover">
+              <el-image
+                slot="reference"
+                :src="$store.state.url + scope.row.img"
+                :alt="$store.state.url + scope.row.img"
+                style="width: 50px; height: 50px"
+              ></el-image>
+              <el-image
+                :src="$store.state.url + scope.row.img"
+                style="max-height: 200px; max-width: 200px"
+              ></el-image>
+            </el-popover>
+          </template>
+        </el-table-column>
         <el-table-column
-          prop="number"
-          label="图片"
+          prop="goods_name"
+          label="品名/SKU"
           align="center"
-        ></el-table-column>
+          width="160"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.goods_name }}</span>
+            <br />
+            <span>{{ scope.row.goods_sku }}</span>
+          </template>
+        </el-table-column>
         <el-table-column
-          prop="shipment_name"
-          label="图片/SKU"
-          align="center"
-        ></el-table-column>
-        <el-table-column
-          prop="shipment_id"
+          prop="category_name"
           label="分类"
           align="center"
         ></el-table-column>
+        <el-table-column label="采购成本" align="center" width="80">
+          <template slot-scope="scope">
+            <span v-if="scope.row.purchase_cost != null"
+              >￥{{ scope.row.purchase_cost }}</span
+            >
+          </template>
+        </el-table-column>
         <el-table-column
-          prop="SKU"
-          label="采购成本"
-          align="center"
-        ></el-table-column>
-        <el-table-column
-          prop="SKU"
+          prop="headOf"
           label="默认头程费用"
           align="center"
         ></el-table-column>
         <el-table-column
-          prop="SKU"
+          prop="supplier_name"
           label="供应商"
           align="center"
+          width="210"
         ></el-table-column>
+        <el-table-column label="交期" align="center" width="80">
+          <template slot-scope="scope">
+            <span v-if="scope.row.purchase_deliverydate"
+              >{{ scope.row.purchase_deliverydate }}天</span
+            >
+          </template>
+        </el-table-column>
         <el-table-column
-          prop="SKU"
-          label="交期"
-          align="center"
-        ></el-table-column>
-        <el-table-column
-          prop="SKU"
+          prop="create_time"
           label="创建时间"
           align="center"
+          width="180"
         ></el-table-column>
         <el-table-column
-          prop="SKU"
+          prop="goods_status"
           label="状态"
           align="center"
-        ></el-table-column>
+          width="80"
+        >
+          <template slot-scope="scope">
+            <span v-if="scope.row.goods_status == 1">可售</span>
+            <span v-if="scope.row.goods_status == 2">不可售</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="goods_status" label="类型" align="center">
+          <template slot-scope="scope">
+            <span v-if="scope.row.is_combined == 1">普通商品</span>
+            <span v-if="scope.row.is_combined == 2">组合商品</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="SKU" label="操作" align="center">
-          <template>
-            <el-dropdown
+          <template slot-scope="scope">
+            <!-- <el-dropdown
               size="small"
               split-button
               trigger="click"
-              @click="addGoods"
+              @click="details(scope.row)"
             >
               详情
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item>
-                  <span>打印标签</span>
-                </el-dropdown-item>
-                <el-dropdown-item>
                   <span>删除</span>
                 </el-dropdown-item>
               </el-dropdown-menu>
-            </el-dropdown>
+            </el-dropdown> -->
+            <el-button size="small" @click="details(scope.row)">详情</el-button>
           </template>
         </el-table-column>
       </el-table>
     </div>
-    <!-- 添加商品弹窗 -->
-    <el-dialog title="添加商品" :visible.sync="addGoodsPop" width="40%">
-      <div class="addGoods">
-        <div class="addGoods_title">
-          <div class="addGoodsTitle_img">
-            <img
-              src="https://m.media-amazon.com/images/I/41+ds5YaSIL._SL75_.jpg"
-              alt=""
-            />
-          </div>
-          <div class="addGoodsTitle_size">
-            <el-form label-width="50px">
-              <el-col :span="24">
-                <el-form-item label="品名">
-                  <el-input placeholder="请输入" v-model="form.name" clearable>
-                  </el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="24">
-                <el-form-item label="SKU">
-                  <el-input placeholder="请输入" v-model="form.name" clearable>
-                  </el-input>
-                </el-form-item>
-              </el-col>
-            </el-form>
-          </div>
-        </div>
-        <div class="addGoodsTitle_content">
-          <el-tabs v-model="activeName" @tab-click="handleClick">
-            <el-tab-pane label="基本" name="first">
-              <el-form label-width="80px">
-                <el-col :span="12">
-                  <el-form-item label="型号：">
-                    <el-input
-                      placeholder="请输入"
-                      v-model="form.name"
-                      clearable
-                    >
-                    </el-input>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                  <el-form-item label="单位">
-                    <el-input
-                      placeholder="请输入"
-                      v-model="form.name"
-                      clearable
-                    >
-                    </el-input>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                  <el-form-item label="状态">
-                    <el-select
-                      v-model="form.departmentPull"
-                      placeholder="请选择状态"
-                      style="width: 100%"
-                      clearable
-                    >
-                      <el-option
-                        v-for="item in replenishment"
-                        :key="item.id"
-                        :label="item.name"
-                        :value="item.id"
-                      ></el-option>
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                  <el-form-item label="分类">
-                    <el-select
-                      v-model="form.departmentPull"
-                      placeholder="全部分类"
-                      style="width: 100%"
-                      clearable
-                    >
-                      <el-option
-                        v-for="item in replenishment"
-                        :key="item.id"
-                        :label="item.name"
-                        :value="item.id"
-                      ></el-option>
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                  <el-form-item label="品牌">
-                    <el-select
-                      v-model="form.departmentPull"
-                      placeholder="全部品牌"
-                      style="width: 100%"
-                      clearable
-                    >
-                      <el-option
-                        v-for="item in replenishment"
-                        :key="item.id"
-                        :label="item.name"
-                        :value="item.id"
-                      ></el-option>
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                  <el-form-item label="开发人">
-                    <el-input
-                      placeholder="请输入"
-                      v-model="form.name"
-                      clearable
-                    >
-                    </el-input>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="24">
-                  <el-form-item label="商品描述">
-                    <el-input
-                      type="textarea"
-                      :rows="4"
-                      placeholder="请输入"
-                      v-model="form.name"
-                      clearable
-                    >
-                    </el-input>
-                  </el-form-item>
-                </el-col>
-              </el-form>
-            </el-tab-pane>
-            <el-tab-pane label="采购" name="second">
-              <div class="purchase">
-                <div class="purchasingInformation">
-                  <p>采购信息</p>
-                  <el-form label-width="80px">
-                    <el-col :span="12">
-                      <el-form-item label="采购员">
-                        <el-input
-                          placeholder="请输入"
-                          v-model="form.name"
-                          clearable
-                        >
-                        </el-input>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                      <el-form-item label="采购交期">
-                        <el-input
-                          placeholder="请输入"
-                          v-model="form.name"
-                          clearable
-                        >
-                          <template slot="append">天</template>
-                        </el-input>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                      <el-form-item label="采购成本">
-                        <el-input
-                          placeholder="CNY"
-                          v-model="form.name"
-                          clearable
-                          style="width: 80px"
-                        >
-                        </el-input>
-                        <el-input
-                          placeholder="请输入"
-                          v-model="form.name"
-                          clearable
-                          style="width: 200px"
-                        >
-                        </el-input>
-                      </el-form-item>
-                    </el-col>
-                  </el-form>
-                </div>
-                <div class="procurementRules">
-                  <p>采购规则</p>
-                  <el-form label-width="80px">
-                    <el-col :span="24">
-                      <el-form-item label="商品材质">
-                        <el-input
-                          placeholder="请输入"
-                          v-model="form.name"
-                          clearable
-                        >
-                        </el-input>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                      <el-form-item label="单品规格">
-                        <el-input
-                          placeholder="长"
-                          v-model="form.name"
-                          clearable
-                          style="width: 32%"
-                        >
-                        </el-input>
-                        <el-input
-                          placeholder="宽"
-                          v-model="form.name"
-                          clearable
-                          style="width: 32%"
-                        >
-                        </el-input>
-                        <el-input
-                          placeholder="高"
-                          v-model="form.name"
-                          clearable
-                          style="width: 32%"
-                        >
-                          <template slot="append">cm</template>
-                        </el-input>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                      <el-form-item label="单品净重">
-                        <el-input
-                          placeholder="请输入"
-                          v-model="form.name"
-                          clearable
-                        >
-                          <template slot="append">g</template>
-                        </el-input>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                      <el-form-item label="包装规格">
-                        <el-input
-                          placeholder="长"
-                          v-model="form.name"
-                          clearable
-                          style="width: 32%"
-                        >
-                        </el-input>
-                        <el-input
-                          placeholder="宽"
-                          v-model="form.name"
-                          clearable
-                          style="width: 32%"
-                        >
-                        </el-input>
-                        <el-input
-                          placeholder="高"
-                          v-model="form.name"
-                          clearable
-                          style="width: 32%"
-                        >
-                          <template slot="append">cm</template>
-                        </el-input>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                      <el-form-item label="单品毛重">
-                        <el-input
-                          placeholder="请输入"
-                          v-model="form.name"
-                          clearable
-                        >
-                          <template slot="append">g</template>
-                        </el-input>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                      <el-form-item label="箱规">
-                        <el-input
-                          placeholder="长"
-                          v-model="form.name"
-                          clearable
-                          style="width: 32%"
-                        >
-                        </el-input>
-                        <el-input
-                          placeholder="宽"
-                          v-model="form.name"
-                          clearable
-                          style="width: 32%"
-                        >
-                        </el-input>
-                        <el-input
-                          placeholder="高"
-                          v-model="form.name"
-                          clearable
-                          style="width: 32%"
-                        >
-                          <template slot="append">cm</template>
-                        </el-input>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                      <el-form-item label="单箱重量">
-                        <el-input
-                          placeholder="请输入"
-                          v-model="form.name"
-                          clearable
-                        >
-                          <template slot="append">kg</template>
-                        </el-input>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                      <el-form-item label="单箱数量">
-                        <el-input
-                          placeholder="请输入"
-                          v-model="form.name"
-                          clearable
-                        >
-                          <template slot="append">g</template>
-                        </el-input>
-                      </el-form-item>
-                    </el-col>
-                  </el-form>
-                </div>
-                <div class="supplier">
-                  <p>
-                    <span>供应商</span>
-                    <span @click="associatedSupplier">
-                      <i class="el-icon-plus"></i>
-                      关联供应商
-                    </span>
-                  </p>
-                  <el-table
-                    :data="tableData"
-                    border
-                    style="width: 100%; margin-top: 10px"
-                  >
-                    <el-table-column
-                      prop="date"
-                      label="供应商名称"
-                      align="center"
-                    >
-                    </el-table-column>
-                    <el-table-column
-                      prop="name"
-                      label="最小采购量"
-                      align="center"
-                    >
-                    </el-table-column>
-                    <el-table-column
-                      prop="address"
-                      label="采购单价(CNY)"
-                      align="center"
-                    >
-                    </el-table-column>
-                    <el-table-column
-                      prop="address"
-                      label="采购单价(USD)"
-                      align="center"
-                    >
-                    </el-table-column>
-                    <el-table-column
-                      prop="address"
-                      label="采购链接"
-                      align="center"
-                    >
-                    </el-table-column>
-                    <el-table-column
-                      prop="address"
-                      label="首选供应商"
-                      align="center"
-                    >
-                    </el-table-column>
-                    <el-table-column prop="address" label="操作" align="center">
-                    </el-table-column>
-                  </el-table>
-                </div>
-              </div>
-            </el-tab-pane>
-            <el-tab-pane label="物流" name="third">
-              <div class="logistics">
-                <el-form label-width="90px">
-                  <el-col :span="12">
-                    <el-form-item label="申报单价">
-                      <el-input
-                        placeholder="请输入内容"
-                        v-model="form.name"
-                        class="input-with-select"
-                      >
-                        <el-select
-                          v-model="form.name"
-                          slot="prepend"
-                          placeholder="请选择"
-                          style="width: 90px"
-                        >
-                          <el-option label="餐厅名" value="1"></el-option>
-                          <el-option label="订单号" value="2"></el-option>
-                          <el-option label="用户电话" value="3"></el-option>
-                        </el-select>
-                      </el-input>
-                    </el-form-item>
-                  </el-col>
-                  <el-col :span="24">
-                    <el-form-item label="中文报关名">
-                      <el-input
-                        placeholder="请输入"
-                        v-model="form.name"
-                        clearable
-                      >
-                      </el-input>
-                    </el-form-item>
-                  </el-col>
-                  <el-col :span="24">
-                    <el-form-item label="英文报关名">
-                      <el-input
-                        placeholder="请输入"
-                        v-model="form.name"
-                        clearable
-                      >
-                      </el-input>
-                    </el-form-item>
-                  </el-col>
-                  <el-table
-                    :data="logisticsTableData"
-                    height="250"
-                    border
-                    style="width: 100%"
-                  >
-                    <el-table-column prop="country" label="国家" align="center">
-                    </el-table-column>
-                    <el-table-column
-                      prop="name"
-                      label="默认头程费用(含税)"
-                      align="center"
-                      width="240"
-                    >
-                      <template slot-scope="scope" v-if="scope.row.id != 1">
-                        <el-input
-                          placeholder="请输入内容"
-                          v-model="input3"
-                          class="input-with-select"
-                          size="small"
-                        >
-                          <el-select
-                            v-model="select"
-                            slot="prepend"
-                            style="width:85px"
-                            
-                          >
-                            <el-option label="CNY" value="1"></el-option>
-                            <el-option label="USD" value="2"></el-option>
-                            <el-option label="EUR" value="3"></el-option>
-                          </el-select>
-                        </el-input>
-                      </template>
-                    </el-table-column>
-                    <el-table-column
-                      prop="address"
-                      label="HS Code"
-                      align="center"
-                    >
-                      <template>
-                        <el-input size="small"></el-input>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="address" label="税率" align="center">
-                      <template slot-scope="scope" v-if="scope.row.id !=1">
-                        <el-input size="small"></el-input>
-                      </template>
-                    </el-table-column>
-                  </el-table>
-                </el-form>
-              </div>
-            </el-tab-pane>
-          </el-tabs>
-        </div>
-      </div>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="addGoodsPop = false">取 消</el-button>
-        <el-button type="primary" @click="addGoodsPop = false">确 定</el-button>
-      </span>
-    </el-dialog>
-    <!-- 关联供应商弹窗 -->
-    <el-dialog
-      title="选择供应商"
-      :visible.sync="associatedSupplierpop"
-      width="40%"
-    >
-      <el-input
-        placeholder="请输入供应商搜索"
-        style="width: 300px; margin-bottom: 10px"
-      >
-        <el-button slot="append" icon="el-icon-search"></el-button>
-      </el-input>
-      <el-table
-        :data="tableData"
-        border
-        style="width: 100%"
-        ref="multipleTable"
-        @selection-change="handleSelectionChange"
-      >
-        <el-table-column type="selection" width="55"> </el-table-column>
-        <el-table-column prop="date" label="供应商名称" align="center">
-        </el-table-column>
-        <el-table-column prop="name" label="联系人" align="center">
-        </el-table-column>
-        <el-table-column prop="address" label="联系电话" align="center">
-        </el-table-column>
-        <el-table-column prop="address" label="地址" align="center">
-        </el-table-column>
-      </el-table>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="associatedSupplierpop = false">取 消</el-button>
-        <el-button type="primary" @click="associatedSupplierpop = false"
-          >确 定</el-button
-        >
-      </span>
-    </el-dialog>
-    <!-- 添加组合商品弹窗 -->
-    <el-dialog
-      title="添加组合商品"
-      :visible.sync="addGoodsJointPop"
-      width="40%"
-    >
-      <div class="addGoods">
-        <div class="addGoods_title">
-          <div class="addGoodsTitle_img">
-            <img
-              src="https://m.media-amazon.com/images/I/41+ds5YaSIL._SL75_.jpg"
-              alt=""
-            />
-          </div>
-          <div class="addGoodsTitle_size">
-            <el-form label-width="50px">
-              <el-col :span="24">
-                <el-form-item label="品名">
-                  <el-input placeholder="请输入" v-model="form.name" clearable>
-                  </el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="24">
-                <el-form-item label="SKU">
-                  <el-input placeholder="请输入" v-model="form.name" clearable>
-                  </el-input>
-                </el-form-item>
-              </el-col>
-            </el-form>
-          </div>
-        </div>
-        <div class="addGoodsTitle_content">
-          <el-tabs v-model="activeName" @tab-click="handleClick">
-            <el-tab-pane label="基本" name="first">
-              <el-form label-width="80px">
-                <el-col :span="12">
-                  <el-form-item label="型号：">
-                    <el-input
-                      placeholder="请输入"
-                      v-model="form.name"
-                      clearable
-                    >
-                    </el-input>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                  <el-form-item label="单位">
-                    <el-input
-                      placeholder="请输入"
-                      v-model="form.name"
-                      clearable
-                    >
-                    </el-input>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                  <el-form-item label="状态">
-                    <el-select
-                      v-model="form.departmentPull"
-                      placeholder="请选择状态"
-                      style="width: 100%"
-                      clearable
-                    >
-                      <el-option
-                        v-for="item in replenishment"
-                        :key="item.id"
-                        :label="item.name"
-                        :value="item.id"
-                      ></el-option>
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                  <el-form-item label="分类">
-                    <el-select
-                      v-model="form.departmentPull"
-                      placeholder="全部分类"
-                      style="width: 100%"
-                      clearable
-                    >
-                      <el-option
-                        v-for="item in replenishment"
-                        :key="item.id"
-                        :label="item.name"
-                        :value="item.id"
-                      ></el-option>
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                  <el-form-item label="品牌">
-                    <el-select
-                      v-model="form.departmentPull"
-                      placeholder="全部品牌"
-                      style="width: 100%"
-                      clearable
-                    >
-                      <el-option
-                        v-for="item in replenishment"
-                        :key="item.id"
-                        :label="item.name"
-                        :value="item.id"
-                      ></el-option>
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                  <el-form-item label="开发人">
-                    <el-input
-                      placeholder="请输入"
-                      v-model="form.name"
-                      clearable
-                    >
-                    </el-input>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="24">
-                  <el-form-item label="商品描述">
-                    <el-input
-                      type="textarea"
-                      :rows="4"
-                      placeholder="请输入"
-                      v-model="form.name"
-                      clearable
-                    >
-                    </el-input>
-                  </el-form-item>
-                </el-col>
-              </el-form>
-              <div class="containsGoods">
-                <p>
-                  <span>包含商品</span>
-                  <span @click="addContains">
-                    <i class="el-icon-plus"></i>
-                    添加商品
-                  </span>
-                </p>
-              </div>
-            </el-tab-pane>
-            <el-tab-pane label="采购" name="second">
-              <div class="purchase">
-                <div class="purchasingInformation">
-                  <p>采购信息</p>
-                  <el-form label-width="80px">
-                    <el-col :span="12">
-                      <el-form-item label="采购员">
-                        <el-input
-                          placeholder="请输入"
-                          v-model="form.name"
-                          clearable
-                        >
-                        </el-input>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                      <el-form-item label="采购交期">
-                        <el-input
-                          placeholder="请输入"
-                          v-model="form.name"
-                          clearable
-                        >
-                          <template slot="append">天</template>
-                        </el-input>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                      <el-form-item label="采购成本">
-                        <el-input
-                          placeholder="CNY"
-                          v-model="form.name"
-                          clearable
-                          style="width: 80px"
-                        >
-                        </el-input>
-                        <el-input
-                          placeholder="请输入"
-                          v-model="form.name"
-                          clearable
-                          style="width: 200px"
-                        >
-                        </el-input>
-                      </el-form-item>
-                    </el-col>
-                  </el-form>
-                </div>
-                <div class="procurementRules">
-                  <p>采购规则</p>
-                  <el-form label-width="80px">
-                    <el-col :span="24">
-                      <el-form-item label="商品材质">
-                        <el-input
-                          placeholder="请输入"
-                          v-model="form.name"
-                          clearable
-                        >
-                        </el-input>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                      <el-form-item label="单品规格">
-                        <el-input
-                          placeholder="长"
-                          v-model="form.name"
-                          clearable
-                          style="width: 32%"
-                        >
-                        </el-input>
-                        <el-input
-                          placeholder="宽"
-                          v-model="form.name"
-                          clearable
-                          style="width: 32%"
-                        >
-                        </el-input>
-                        <el-input
-                          placeholder="高"
-                          v-model="form.name"
-                          clearable
-                          style="width: 32%"
-                        >
-                          <template slot="append">cm</template>
-                        </el-input>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                      <el-form-item label="单品净重">
-                        <el-input
-                          placeholder="请输入"
-                          v-model="form.name"
-                          clearable
-                        >
-                          <template slot="append">g</template>
-                        </el-input>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                      <el-form-item label="包装规格">
-                        <el-input
-                          placeholder="长"
-                          v-model="form.name"
-                          clearable
-                          style="width: 32%"
-                        >
-                        </el-input>
-                        <el-input
-                          placeholder="宽"
-                          v-model="form.name"
-                          clearable
-                          style="width: 32%"
-                        >
-                        </el-input>
-                        <el-input
-                          placeholder="高"
-                          v-model="form.name"
-                          clearable
-                          style="width: 32%"
-                        >
-                          <template slot="append">cm</template>
-                        </el-input>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                      <el-form-item label="单品毛重">
-                        <el-input
-                          placeholder="请输入"
-                          v-model="form.name"
-                          clearable
-                        >
-                          <template slot="append">g</template>
-                        </el-input>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                      <el-form-item label="箱规">
-                        <el-input
-                          placeholder="长"
-                          v-model="form.name"
-                          clearable
-                          style="width: 32%"
-                        >
-                        </el-input>
-                        <el-input
-                          placeholder="宽"
-                          v-model="form.name"
-                          clearable
-                          style="width: 32%"
-                        >
-                        </el-input>
-                        <el-input
-                          placeholder="高"
-                          v-model="form.name"
-                          clearable
-                          style="width: 32%"
-                        >
-                          <template slot="append">cm</template>
-                        </el-input>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                      <el-form-item label="单箱重量">
-                        <el-input
-                          placeholder="请输入"
-                          v-model="form.name"
-                          clearable
-                        >
-                          <template slot="append">kg</template>
-                        </el-input>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                      <el-form-item label="单箱数量">
-                        <el-input
-                          placeholder="请输入"
-                          v-model="form.name"
-                          clearable
-                        >
-                          <template slot="append">g</template>
-                        </el-input>
-                      </el-form-item>
-                    </el-col>
-                  </el-form>
-                </div>
-                <div class="supplier">
-                  <p>
-                    <span>供应商</span>
-                    <span @click="associatedSupplier">
-                      <i class="el-icon-plus"></i>
-                      关联供应商
-                    </span>
-                  </p>
-                  <el-table
-                    :data="tableData"
-                    border
-                    style="width: 100%; margin-top: 10px"
-                  >
-                    <el-table-column
-                      prop="date"
-                      label="供应商名称"
-                      align="center"
-                    >
-                    </el-table-column>
-                    <el-table-column
-                      prop="name"
-                      label="最小采购量"
-                      align="center"
-                    >
-                    </el-table-column>
-                    <el-table-column
-                      prop="address"
-                      label="采购单价(CNY)"
-                      align="center"
-                    >
-                    </el-table-column>
-                    <el-table-column
-                      prop="address"
-                      label="采购单价(USD)"
-                      align="center"
-                    >
-                    </el-table-column>
-                    <el-table-column
-                      prop="address"
-                      label="采购链接"
-                      align="center"
-                    >
-                    </el-table-column>
-                    <el-table-column
-                      prop="address"
-                      label="首选供应商"
-                      align="center"
-                    >
-                    </el-table-column>
-                    <el-table-column prop="address" label="操作" align="center">
-                    </el-table-column>
-                  </el-table>
-                </div>
-              </div>
-            </el-tab-pane>
-            <el-tab-pane label="物流" name="third">
-              <div class="logistics">
-                <el-form label-width="90px">
-                  <el-col :span="12">
-                    <el-form-item label="申报单价">
-                      <el-input
-                        placeholder="请输入内容"
-                        v-model="form.name"
-                        class="input-with-select"
-                      >
-                        <el-select
-                          v-model="form.name"
-                          slot="prepend"
-                          placeholder="请选择"
-                          style="width: 90px"
-                        >
-                          <el-option label="餐厅名" value="1"></el-option>
-                          <el-option label="订单号" value="2"></el-option>
-                          <el-option label="用户电话" value="3"></el-option>
-                        </el-select>
-                      </el-input>
-                    </el-form-item>
-                  </el-col>
-                  <el-col :span="24">
-                    <el-form-item label="中文报关名">
-                      <el-input
-                        placeholder="请输入"
-                        v-model="form.name"
-                        clearable
-                      >
-                      </el-input>
-                    </el-form-item>
-                  </el-col>
-                  <el-col :span="24">
-                    <el-form-item label="英文报关名">
-                      <el-input
-                        placeholder="请输入"
-                        v-model="form.name"
-                        clearable
-                      >
-                      </el-input>
-                    </el-form-item>
-                  </el-col>
-                  <el-table
-                    :data="tableData"
-                    height="250"
-                    border
-                    style="width: 100%"
-                  >
-                    <el-table-column prop="date" label="国家" align="center">
-                    </el-table-column>
-                    <el-table-column
-                      prop="name"
-                      label="默认头程费用(含税)"
-                      align="center"
-                    >
-                    </el-table-column>
-                    <el-table-column
-                      prop="address"
-                      label="HS Code"
-                      align="center"
-                    >
-                    </el-table-column>
-                    <el-table-column prop="address" label="税率" align="center">
-                    </el-table-column>
-                  </el-table>
-                </el-form>
-              </div>
-            </el-tab-pane>
-          </el-tabs>
-        </div>
-      </div>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="addGoodsJointPop = false">取 消</el-button>
-        <el-button type="primary" @click="addGoodsJointPop = false"
-          >确 定</el-button
-        >
-      </span>
-    </el-dialog>
-    <!-- 添加商品弹窗 -->
-    <el-dialog title="选择商品" :visible.sync="addContainsPop" width="40%">
-      <el-input
-        placeholder="请输入品名/SKU搜索"
-        style="width: 300px; margin-bottom: 10px"
-      >
-        <el-button slot="append" icon="el-icon-search"></el-button>
-      </el-input>
-      <el-table
-        :data="tableData"
-        border
-        style="width: 100%"
-        ref="multipleTable"
-        @selection-change="handleSelectionChange"
-      >
-        <el-table-column type="selection" width="55"> </el-table-column>
-        <el-table-column prop="date" label="图片" align="center">
-        </el-table-column>
-        <el-table-column prop="name" label="品名/SKU" align="center">
-        </el-table-column>
-        <el-table-column prop="address" label="分类" align="center">
-        </el-table-column>
-        <el-table-column prop="address" label="品牌" align="center">
-        </el-table-column>
-      </el-table>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="addContainsPop = false">取 消</el-button>
-        <el-button type="primary" @click="addContainsPop = false"
-          >确 定</el-button
-        >
-      </span>
-    </el-dialog>
     <!-- 打印标签  -->
     <el-dialog title="打印标签" :visible.sync="brandLabelPop" width="45%">
       <div class="brandLabel">
@@ -1237,50 +259,64 @@
         >
       </span>
     </el-dialog>
+    <!-- 添加商品 -->
+    <AddGoods :addGoodsClose.sync="addGoodsClose" ref="addGoodsChild" />
+    <!-- 添加组合商品 -->
+    <AddGoodsJoint
+      :addGoodsJointClose.sync="addGoodsJointClose"
+      ref="addGoodsJointChild"
+    />
+    <!-- 详情 -->
+    <Details
+      :detailsClose.sync="detailsClose"
+      :isCombined.sync="isCombined"
+      ref="detailsChild"
+    />
     <!-- 分页 -->
-    <div class="paging">
-      <el-pagination
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page="currentPage1"
-        :page-sizes="[100, 200, 300, 400]"
-        :page-size="100"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="400"
-      ></el-pagination>
-    </div>
+    <pagination
+      :page="page"
+      :total="total"
+      :limit="limit"
+      @handleCurrentChange="handleCurrentChange"
+      @handleSizeChange="handleSizeChange"
+    />
   </div>
 </template>
 
 <script>
+import pagination from "@/components/pagination"; // 分页
+import Details from "./cManagementComponents/details"; // 详情
+import AddGoods from "./cManagementComponents/addGoods"; // 添加商品
+import AddGoodsJoint from "./cManagementComponents/addGoodsJoint"; // 添加组合商品
 export default {
+  components: {
+    pagination,
+    Details,
+    AddGoods,
+    AddGoodsJoint,
+  },
   data() {
     return {
-      input3:'',
-      select:'',
-      addGoodsPop: false, //添加商品弹窗
-      associatedSupplierpop: false, //关联供应商弹窗
+      loading: true,
+      addGoodsClose: false, //添加商品弹窗关闭
+      detailsClose: false, //详情弹窗关闭
+      addGoodsJointClose: false, //添加组合商品弹窗关闭
       addGoodsJointPop: false, //添加组合商品弹窗
-      addContainsPop: false, //添加商品弹窗
       brandLabelPop: false, //打印标签弹窗
       commodityType: "", //商品类型
       // 商品类型下拉
       commodityTypeDrop: [
         {
           id: 1,
-          name: "全部",
-        },
-        {
-          id: 2,
           name: "普通商品",
         },
         {
-          id: 3,
+          id: 2,
           name: "组合商品",
         },
       ],
       date: "", //日期
-      classify: "", //分类
+      classify: [], //分类
       //分类下拉
       classifyDrop: [
         {
@@ -1301,11 +337,15 @@ export default {
       stateDrop: [
         {
           id: 1,
-          name: "状态",
+          name: "可售",
+        },
+        {
+          id: 2,
+          name: "不可售",
         },
       ],
       searchContent: "", //搜索
-      multipleDrop: "", //多个下拉值
+      multipleDrop: 1, //多个下拉值
       multipleConditions: [
         {
           id: 1,
@@ -1328,102 +368,139 @@ export default {
           name: "供应商",
         },
       ],
-      logisticsTableData: [
-        {
-          id: 1,
-          country: "中国",
-        },
-        {
-          id: 2,
-          country: "美国",
-        },
-      ], //物流列表
-      activeName: "first",
-      currentPage1: 1,
-      disabled: false,
-      checked: false,
-      radio: 3,
-      form: {
-        name: "",
-      },
-      form: {
-        name: "",
-        departmentPull: "",
-        status: "",
-      },
-      departmentPull: [],
-      replenishment: [
-        //是否当前补货
-        {
-          id: 1,
-          name: "全部",
-        },
-        {
-          id: 2,
-          name: "是",
-        },
-        {
-          id: 3,
-          name: "否",
-        },
-        {
-          id: 4,
-          name: "无需提醒",
-        },
-      ],
-      state: [
-        //状态
-        {
-          id: 1,
-          label: "启用",
-        },
-        {
-          id: 2,
-          label: "禁用",
-        },
-      ],
-      tableData: [
-        {
-          id: 1,
-          number: 2,
-        },
-      ],
+      tableData: [], //列表数据
+      page: 1,
+      limit: 10,
+      total: 0,
+      id: "",
+      isCombined: "",
+      imgUrl: "",
     };
   },
-  mounted() {},
+  mounted() {
+    this.getList();
+  },
   methods: {
     // 添加商品弹窗
     addGoods() {
-      this.addGoodsPop = true;
-    },
-    // 关联供应商弹窗
-    associatedSupplier() {
-      console.log(1);
-      this.associatedSupplierpop = true;
+      this.addGoodsClose = true;
+      this.$refs.addGoodsChild.addMerchandise();
     },
     // 添加组合商品弹窗
     addGoodsJoint() {
-      this.addGoodsJointPop = true;
+      this.addGoodsJointClose = true;
+      this.$refs.addGoodsJointChild.addMultiple();
     },
-    // 添加商品弹窗
-    addContains() {
-      this.addContainsPop = true;
+    // 导出
+    exportExcel() {
+      this.loading = true;
+      this.$http
+        .get(`goods/export_goods_excel`, {
+          params: {
+            page: this.page,
+            limit: this.limit,
+            is_combined: this.commodityType, //商品类型
+            goods_type: JSON.stringify(this.classify), //分类
+            goods_brand: JSON.stringify(this.brand), //品牌
+            goods_status: this.state, //状态
+            goods_sku: this.multipleDrop == 1 ? this.searchContent : "", //SKU
+            goods_name: this.multipleDrop == 2 ? this.searchContent : "", //品名
+            goods_developer: this.multipleDrop == 3 ? this.searchContent : "", //开发人
+            purchase_buyer: this.multipleDrop == 4 ? this.searchContent : "", //采购员
+            goods_supplier: this.multipleDrop == 5 ? this.searchContent : "", //供应商
+          },
+        })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == 200) {
+            this.loading = false;
+            this.uploadUrl = res.data.data;
+            window.location.href = "http://" + this.uploadUrl;
+            this.$message.success(res.data.message);
+          } else {
+            this.$message.error(res.data.message);
+          }
+        });
+    },
+    // 详情
+    details(row) {
+      this.$store.commit("Allid/setPrint", {
+        //商品管理详情id
+        commodityId: row.id,
+      });
+      this.isCombined = row.is_combined.toString();
+      this.detailsClose = true;
+      this.$refs.detailsChild.clickTab();
+    },
+    // 列表数据
+    getList() {
+      this.$http
+        .get(`goods/goods_list`, {
+          params: {
+            page: this.page,
+            limit: this.limit,
+            is_combined: this.commodityType, //商品类型
+            goods_type: JSON.stringify(this.classify), //分类
+            goods_brand: JSON.stringify(this.brand), //品牌
+            goods_status: this.state, //状态
+            goods_sku: this.multipleDrop == 1 ? this.searchContent : "", //SKU
+            goods_name: this.multipleDrop == 2 ? this.searchContent : "", //品名
+            goods_developer: this.multipleDrop == 3 ? this.searchContent : "", //开发人
+            purchase_buyer: this.multipleDrop == 4 ? this.searchContent : "", //采购员
+            goods_supplier: this.multipleDrop == 5 ? this.searchContent : "", //供应商
+          },
+        })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == 200) {
+            this.loading = false;
+            this.tableData = res.data.data.data;
+            this.brandDrop = res.data.data.brand; //品牌
+            this.classifyDrop = res.data.data.category; //分类
+            this.total = res.data.count;
+          } else {
+            this.$message.error(res.data.message);
+          }
+        });
+    },
+    // 搜索
+    changeSearch() {
+      this.loading = true;
+      this.page = 1;
+      this.getList();
+    },
+    // 多选搜索
+    multipleSearch(event) {
+      if (event == false) {
+        this.loading = true;
+        this.page = 1;
+        this.getList();
+      }
+    },
+    // 清除搜索input
+    clearChageSearch() {
+      this.loading = true;
+      this.getList();
     },
     // 打印标签弹窗
     brandLabel() {
       this.brandLabelPop = true;
     },
-    handleClick(tab, event) {
-      console.log(tab, event);
-    },
     handleSelectionChange(val) {
       this.multipleSelection = val;
     },
-    handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
-    },
+    // 分页下拉
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
+      this.loading = true;
+      this.page = val;
+      this.getList();
+    },
+    // 分页右滚
+    handleSizeChange(val) {
+      this.loading = true;
+      this.limit = val;
+      this.page = 1;
+      this.getList();
     },
   },
 };
@@ -1456,9 +533,49 @@ export default {
     .addGoodsTitle_img {
       width: 15%;
       height: 100%;
-      img {
-        width: 100%;
-        height: 100%;
+      .uploadImg {
+        width: 100px;
+        height: 100px;
+        border: 1px dashed #8c939d;
+        text-align: center;
+        line-height: 100px;
+        border-radius: 10px;
+        position: relative;
+        img {
+          width: 100%;
+          height: 100%;
+          border: none;
+          border-radius: 10px;
+        }
+        .mark {
+          position: absolute;
+          top: 0px;
+          right: 0;
+          z-index: 1;
+          display: inline-block;
+          border: 15px solid #67c23a;
+          height: 0;
+          width: 0;
+          border-left-color: transparent;
+          border-bottom-color: transparent;
+          border-top-right-radius: 10px;
+          .mark_item {
+            position: absolute;
+            top: -15px;
+            right: -12px;
+            z-index: 2;
+            color: #fff;
+          }
+        }
+      }
+      .uploadImg:hover {
+        width: 100px;
+        height: 100px;
+        border: 1px dashed #409eff;
+        text-align: center;
+        line-height: 100px;
+        cursor: pointer;
+        border-radius: 10px;
       }
     }
     .addGoodsTitle_size {
@@ -1467,7 +584,6 @@ export default {
     }
   }
   .addGoodsTitle_content {
-    margin-top: 15px;
     // 添加组合商品的包含商品
     .containsGoods {
       p {

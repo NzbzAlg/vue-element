@@ -1,23 +1,27 @@
 <template>
-<!-- 订单金额 -->
+  <!-- 订单金额 -->
   <div
     id="orderAmountEcharts"
     :style="{ width: '100%', height: '200px' }"
+     v-on-echart-resize
   ></div>
 </template>
 
 <script>
+// import "../../../utils/chart.resize";
 export default {
   data() {
     return {};
   },
-  mounted(){
-      this.drawLine()
+  mounted() {
+    this.drawLine();
   },
   methods: {
     drawLine() {
       // 基于准备好的dom，初始化echarts实例
-      let myChart = this.$echarts.init(document.getElementById("orderAmountEcharts"));
+      let myChart = this.$echarts.init(
+        document.getElementById("orderAmountEcharts")
+      );
       // 绘制图表
       myChart.setOption({
         title: {},

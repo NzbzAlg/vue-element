@@ -6,14 +6,6 @@ import Login from "@/views/login/index.vue"
 import Home from "@/views/index.vue"
 // 管理中心 => 数据看板
 import DataBoard from "@/views/home/dataBoard.vue"
-//分析 => 排名分析 => 关键词分析
-import KeywordAnalysis from "@/views/analyse/rankingAnalysis/keywordAnalysis.vue"
-//分析 => 市场分析 => 市场分析表
-import MarketAnalysisTable from "@/views/analyse/marketAnalysis/marketAnalysisTable.vue"
-//分析 => 主推程序 => 主推数据
-import MainData from "@/views/analyse/mainProgram/mainData.vue"
-//分析 => 评论采集 => 评论数据
-import ReviewData from "@/views/analyse/CommentsAcquisition/reviewData.vue"
 
 //仓库 => 库存 => 仓库列表
 import WarehouseList from "@/views/warehouse/inventory/warehouseList.vue"
@@ -39,14 +31,7 @@ import IncomingOutgoingFlow from "@/views/warehouse/outInPut/IncomingOutgoingFlo
 import SummaryDials from "@/views/warehouse/outInPut/SummaryDials.vue"
 //仓库 => 出入库 => 补发货订单
 import ReissueOrder from "@/views/warehouse/outInPut/ReissueOrder.vue"
-//仓库 => 采购订单 => 未处理
-import Untreated from "@/views/warehouse/purchaseOrder/untreated.vue"
-//仓库 => 采购订单 => 已处理
-import Processed from "@/views/warehouse/purchaseOrder/processed.vue"
-//仓库 => 库存整合 => 整合
-import Conformity from "@/views/warehouse/InventoryIntegration/conformity.vue"
-//仓库 => 库存整合 => 整合单
-import ConformityOrder from "@/views/warehouse/InventoryIntegration/conformityOrder.vue"
+
 
 //仓库 => FBA库存管理 => FBA看板
 import FBAboard from "@/views/warehouse/inventoryManagement/FBAboard.vue"
@@ -60,7 +45,6 @@ import CostingList from "@/views/warehouse/inventoryManagement/costingList.vue"
 import ProcurementCenter from "@/views/warehouse/inventoryManagement/procurementCenter.vue"
 //仓库 => FBA库存管理 => FBA配送费异常
 import AbnormalDistribution from "@/views/warehouse/inventoryManagement/abnormalDistribution.vue"
-
 //仓库 => 补货 => 补货建议
 import ReplenishmentProposal from "@/views/warehouse/replenishment/replenishmentProposal.vue"
 
@@ -73,26 +57,12 @@ import DispatchList from "@/views/warehouse/parcel/dispatchList.vue"
 //仓库 => 货件 => 头程分摊
 import FirstLegSplit from "@/views/warehouse/parcel/firstLegSplit.vue"
 
-//商品 => 商品数据管理
-import DataManagement from "@/views/commodity/dataManagement.vue"
-//商品 => 采购部商品
-import MerchandiseDepartment from "@/views/commodity/merchandiseDepartment.vue"
-//商品 => 产品部商品
-import ProductsDepartment from "@/views/commodity/productsDepartment.vue"
 //商品 => 商品管理
 import CommodityManagement from "@/views/commodity/commodityManagement.vue"
-//商品 => 辅料管理
-import MaterialsManagement from "@/views/commodity/materialsManagement.vue"
 //商品 => 品牌管理
 import BrandManagement from "@/views/commodity/brandManagement.vue"
 //商品 => 分类管理
 import SortManagement from "@/views/commodity/sortManagement.vue"
-//商品 => 供应商
-import Supplier from "@/views/commodity/supplier.vue"
-//商品 => 已删除商品
-import DeletedItem from "@/views/commodity/deletedItem.vue"
-//商品 => 批量上传图
-import BatchMapUpload from "@/views/commodity/batchMapUpload.vue"
 
 //采购 => 采购单据 => 采购计划
 import ProcurementPlan from "@/views/purchase/purchasingDocuments/procurementPlan.vue"
@@ -105,32 +75,25 @@ import PaymentRecord from "@/views/purchase/purchasingPayment/paymentRecord.vue"
 //采购 => 供应商协同 => 供应商
 import Distributor from "@/views/purchase/supplierCollaboration/distributor.vue"
 
-//物流 => 物流单汇总
-import LogisticsSummary from "@/views/logistics/logisticsSummary.vue"
-//物流 => 物流单
+//物流 => 头程物流
 import LogisticsBill from "@/views/logistics/logisticsBill.vue"
-//物流 => 物流商信息
+//物流 => 自发货物流
 import LogisticsInformation from "@/views/logistics/logisticsInformation.vue"
-//物流 => 自发货汇总
-import VoluntarySummary from "@/views/logistics/voluntarySummary.vue"
-//物流 => 其他费用
-import OtherExpenses from "@/views/logistics/otherExpenses.vue"
 
-//销售 => Listing
-import Listing from "@/views/orderForm/listing.vue"
+//销售 => 客户列表
+import CustomerList from "@/views/orderForm/customerList.vue"
+//销售 => 移除订单
+import RemovalOrder from "@/views/orderForm/removalOrder.vue"
+//销售 => 退货订单
+import RefundOrder from "@/views/orderForm/refundOrder.vue"
 //销售 => 售后评价
 import SaleEvaluate from "@/views/orderForm/saleEvaluate.vue"
 //销售 => 订单列表
 import OrderList from "@/views/orderForm/orderList.vue"
-//销售 => 订单发货
+//销售 => 自发货订单
 import SelfShipment from "@/views/orderForm/selfShipment.vue"
-//销售 => 退货订单
-import RefundOrder from "@/views/orderForm/refundOrder.vue"
-//销售 => 移除订单
-import RemovalOrder from "@/views/orderForm/removalOrder.vue"
-//销售 => 客户列表
-import CustomerList from "@/views/orderForm/customerList.vue"
-
+//销售 => Listing
+import Listing from "@/views/orderForm/listing.vue"
 
 //系统 => 用户管理
 import UserManagement from "@/views/system/userManagement.vue"
@@ -184,12 +147,6 @@ import MonthlyInventory from "@/views/financialData/information/monthlyInventory
 import StatementAccountsPayable from "@/views/financialData/information/statementAccountsPayable.vue"
 //财务数据 => 数据 => 合同汇总表
 import SummaryContract from "@/views/financialData/information/summaryContract.vue"
-//财务数据 => 数据 => VAT报表一
-import VATReportOne from "@/views/financialData/information/VATReportOne.vue"
-//财务数据 => 数据 => VAT报表二
-import VATReportTwo from "@/views/financialData/information/VATReportTwo.vue"
-//财务数据 => 数据 => VAT报表三
-import VATReportThree from "@/views/financialData/information/VATReportThree.vue"
 //财务数据 => 报表 => 入库单
 import FinancialReceipt from "@/views/financialData/reportForms/financialReceipt.vue"
 //财务数据 => 报表 => 调拨单
@@ -235,9 +192,13 @@ import CrossBorderMorning from "@/views/utilityClass/crossBorderMorning.vue"
 //工具类 => 店铺销量报表
 import StoreSalesReport from "@/views/utilityClass/storeSalesReport.vue"
 
+//OA => 学习资料
+import LearningMaterials from "@/views/OA/learningMaterials.vue"
+
 Vue.use(VueRouter)
 
 const routes = [
+  
   {
     path:"/",
     redirect:"/login"
@@ -259,32 +220,6 @@ const routes = [
         path:"/dataBoard",
         component:DataBoard
       },
-
-      //分析 => 排名分析 => 关键词分析
-      {
-        name:"keywordAnalysis",
-        path:"/keywordAnalysis",
-        component:KeywordAnalysis
-      },
-      //分析 => 市场分析 => 市场分析表
-      {
-        name:"marketAnalysisTable",
-        path:"/marketAnalysisTable",
-        component:MarketAnalysisTable
-      },
-      //分析 => 主推程序 => 主推数据
-      {
-        name:"mainData",
-        path:"/mainData",
-        component:MainData
-      },
-      //分析 => 评论采集 => 评论数据
-      {
-        name:"reviewData",
-        path:"/reviewData",
-        component:ReviewData
-      },
-      
       //仓库 => 库存 => 仓库列表
       {
         name:"warehouseList",
@@ -357,30 +292,6 @@ const routes = [
         path:"/ReissueOrder",
         component:ReissueOrder
       },
-      //仓库 => 采购订单 => 未处理
-      {
-        name:"untreated",
-        path:"/untreated",
-        component:Untreated
-      },
-      //仓库 => 采购订单 => 已处理
-      {
-        name:"processed",
-        path:"/processed",
-        component:Processed
-      },
-      //仓库 => 库存整合 => 整合
-      {
-        name:"conformity",
-        path:"/conformity",
-        component:Conformity
-      },
-      //仓库 => 库存整合 => 整合单
-      {
-        name:"conformityOrder",
-        path:"/conformityOrder",
-        component:ConformityOrder
-      },
       //仓库 => FBA库存管理 => FBA看板
       {
         name:"FBAboard",
@@ -449,35 +360,11 @@ const routes = [
       },
 
 
-      //商品 => 商品数据管理
-      {
-        name:"dataManagement",
-        path:"/dataManagement",
-        component:DataManagement
-      },
-      //商品 => 采购部商品
-      {
-        name:"merchandiseDepartment",
-        path:"/merchandiseDepartment",
-        component:MerchandiseDepartment
-      },
-      //商品 => 产品部商品
-      {
-        name:"productsDepartment",
-        path:"/productsDepartment",
-        component:ProductsDepartment
-      },
       //商品 => 商品管理
       {
         name:"commodityManagement",
         path:"/commodityManagement",
         component:CommodityManagement
-      },
-      //商品 => 辅料管理
-      {
-        name:"materialsManagement",
-        path:"/materialsManagement",
-        component:MaterialsManagement
       },
       //商品 => 品牌管理
       {
@@ -491,24 +378,7 @@ const routes = [
         path:"/sortManagement",
         component:SortManagement
       },
-      //商品 => 供应商
-      {
-        name:"supplier",
-        path:"/supplier",
-        component:Supplier
-      },
-      //商品 => 已删除商品
-      {
-        name:"deletedItem",
-        path:"/deletedItem",
-        component:DeletedItem
-      },
-      //商品 => 批量图上传
-      {
-        name:"batchMapUpload",
-        path:"/batchMapUpload",
-        component:BatchMapUpload
-      },
+
 
       //采购 => 采购单据 => 采购计划
       {
@@ -542,12 +412,6 @@ const routes = [
       },
 
       
-      //物流 => 物流单汇总
-      {
-        name:"logisticsSummary",
-        path:"/logisticsSummary",
-        component:LogisticsSummary
-      },
       //物流 => 物流单
       {
         name:"logisticsBill",
@@ -560,18 +424,7 @@ const routes = [
         path:"/logisticsInformation",
         component:LogisticsInformation
       },
-      //物流 => 自发货汇总
-      {
-        name:"voluntarySummary",
-        path:"/voluntarySummary",
-        component:VoluntarySummary
-      },
-      //物流 => 其他费用
-      {
-        name:"otherExpenses",
-        path:"/otherExpenses",
-        component:OtherExpenses
-      },
+
 
       //销售 => Listing
       {
@@ -766,24 +619,6 @@ const routes = [
         path:"/summaryContract",
         component:SummaryContract
       },
-      //财务数据 => 数据 => VAT报表一
-      {
-        name:"VATReportOne",
-        path:"/VATReportOne",
-        component:VATReportOne
-      },
-      //财务数据 => 数据 => VAT报表二
-      {
-        name:"VATReportTwo",
-        path:"/VATReportTwo",
-        component:VATReportTwo
-      },
-      //财务数据 => 数据 => VAT报表三
-      {
-        name:"VATReportThree",
-        path:"/VATReportThree",
-        component:VATReportThree
-      },
       //财务数据 => 报表 => 入库单
       {
         name:"financialReceipt",
@@ -912,12 +747,20 @@ const routes = [
         path:"/storeSalesReport",
         component:StoreSalesReport
       },
+
+       //OA => 学习资料
+       {
+        name:"learningMaterials",
+        path:"/learningMaterials",
+        component:LearningMaterials
+      },
     ] 
   },
 ]
 
 const router = new VueRouter({
-  routes
+  routes,
+  mode:'hash',
 })
 router.beforeEach( (to, from, next) => {
   if( to.path === '/login' ) return next()

@@ -119,7 +119,7 @@ export default {
         let info = {
           name: this.broadHeading.bigData,
         };
-        this.$http.post(`/api/admin/addbig`, info).then((res) => {
+        this.$http.post(`user/addbig`, info).then((res) => {
           const { code, data } = res.data;
           if (code == 200) {
             this.$message.success(res.data.message);
@@ -145,7 +145,7 @@ export default {
           name: this.menuname,
           name1: this.subclass.smallData,
         };
-        this.$http.post(`/api/admin/addxiao`, info).then((res) => {
+        this.$http.post(`user/addxiao`, info).then((res) => {
           const { code, data } = res.data;
           if (code == 200) {
             this.$message.success(res.data.message);
@@ -174,7 +174,7 @@ export default {
           name2: this.formPermission.accessPath,
           id:this.id
         };
-        this.$http.post(`/api/admin/addquan`, info).then((res) => {
+        this.$http.post(`user/addquan`, info).then((res) => {
           const { code, data } = res.data;
           if (code == 200) {
             this.$message.success(res.data.message);
@@ -188,7 +188,7 @@ export default {
     },
     // 列表数据
     getList() {
-      this.$http.get(`/api/admin/shenpi`).then((res) => {
+      this.$http.get(`user/shenpi`).then((res) => {
         const { code, data } = res.data;
         if (code == 200) {
           this.categoryListing = res.data.data;

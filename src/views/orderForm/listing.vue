@@ -11,11 +11,12 @@
         filterable
         size="medium"
         style="width: 150px"
+        @change="changeSearch()"
       >
         <el-option
           v-for="item in countryDrop"
           :key="item.id"
-          :label="item.name"
+          :label="item.countryname"
           :value="item.id"
         ></el-option>
       </el-select>
@@ -27,11 +28,12 @@
         filterable
         size="medium"
         style="width: 150px; margin-left: 10px"
+        @change="changeSearch()"
       >
         <el-option
           v-for="item in shopDrop"
           :key="item.id"
-          :label="item.name"
+          :label="item.shopname"
           :value="item.id"
         ></el-option>
       </el-select>
@@ -43,6 +45,7 @@
         filterable
         size="medium"
         style="width: 150px; margin-left: 10px"
+        @change="changeSearch()"
       >
         <el-option
           v-for="item in stateDrop"
@@ -53,15 +56,16 @@
       </el-select>
       <!-- 配对 -->
       <el-select
-        v-model="pairSelect"
+        v-model="batchPairSelect"
         placeholder="配对"
         clearable
         filterable
         size="medium"
         style="width: 150px; margin-left: 10px"
+        @change="changeSearch()"
       >
         <el-option
-          v-for="item in pairSelectDrop"
+          v-for="item in batchPairSelectDrop"
           :key="item.id"
           :label="item.name"
           :value="item.id"
@@ -75,6 +79,7 @@
         filterable
         size="medium"
         style="width: 150px; margin-left: 10px"
+        @change="changeSearch()"
       >
         <el-option
           v-for="item in modeDistributionDrop"
@@ -89,12 +94,14 @@
         type="daterange"
         align="center"
         unlink-panels
+        value-format="yyyy-MM-dd"
         range-separator="至"
         start-placeholder="开始日期"
         end-placeholder="结束日期"
         :picker-options="pickerOptions"
         size="medium"
         style="margin-left: 10px; width: 255px"
+        @change="changeSearch()"
       >
       </el-date-picker>
       <!-- 搜索 -->
@@ -104,11 +111,12 @@
         class="input-with-select"
         style="width: 275px; margin-left: 10px"
         size="medium"
+        clearable
+        @keyup.enter.native="changeSearch"
+        @clear="clearChageSearch"
       >
         <el-select
           v-model="multipleDrop"
-          clearable
-          filterable
           slot="prepend"
           size="medium"
           style="width: 105px"
@@ -121,90 +129,106 @@
           ></el-option>
         </el-select>
       </el-input>
-      <el-button type="primary" size="medium" style="margin-left: 10px"
+      <!-- <el-button type="primary" size="medium" style="margin-left: 10px"
         >搜索</el-button
-      >
+      > -->
     </div>
     <!-- 表格 -->
     <div class="table">
       <div class="tabItem">
         <p>
-          <el-button type="primary" size="small" @click="pair"
+          <el-button type="primary" size="small" @click="batchPair"
             >批量配对</el-button
           >
-          <el-button size="small" @click="ImportPair">导入配对</el-button>
+          <!-- <el-button size="small" @click="ImportPair">导入配对</el-button> -->
           <el-button size="small" @click="assignedCharge"
             >批量分配负责人</el-button
           >
-          <el-button size="small" @click="ImportAllocation"
+          <!-- <el-button size="small" @click="ImportAllocation"
             >导入分配负责人</el-button
-          >
+          > -->
         </p>
       </div>
       <el-table
         :data="tableData"
         border
+        v-loading="loading"
+        element-loading-text="拼命加载中"
         style="width: 100%"
+        height="600"
         ref="multipleTable"
-        @selection-change="handleSelectionChange"
+        @selection-change="listSelectionChange"
       >
         <el-table-column type="selection" width="55"> </el-table-column>
+        <el-table-column prop="channel_name" label="图片" align="center">
+          <template slot-scope="scope">
+            <el-popover placement="right" title="" trigger="hover">
+              <el-image
+                slot="reference"
+                :src="$store.state.url + scope.row.img"
+                :alt="$store.state.url + scope.row.img"
+                style="width: 50px; height: 50px"
+              ></el-image>
+              <el-image
+                :src="$store.state.url + scope.row.img"
+                style="max-height: 200px; max-width: 200px"
+              ></el-image>
+            </el-popover>
+          </template>
+        </el-table-column>
+        <el-table-column label="MSKU/FNSKU" align="center" width="200px">
+          <template slot-scope="scope">
+            <span>{{ scope.row.MSKU }}</span>
+            <br />
+            <span>{{ scope.row.FNSKU }}</span>
+          </template>
+        </el-table-column>
         <el-table-column
-          prop="channel_name"
-          label="图片"
-          align="center"
-        ></el-table-column>
-        <el-table-column
-          prop="shipment_name"
-          label="MSKU/FNSKU"
-          align="center"
-          width="120px"
-        ></el-table-column>
-        <el-table-column
-          prop="shipment_id"
+          prop="ASIN"
           label="ASIN"
           align="center"
+          width="120"
         ></el-table-column>
         <el-table-column
           prop="operator"
           label="标题"
           align="center"
         ></el-table-column>
+        <el-table-column label="品名/SKU" align="center" width="200px">
+          <template slot-scope="scope">
+            <span>{{ scope.row.goods_name }}</span>
+            <br />
+            <span>{{ scope.row.goods_sku }}</span>
+          </template>
+        </el-table-column>
         <el-table-column
-          prop="SKU"
-          label="品名/SKU"
-          align="center"
-          width="100px"
-        ></el-table-column>
-        <el-table-column
-          prop="SKU"
+          prop="shop_name"
           label="店铺"
           align="center"
+          width="130"
         ></el-table-column>
         <el-table-column
-          prop="SKU"
+          prop="country"
           label="国家"
           align="center"
         ></el-table-column>
+        <el-table-column prop="ListingPrice" label="价格" align="center">
+        </el-table-column>
         <el-table-column
-          prop="SKU"
-          label="价格"
-          align="center"
-        ></el-table-column>
-        <el-table-column
-          prop="SKU"
+          prop="InStockSupplyQuantity"
           label="FBA可售"
           align="center"
         ></el-table-column>
         <el-table-column
-          prop="SKU"
+          prop="count"
           label="销量"
           align="center"
         ></el-table-column>
         <el-table-column
-          prop="SKU"
-          label="销售额"
+          prop="money"
+          label="销售额(外币)"
           align="center"
+          width="110"
         ></el-table-column>
         <el-table-column
           prop="SKU"
@@ -222,7 +246,7 @@
           align="center"
         ></el-table-column>
         <el-table-column
-          prop="SKU"
+          prop="create_time"
           label="创建时间"
           align="center"
         ></el-table-column>
@@ -232,23 +256,57 @@
           align="center"
         ></el-table-column>
         <el-table-column
-          prop="SKU"
+          prop="charge_preson"
           label="负责人"
           align="center"
         ></el-table-column>
-        <el-table-column prop="SKU" label="操作" align="center" width="110px">
-          <template>
-            <el-dropdown split-button size="small" @click="pair">
+        <el-table-column
+          prop="SKU"
+          label="操作"
+          align="center"
+          width="130px"
+          fixed="right"
+        >
+          <template slot-scope="scope">
+            <el-dropdown
+              split-button
+              size="small"
+              @click="pair(scope.row)"
+              v-if="scope.row.is_content == 0"
+            >
               配对
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item>
-                  <span @click="statistics">统计</span>
+                <el-dropdown-item @click.native="statistics(scope.row)">
+                  统计
                 </el-dropdown-item>
-                <el-dropdown-item>
+                <!-- <el-dropdown-item>
                   <span @click="brandLabel">打印标签</span>
+                </el-dropdown-item> -->
+                <el-dropdown-item
+                  @click.native="allocationPrincipal(scope.row)"
+                >
+                  分配负责人
                 </el-dropdown-item>
-                <el-dropdown-item>
-                  <span @click="assignedCharge">分配负责人</span>
+              </el-dropdown-menu>
+            </el-dropdown>
+            <el-dropdown
+              split-button
+              size="small"
+              @click="cancelPairing(scope.row)"
+              v-if="scope.row.is_content == 1"
+            >
+              取消配对
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item @click.native="statistics(scope.row)">
+                  统计
+                </el-dropdown-item>
+                <!-- <el-dropdown-item>
+                  <span @click="brandLabel">打印标签</span>
+                </el-dropdown-item> -->
+                <el-dropdown-item
+                  @click.native="allocationPrincipal(scope.row)"
+                >
+                  分配负责人
                 </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
@@ -256,41 +314,63 @@
         </el-table-column>
       </el-table>
     </div>
-    <!-- 配对弹窗 -->
-    <el-dialog title="配对" :visible.sync="pairPop" width="40%">
+    <!-- 批量配对弹窗 -->
+    <el-dialog title="批量配对" :visible.sync="batchPairPop" width="40%" :close-on-click-modal='false'>
       <el-input
         placeholder="请输入品名、SKU搜索"
         style="width: 300px; margin-bottom: 10px"
+        v-model="batchPairName"
       >
-        <el-button slot="append" icon="el-icon-search"></el-button>
+        <el-button
+          slot="append"
+          icon="el-icon-search"
+          @click="batchPairSearch"
+        ></el-button>
       </el-input>
       <el-table
-        :data="tableData"
+        :data="batchPairTableData"
         border
         style="width: 100%"
-        ref="multipleTable"
-        @selection-change="handleSelectionChange"
+        height="450"
       >
-        <el-table-column type="selection" width="55"> </el-table-column>
         <el-table-column prop="date" label="图片" align="center">
+          <template slot-scope="scope">
+            <img
+              :src="scope.row.img"
+              alt=""
+              style="width: 30px; height: 30px"
+            />
+          </template>
         </el-table-column>
-        <el-table-column prop="name" label="品名" align="center">
+        <el-table-column prop="goods_name" label="品名" align="center">
         </el-table-column>
-        <el-table-column prop="address" label="SKU" align="center">
+        <el-table-column prop="goods_sku" label="SKU" align="center">
         </el-table-column>
-        <el-table-column prop="address" label="分类" align="center">
+        <el-table-column prop="category_name" label="分类" align="center">
         </el-table-column>
-        <el-table-column prop="address" label="品牌" align="center">
+        <el-table-column prop="brand_name" label="品牌" align="center">
         </el-table-column>
         <el-table-column label="操作" align="center">
-          <template>
-            <span>配对</span>
+          <template slot-scope="scope">
+            <span
+              style="color: #409eff; cursor: pointer"
+              @click="batchPairConfirm(scope.row)"
+              >配对</span
+            >
           </template>
         </el-table-column>
       </el-table>
+      <!-- 配对分页 -->
+      <pagination
+        :page="batchPairPage"
+        :total="batchPairTotal"
+        :limit="batchPairLimit"
+        @handleCurrentChange="batchPairCurrentChange"
+        @handleSizeChange="batchPairSizeChange"
+      />
       <span slot="footer" class="dialog-footer">
-        <el-button @click="pairPop = false">取 消</el-button>
-        <el-button type="primary" @click="pairPop = false">确 定</el-button>
+        <!-- <el-button @click="batchPairPop = false">取 消</el-button> -->
+        <!-- <el-button type="primary" @click="batchPairPop = false">确 定</el-button> -->
       </span>
     </el-dialog>
     <!-- 导入配对弹窗 -->
@@ -322,16 +402,54 @@
       title="批量设置负责人"
       :visible.sync="assignedChargePop"
       width="25%"
+      :close-on-click-modal='false'
     >
       <div style="margin: 20px 0 10px 0">
-        <span style="padding-right: 15px">负责人</span>
-        <el-input style="width: 85%"></el-input>
+        <span style="padding: 0 15px">负责人</span>
+        <el-select
+          v-model="principal"
+          placeholder="负责人"
+          style="width: 75%"
+          clearable
+          filterable
+        >
+          <el-option
+            v-for="item in principalDrop"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
+          ></el-option>
+        </el-select>
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="assignedChargePop = false">取 消</el-button>
-        <el-button type="primary" @click="assignedChargePop = false"
+        <el-button type="primary" @click="assignedChargeConfirm"
           >确 定</el-button
         >
+      </span>
+    </el-dialog>
+    <!-- 分配负责人弹窗 -->
+    <el-dialog title="分配负责人" :visible.sync="principalPop" width="25%" :close-on-click-modal='false'>
+      <div style="margin: 20px 0 10px 0">
+        <span style="padding: 0 15px">负责人</span>
+        <el-select
+          v-model="principal"
+          placeholder="负责人"
+          style="width: 75%"
+          clearable
+          filterable
+        >
+          <el-option
+            v-for="item in principalDrop"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
+          ></el-option>
+        </el-select>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="principalPop = false">取 消</el-button>
+        <el-button type="primary" @click="principalConfirm">确 定</el-button>
       </span>
     </el-dialog>
     <!-- 导入分配负责人弹窗 -->
@@ -366,24 +484,32 @@
     <el-dialog title="统计" :visible.sync="statisticsPop" width="50%">
       <div class="statistics">
         <div class="statistics_title">
-          <img
-            src="https://m.media-amazon.com/images/I/41+ds5YaSIL._SL75_.jpg"
-            alt=""
-          />
+          <img :src="$store.state.url + statisticsImg" alt="" />
           <p>
-            <span
-              >Pukomc French Press Coffee Maker 34 oz,Tea Maker with 4 Level
-              Filtration System Heat Resistant Removable Borosilicate Glass 304
-              Grade Stainless Steel Stylish Durable</span
-            >
+            <span>{{ this.statisticsTitle }}</span>
             <br />
-            <span>MSKU：PUKOMC01A</span>
+            <span>MSKU：{{ this.statisticsMsku }}</span>
           </p>
         </div>
         <div class="statistics_echarts">
+          <!-- <div class="tabs">
+            <span @click="tabmsg((msg = 7))" :class="{ tab_active: msg === 7 }"
+              >7天</span
+            >
+            <span
+              @click="tabmsg((msg = 15))"
+              :class="{ tab_active: msg === 15 }"
+              >15天</span
+            >
+            <span
+              @click="tabmsg((msg = 30))"
+              :class="{ tab_active: msg === 30 }"
+              >30天</span
+            >
+          </div> -->
           <div
             id="statisticalChart"
-            :style="{ width: '100%', height: '200px' }"
+            :style="{ width: '100%', height: '400px' }"
           ></div>
         </div>
       </div>
@@ -468,48 +594,94 @@
         >
       </span>
     </el-dialog>
+    <!-- 配对弹窗 -->
+    <el-dialog title="配对" :visible.sync="pairPop" width="40%">
+      <el-input
+        placeholder="请输入品名、SKU搜索"
+        style="width: 300px; margin-bottom: 10px"
+        v-model="pairName"
+      >
+        <el-button
+          slot="append"
+          icon="el-icon-search"
+          @click="pairSearch"
+        ></el-button>
+        <!-- @click="pairSearch" -->
+      </el-input>
+      <el-table :data="pairTableData" border style="width: 100%" height="450">
+        <el-table-column prop="date" label="图片" align="center">
+          <template slot-scope="scope">
+            <img
+              :src="scope.row.img"
+              alt=""
+              style="width: 30px; height: 30px"
+            />
+          </template>
+        </el-table-column>
+        <el-table-column prop="goods_name" label="品名" align="center">
+        </el-table-column>
+        <el-table-column prop="goods_sku" label="SKU" align="center">
+        </el-table-column>
+        <el-table-column prop="category_name" label="分类" align="center">
+        </el-table-column>
+        <el-table-column prop="brand_name" label="品牌" align="center">
+        </el-table-column>
+        <el-table-column label="操作" align="center">
+          <template slot-scope="scope">
+            <span
+              style="color: #409eff; cursor: pointer"
+              @click="pairConfirm(scope.row)"
+              >配对</span
+            >
+          </template>
+        </el-table-column>
+      </el-table>
+      <!-- 配对分页 -->
+      <pagination
+        :page="pairPage"
+        :total="pairTotal"
+        :limit="pairLimit"
+        @handleCurrentChange="pairCurrentChange"
+        @handleSizeChange="pairSizeChange"
+      />
+      <span slot="footer" class="dialog-footer">
+        <!-- <el-button @click="batchPairPop = false">取 消</el-button> -->
+        <!-- <el-button type="primary" @click="batchPairPop = false">确 定</el-button> -->
+      </span>
+    </el-dialog>
     <!-- 分页 -->
-    <div class="paging">
-      <el-pagination
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page="currentPage1"
-        :page-sizes="[100, 200, 300, 400]"
-        :page-size="100"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="400"
-      ></el-pagination>
-    </div>
+    <pagination
+      :page="page"
+      :total="total"
+      :limit="limit"
+      @handleCurrentChange="handleCurrentChange"
+      @handleSizeChange="handleSizeChange"
+    />
   </div>
 </template>
 
 <script>
+import pagination from "@/components/pagination"; // 分页
 export default {
+  components: {
+    pagination,
+  },
   data() {
     return {
-      pairPop: false, //详情弹窗的添加商品
+      loading: true,
+      batchPairPop: false, //批量匹配弹窗
+      pairPop: false, //匹配弹窗
       ImportPairPop: false, //导入商品弹窗
       assignedChargePop: false, //批量分配负责人弹窗
+      principalPop: false, //分配负责人弹窗
       ImportAllocationPop: false, //导入分配负责人弹窗
       statisticsPop: false, //统计弹窗
       brandLabelPop: false, //打印标签弹窗
       checked: false,
       country: "", //国家
-      // 国家下拉
-      countryDrop: [
-        {
-          id: 1,
-          name: "中国",
-        }
-      ],
+      countryDrop: [], // 国家下拉
       shop: "", //店铺
-      //店铺下拉
-      shopDrop: [
-        {
-          id: 1,
-          name: "店铺",
-        }
-      ],
+      shopDrop: [], //店铺下拉
       state: "", //状态
       // 状态下拉
       stateDrop: [
@@ -526,9 +698,9 @@ export default {
           name: "已删除",
         },
       ],
-      pairSelect: "", //配对
+      batchPairSelect: "", //配对
       // 配对下拉
-      pairSelectDrop: [
+      batchPairSelectDrop: [
         {
           id: 1,
           name: "已配对",
@@ -536,9 +708,9 @@ export default {
         {
           id: 2,
           name: "未配对",
-        }
+        },
       ],
-       modeDistribution: "", //配送方式
+      modeDistribution: "", //配送方式
       // 配送方式下拉
       modeDistributionDrop: [
         {
@@ -548,11 +720,11 @@ export default {
         {
           id: 2,
           name: "FBM",
-        }
+        },
       ],
-      date: "", //日期
+      date: [], //日期
       searchContent: "", //搜索
-      multipleDrop: "", //多个下拉值
+      multipleDrop: 1, //多个下拉值
       multipleConditions: [
         {
           id: 1,
@@ -583,69 +755,33 @@ export default {
           name: "标题",
         },
       ],
-      currentPage1: 1,
-      value1: "",
+      tableData: [], //列表数据
+      page: 1,
+      limit: 10,
+      total: 0,
+      batchPairTableData: [], //批量配对列表
+      batchPairName: "", //批量配对搜索
+      batchPairPage: 1,
+      batchPairLimit: 10,
+      batchPairTotal: 0,
+      pairTableData: [], //配对列表
+      pairName: "", //配对搜索
+      pairPage: 1,
+      pairLimit: 10,
+      pairTotal: 0,
+      principal: "", //分配负责人
+      principalDrop: [], //分配负责人下拉
       formInline: {},
-      activeName: "first",
-      isShow: false,
       form: {
         name: "",
         departmentPull: "",
         status: "",
       },
-      departmentPull: [],
-      replenishment: [
-        //是否当前补货
-        {
-          id: 1,
-          name: "全部",
-        },
-        {
-          id: 2,
-          name: "是",
-        },
-        {
-          id: 3,
-          name: "否",
-        },
-        {
-          id: 4,
-          name: "无需提醒",
-        },
-      ],
-      state: [
-        //状态
-        {
-          id: 1,
-          label: "启用",
-        },
-        {
-          id: 2,
-          label: "禁用",
-        },
-      ],
-      tableData: [
-        {
-          id: "58259",
-          number: 1,
-          operator: "admin",
-          children: [
-            {
-              size: 1,
-            },
-          ],
-        },
-        {
-          id: "58259a",
-          number: 1,
-          operator: "admin1",
-          children: [
-            {
-              size: 1,
-            },
-          ],
-        },
-      ],
+      statisticsImg: "", //统计弹窗图片
+      statisticsTitle: "", //统计弹窗title
+      statisticsMsku: "", //统计弹窗msku
+      // msg: 7,
+      // day: "", //天
       // 日期快捷方式
       pickerOptions: {
         shortcuts: [
@@ -681,16 +817,231 @@ export default {
     };
   },
   mounted() {
-    // this.drawLine();
+    this.getList();
   },
   methods: {
-    // 详情弹窗的添加商品
-    pair() {
-      this.pairPop = true;
+    // 列表数据
+    getList() {
+      // 日期清空
+      if (!this.date) {
+        this.date = [];
+      }
+      this.$http
+        .get(`sale/listing_list`, {
+          params: {
+            page: this.page,
+            limit: this.limit,
+            selcountry: this.country, //国家
+            selshop: this.shop, //店铺
+            selstatus: this.state, //状态
+            selbatchPair: this.batchPairSelect, //配对
+            sendtype: this.modeDistribution, //配送方式
+            start_time: this.date[0], //开始日期
+            end_time: this.date[1], //结束日期
+            msku: this.multipleDrop == 1 ? this.searchContent : "", //MSKU
+            fnsku: this.multipleDrop == 2 ? this.searchContent : "", //FNSKU
+            asin: this.multipleDrop == 3 ? this.searchContent : "", //ASIN
+            parentasin: this.multipleDrop == 4 ? this.searchContent : "", //parentAsin
+            sku: this.multipleDrop == 5 ? this.searchContent : "", //SKU
+            goods_name: this.multipleDrop == 6 ? this.searchContent : "", //品名
+            titel: this.multipleDrop == 7 ? this.searchContent : "", //标题
+          },
+        })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == 200) {
+            this.loading = false;
+            this.tableData = res.data.data.data;
+            this.total = res.data.count;
+            this.countryDrop = res.data.data.country; //国家
+            this.shopDrop = res.data.data.shoparr; //店铺
+          } else {
+            this.$message.error(res.data.message);
+          }
+        });
     },
-    // 添加商品 - 选择
-    handleSelectionChange(val) {
-      this.multipleSelection = val;
+    // 列表选择
+    listSelectionChange(val) {
+      this.listSelection = val;
+      this.listSelection = [];
+      for (let i = 0; i < val.length; i++) {
+        if (this.listSelection.indexOf(val[i].id) === -1) {
+          this.listSelection.push(val[i].id);
+        }
+      }
+    },
+    // 搜索
+    changeSearch() {
+      this.loading = true;
+      this.page = 1;
+      this.getList();
+    },
+    // 清除搜索input
+    clearChageSearch() {
+      this.loading = true;
+      this.getList();
+    },
+    // 批量配对
+    batchPair() {
+      if (this.listSelection == undefined) {
+        this.$message.error("需选择配对产品");
+      } else {
+        this.batchPairPop = true;
+        this.$http
+          .get(`goods/goods_search`, {
+            params: {
+              page: this.batchPairPage,
+              limit: this.batchPairLimit,
+              name: this.batchPairName,
+            },
+          })
+          .then((res) => {
+            const { code, data } = res.data;
+            if (code == 200) {
+              this.batchPairTableData = res.data.data;
+              this.batchPairTotal = res.data.count;
+            } else {
+              this.$message.error(res.data.message);
+            }
+          });
+      }
+    },
+    // 批量配对搜索
+    batchPairSearch() {
+      this.batchPairPage = 1;
+      this.batchPair();
+    },
+    // 批量配对确定
+    batchPairConfirm(row) {
+      this.goods_id = row.id;
+      this.$confirm("此操作将配对该产品, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          let info = {
+            goods_id: this.goods_id,
+            listing_id: this.listSelection,
+          };
+          this.$http.post(`sale/pair_listing`, info).then((res) => {
+            const { code, data } = res.data;
+            if (code == 200) {
+              this.$message.success(res.data.message);
+              this.getList();
+              this.batchPairPop = false;
+            } else {
+              this.$message.error(res.data.message);
+            }
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消配对",
+          });
+        });
+    },
+    // 配对弹窗
+    pair(row) {
+      console.log(row);
+      this.listing_id = row.id;
+      this.pairPop = true;
+      this.$http
+        .get(`goods/goods_search`, {
+          params: {
+            page: this.pairPage,
+            limit: this.pairLimit,
+          },
+        })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == 200) {
+            this.pairTableData = res.data.data;
+            this.pairTotal = res.data.count;
+          } else {
+            this.$message.error(res.data.message);
+          }
+        });
+    },
+    // 配对搜索
+    pairSearch() {
+      this.pairPage = 1;
+      this.$http
+        .get(`goods/goods_search`, {
+          params: {
+            page: this.pairPage,
+            limit: this.pairLimit,
+            name: this.pairName,
+          },
+        })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == 200) {
+            this.pairTableData = res.data.data;
+            this.pairTotal = res.data.count;
+          } else {
+            this.$message.error(res.data.message);
+          }
+        });
+    },
+    // 配对确定
+    pairConfirm(row) {
+      this.goods_id = row.id;
+      this.$confirm("此操作将配对该产品, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          let info = {
+            goods_id: this.goods_id,
+            listing_id: this.listing_id,
+          };
+          this.$http.post(`sale/pair_listing`, info).then((res) => {
+            const { code, data } = res.data;
+            if (code == 200) {
+              this.$message.success(res.data.message);
+              this.getList();
+              this.pairPop = false;
+            } else {
+              this.$message.error(res.data.message);
+            }
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消配对",
+          });
+        });
+    },
+    // 取消配对
+    cancelPairing(row) {
+      this.$confirm("此操作将取消该条配对, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          this.$http
+            .get(`sale/unpair_listing?listing_id=${row.id}`)
+            .then((res) => {
+              const { code, data } = res.data;
+              if (code == 200) {
+                this.$message.success(res.data.message);
+                this.getList();
+              } else {
+                this.$message.error(res.data.message);
+              }
+            });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消配对",
+          });
+        });
     },
     // 导入商品弹窗
     ImportPair() {
@@ -698,86 +1049,219 @@ export default {
     },
     // 批量分配负责人弹窗
     assignedCharge() {
-      this.assignedChargePop = true;
+      if (this.listSelection == undefined) {
+        this.$message.error("需选择分配商品");
+      } else {
+        this.assignedChargePop = true;
+        this.$http.get(`user/get_users`).then((res) => {
+          const { code, data } = res.data;
+          if (code == 200) {
+            this.principalDrop = res.data.data;
+          } else {
+            this.$message.error(res.data.message);
+          }
+        });
+      }
+    },
+    // 批量分配负责人确定
+    assignedChargeConfirm() {
+      let info = {
+        listing_id: this.listSelection,
+        user_id: this.principal,
+      };
+      this.$http.post(`sale/new_listing_charge_preson`, info).then((res) => {
+        const { code, data } = res.data;
+        if (code == 200) {
+          this.$message.success(res.data.message);
+          this.getList();
+          this.assignedChargePop = false;
+        } else {
+          this.$message.error(res.data.message);
+        }
+      });
+    },
+    // 分配负责人弹窗
+    allocationPrincipal(row) {
+      this.id = row.id;
+      this.principalPop = true;
+      this.$http.get(`user/get_users`).then((res) => {
+        const { code, data } = res.data;
+        if (code == 200) {
+          this.principalDrop = res.data.data;
+        } else {
+          this.$message.error(res.data.message);
+        }
+      });
+    },
+    // 分配负责人弹窗确定
+    principalConfirm() {
+      let info = {
+        listing_id: this.id,
+        user_id: this.principal,
+      };
+      this.$http.post(`sale/new_listing_charge_preson`, info).then((res) => {
+        const { code, data } = res.data;
+        if (code == 200) {
+          this.$message.success(res.data.message);
+          this.getList();
+          this.principalPop = false;
+        } else {
+          this.$message.error(res.data.message);
+        }
+      });
     },
     // 导入分配负责人弹窗
     ImportAllocation() {
       this.ImportAllocationPop = true;
     },
     // 统计弹窗
-    statistics() {
+    statistics(row) {
+      this.id = row.id;
+      console.log(this.msg);
       this.statisticsPop = true;
       this.$nextTick(() => {
         //  执行echarts方法
         this.statisticalLine();
       });
     },
+    // tabmsg(msg) {
+    //   this.day = this.msg;
+    //   if ((this.day = this.msg)) {
+    //     this.statisticalLine();
+    //   }
+    // },
     // 统计折线图
     statisticalLine() {
-      let myChart = this.$echarts.init(
-        document.getElementById("statisticalChart")
-      );
-      // 绘制图表
-      myChart.setOption({
-        title: {},
-        tooltip: {
-          trigger: "axis",
-        },
-        legend: {
-          padding: [20, 0, 0, 0],
-          data: ["今天", "昨天", "上周同日"],
-        },
-        grid: {
-          left: "3%",
-          right: "4%",
-          bottom: "6%",
-          containLabel: true,
-        },
-        toolbox: {
-          feature: {
-            saveAsImage: {},
-          },
-        },
-        xAxis: {
-          type: "category",
-          boundaryGap: false,
-          data: ["周一", "周二", "周三", "周四", "周五", "周六", "周日"],
-        },
-        yAxis: {
-          type: "value",
-        },
-        series: [
-          {
-            name: "今天",
-            type: "line",
-            stack: "总量",
-            data: [120, 132, 101, 134, 90, 230, 210],
-          },
-          {
-            name: "昨天",
-            type: "line",
-            stack: "总量",
-            data: [220, 182, 191, 234, 290, 330, 310],
-          },
-          {
-            name: "上周同日",
-            type: "line",
-            stack: "总量",
-            data: [150, 232, 201, 154, 190, 330, 410],
-          },
-        ],
+      this.$http.get(`sale/get_statistics?id=${this.id}`).then((res) => {
+        const { code, data } = res.data;
+        if (code == 200) {
+          this.statisticsImg = res.data.data.listing.img; //图片
+          this.statisticsTitle = res.data.data.listing.titel; //标题
+          this.statisticsMsku = res.data.data.listing.MSKU; //msku
+          this.time = res.data.data.time;
+          this.count = res.data.data.count;
+          this.sale = res.data.data.sale;
+          let myChart = this.$echarts.init(
+            document.getElementById("statisticalChart")
+          );
+          // 绘制图表
+          myChart.setOption({
+            title: {},
+            tooltip: {
+              trigger: "axis",
+            },
+            legend: {
+              padding: [20, 0, 0, 0],
+              data: ["订单量", "销量"],
+            },
+            grid: {
+              left: "3%",
+              right: "4%",
+              bottom: "6%",
+              containLabel: true,
+            },
+            toolbox: {
+              feature: {
+                saveAsImage: {},
+              },
+            },
+            xAxis: {
+              type: "category",
+              boundaryGap: false,
+              data: this.time,
+            },
+            yAxis: {
+              type: "value",
+            },
+            series: [
+              {
+                name: "订单量",
+                type: "line",
+                data: this.sale,
+                smooth: true,
+              },
+              {
+                name: "销量",
+                type: "line",
+                data: this.count,
+                smooth: true,
+              },
+            ],
+          });
+          window.onresize = myChart.resize;
+        } else {
+          this.$message.error(res.data.message);
+        }
       });
-      window.onresize = myChart.resize;
     },
     // 打印标签弹窗
     brandLabel() {
       this.brandLabelPop = true;
     },
-    handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
-    },
+    // 分页下拉
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
+      this.page = val;
+      this.loading = true;
+      this.getList();
+    },
+    // 分页右滚
+    handleSizeChange(val) {
+      this.loading = true;
+      this.limit = val;
+      this.page = 1;
+      this.getList();
+    },
+    // 批量配对分页下拉
+    batchPairCurrentChange(val) {
+      this.batchPairPage = val;
+      this.batchPair();
+    },
+    // 批量配对分页右滚
+    batchPairSizeChange(val) {
+      this.batchPairLimit = val;
+      this.batchPairPage = 1;
+      this.batchPair();
+    },
+    // 配对分页下拉
+    pairCurrentChange(val) {
+      this.pairPage = val;
+      this.$http
+        .get(`goods/goods_search`, {
+          params: {
+            page: this.pairPage,
+            limit: this.pairLimit,
+          },
+        })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == 200) {
+            this.pairTableData = res.data.data;
+            this.pairTotal = res.data.count;
+          } else {
+            this.$message.error(res.data.message);
+          }
+        });
+    },
+    // 配对分页右滚
+    pairSizeChange(val) {
+      this.pairLimit = val;
+      this.pairPage = 1;
+      this.$http
+        .get(`goods/goods_search`, {
+          params: {
+            page: this.pairPage,
+            limit: this.pairLimit,
+          },
+        })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == 200) {
+            this.pairTableData = res.data.data;
+            this.pairTotal = res.data.count;
+          } else {
+            this.$message.error(res.data.message);
+          }
+        });
     },
   },
 };
@@ -838,7 +1322,7 @@ export default {
       span:nth-of-type(1) {
         display: inline-block;
         width: 400px;
-        max-height: 40px;
+        max-height: 45px;
         font-size: 16px;
         line-clamp: 2;
         overflow: hidden;
@@ -849,6 +1333,22 @@ export default {
         color: #888;
       }
     }
+  }
+  .statistics_echarts {
+    // .tabs {
+    //   span {
+    //     display: inline-block;
+    //     width: 40px;
+    //     text-align: center;
+    //     cursor: pointer;
+    //   }
+    //   .tab_active {
+    //     font-weight: bold;
+    //     color: #409eff;
+    //     border-bottom: 3px solid #409eff;
+    //     cursor: pointer;
+    //   }
+    // }
   }
 }
 // 打印商品标签

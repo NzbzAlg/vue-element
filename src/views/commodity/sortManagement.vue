@@ -3,118 +3,205 @@
     <!-- 头部 -->
     <div class="title">
       <el-input
-        v-model="classify"
+        v-model="brandNmae"
         placeholder="搜索分类名称"
         clearable
         size="medium"
         style="width: 150px"
+        @change="changeSearch"
       ></el-input>
-      <el-button type="primary" size="medium" style="margin-left: 10px"
+      <!-- <el-button
+        type="primary"
+        size="medium"
+        style="margin-left: 10px"
+        @click="search"
         >搜索</el-button
-      >
+      > -->
     </div>
     <!-- 表格 -->
     <div class="table">
       <div class="table_button">
-        <el-button type="primary" size="small" @click="updateProductPop"
+        <el-button type="primary" size="small" @click="addClassify"
           >添加分类</el-button
         >
       </div>
       <el-table :data="tableData" border style="width: 100%">
         <el-table-column
-          prop="date"
+          prop="category_name"
           label="分类名称"
           align="center"
         ></el-table-column>
         <el-table-column
-          prop="name"
+          prop="create_time"
           label="创建时间"
           align="center"
         ></el-table-column>
         <el-table-column label="操作" align="center" width="300">
-          <template>
-            <el-button size="mini" type="success" @click="updateProductPop"
+          <template slot-scope="scope">
+            <el-button size="mini" type="success" @click="editClassify(scope.row)"
               >编辑</el-button
             >
           </template>
         </el-table-column>
       </el-table>
     </div>
-    <!-- 分类管理弹窗 -->
-    <el-dialog title="编辑" :visible.sync="productUpdate" width="30%">
-      <el-form :model="productForm">
+    <!-- 添加分类名称 -->
+    <el-dialog title="添加分类" :visible.sync="addClassifyPop" width="30%" :close-on-click-modal='false'>
+      <el-form :model="classifyForm">
         <el-row>
           <el-col>
             <el-form-item label="分类名称：" label-width="120px">
-              <el-input></el-input>
+              <el-input v-model="classifyForm.name"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="productUpdate = false">取 消</el-button>
-        <el-button type="primary" @click="productUpdate = false"
-          >确 定</el-button
-        >
+        <el-button @click="addClassifyPop = false">取 消</el-button>
+        <el-button type="primary" @click="addClassifyConfirm">确 定</el-button>
+      </span>
+    </el-dialog>
+    <!-- 编辑分类名称 -->
+    <el-dialog title="编辑分类" :visible.sync="editClassifyPop" width="30%" :close-on-click-modal='false'>
+      <el-form :model="editClassifyForm">
+        <el-row>
+          <el-col>
+            <el-form-item label="分类名称：" label-width="120px">
+              <el-input v-model="editClassifyForm.name"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="editClassifyPop = false">取 消</el-button>
+        <el-button type="primary" @click="editClassifyConfirm">确 定</el-button>
       </span>
     </el-dialog>
     <!-- 分页 -->
-    <div class="paging">
-      <el-pagination
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page="currentPage1"
-        :page-sizes="[100, 200, 300, 400]"
-        :page-size="100"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="400"
-      ></el-pagination>
-    </div>
+    <pagination
+      :page="page"
+      :total="total"
+      :limit="limit"
+      @handleCurrentChange="handleCurrentChange"
+      @handleSizeChange="handleSizeChange"
+    />
   </div>
 </template>
 
 <script>
+import pagination from "@/components/pagination"; // 分页
 export default {
+  components: {
+    pagination,
+  },
   data() {
     return {
-      classify: "", //分类
+      brandNmae: "",
+      //添加分类名称
+      classifyForm: {
+        name: "",
+      },
+      // 编辑分类名称
+      editClassifyForm: {
+        name: "",
+      },
       currentPage1: 1,
-      productUpdate: false,
-      productForm: {},
-      tableData: [
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-          address: "上海518 弄",
-        },
-        {
-          date: "2016-05-04",
-          name: "王小虎",
-          address: "上海市1517 弄",
-        },
-        {
-          date: "2016-05-01",
-          name: "王小虎",
-          address: "上海市普",
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀6 弄",
-        },
-      ],
+      addClassifyPop: false, //添加弹窗
+      editClassifyPop: false, //编辑弹窗
+      tableData: [], //列表数据
+      page: 1,
+      limit: 10,
+      total: 0,
     };
   },
+  mounted() {
+    this.getList();
+  },
   methods: {
-    //   更新产品弹窗
-    updateProductPop() {
-      this.productUpdate = true;
+    getList() {
+      this.$http
+        .get(`goods/show_goods_category`, {
+          params: {
+            page: this.page,
+            limit: this.limit,
+            name: this.brandNmae,
+          },
+        })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == 200) {
+            this.tableData = res.data.data;
+            this.total = res.data.count;
+          } else {
+            this.$message.error(res.data.message);
+          }
+        });
     },
-    handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
+    // 搜索
+    changeSearch() {
+      this.page = 1
+      this.getList();
     },
+    // 添加分类
+    addClassify() {
+      this.addClassifyPop = true;
+    },
+    // 添加分类确定
+    addClassifyConfirm() {
+      let info = {
+        category_name: this.classifyForm.name,
+      };
+      this.$http.post(`goods/update_goods_category`, info).then((res) => {
+        const { code, data } = res.data;
+        if (code == 200) {
+          this.addClassifyPop = false;
+          this.$message.success(res.data.message);
+          this.getList();
+        } else {
+          this.$message.error(res.data.message);
+        }
+      });
+    },
+    // 编辑分类
+    editClassify(row) {
+      this.id = row.id
+      this.editClassifyPop = true;
+      this.$http.get(`goods/get_one_category?id=${this.id}`).then(res=>{
+        const{code,data} = res.data
+        if(code == 200){
+          this.editClassifyForm = res.data.data.data
+        }else{
+          this.$message.error(res.data.message)
+        }
+      })
+    },
+    // 编辑确定
+    editClassifyConfirm() {
+      let info = {
+        id:this.id,
+        category_name: this.editClassifyForm.name,
+      };
+      this.$http.post(`goods/update_goods_category`, info).then((res) => {
+        const { code, data } = res.data;
+        if (code == 200) {
+          this.editClassifyPop = false;
+          this.$message.success(res.data.message);
+          this.getList();
+        } else {
+          this.$message.error(res.data.message);
+        }
+      });
+    },
+    // 分页下拉
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
+      this.page = val;
+      this.getList();
+    },
+    // 分页右滚
+    handleSizeChange(val) {
+      this.limit = val;
+      this.page = 1;
+      this.getList();
     },
   },
 };
@@ -136,6 +223,7 @@ export default {
     margin-bottom: 10px;
   }
 }
+
 .paging {
   float: right;
   margin-top: 20px;

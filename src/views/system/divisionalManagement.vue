@@ -137,6 +137,12 @@
         style="margin-bottom: 20px"
       >
       </el-input>
+      <el-checkbox
+        v-model="roleStoreChecked"
+        @change="roleStoreCheckedAll"
+        style="margin-bottom: 5px"
+        >全选</el-checkbox
+      >
       <el-tree
         :data="roleStoreList"
         show-checkbox
@@ -163,6 +169,12 @@
         style="margin-bottom: 20px"
       >
       </el-input>
+      <el-checkbox
+        v-model="roleWarehouseChecked"
+        @change="roleWarehouseCheckedAll"
+        style="margin-bottom: 5px"
+        >全选</el-checkbox
+      >
       <el-tree
         :data="roleWarehouseList"
         show-checkbox
@@ -188,6 +200,12 @@
         style="margin-bottom: 20px"
       >
       </el-input>
+      <!-- <el-checkbox
+        v-model="roleMenuChecked"
+        @change="roleMenuCheckedAll"
+        style="margin-bottom: 5px"
+        >全选</el-checkbox
+      > -->
       <el-tree
         :data="roleMenuList"
         show-checkbox
@@ -196,8 +214,8 @@
         :props="roleMenuProps"
         :default-checked-keys="roleMenuTable"
         :default-expand-all="true"
-        :check-strictly="true"
         :filter-node-method="filterMenuList"
+        :check-strictly="true"
       ></el-tree>
       <span slot="footer" class="dialog-footer">
         <el-button @click="roleMenuPop = false">取 消</el-button>
@@ -289,6 +307,7 @@ export default {
       currentPage1: 1,
       department: [], //列表数据
       departmentDetails: [], //弹窗列表数据
+      roleStoreChecked: "", //角色店铺全选
       roleStoreTable: [], //角色店铺数据
       roleStoreList: [], //角色店铺列表
       defaultProps: {
@@ -296,6 +315,7 @@ export default {
         children: "children",
         label: "shopname",
       },
+      roleWarehouseChecked: "", //角色仓库全选
       roleWarehouseTable: [], //角色仓库数据
       roleWarehouseList: [], //角色仓库列表
       roleWarehouseProps: {
@@ -303,7 +323,8 @@ export default {
         children: "children",
         label: "name",
       },
-      roleMenuTable: [], //角色列表数据
+      roleMenuChecked: "", //角色菜单全选
+      roleMenuTable: [], //角色菜单数据
       roleMenuList: [], //角色菜单列表
       roleMenuProps: {
         //角色菜单数据
@@ -340,7 +361,7 @@ export default {
   methods: {
     // 列表
     getList() {
-      this.$http.post(`api/admin/department_list`).then((res) => {
+      this.$http.post(`user/department_list`).then((res) => {
         const { code, data } = res.data;
         if (code == 200) {
           this.department = res.data.data;
@@ -378,11 +399,10 @@ export default {
     },
     // 编辑部门名称
     editorialDepartment(row) {
-      console.log(row.id);
       this.id = row.id;
       this.editorialDepartmentPop = true;
       this.$http
-        .post(`api/admin/get_dedepartment_from_id?id=${row.id}`)
+        .post(`user/get_dedepartment_from_id?id=${row.id}`)
         .then((res) => {
           const { code, data } = res.data;
           if (code == 200) {
@@ -396,7 +416,7 @@ export default {
     editDepartmentDetermine() {
       this.$http
         .post(
-          `api/admin/updedepartment?id=${this.id}&name=${this.editDepartmentForm.data}`
+          `user/updedepartment?id=${this.id}&name=${this.editDepartmentForm.data}`
         )
         .then((res) => {
           const { code, data } = res.data;
@@ -419,7 +439,7 @@ export default {
     newDepartmentDetermine() {
       this.$http
         .post(
-          `api/admin/insertgroup?id=${this.id}&name=${this.newDepartmentForm.name}`
+          `user/insertgroup?id=${this.id}&name=${this.newDepartmentForm.name}`
         )
         .then((res) => {
           const { code, data } = res.data;
@@ -436,7 +456,7 @@ export default {
     examinePop(row) {
       this.examineId = row.id;
       this.dialogVisible = true;
-      this.$http.post(`api/admin/get_group?id=${row.id}`).then((res) => {
+      this.$http.post(`user/get_group?id=${row.id}`).then((res) => {
         const { code, data } = res.data;
         if (code == 200) {
           this.departmentDetails = res.data.data;
@@ -450,10 +470,20 @@ export default {
       if (!value) return true;
       return roleStoreList.shopname.indexOf(value) !== -1;
     },
+    // 查看角色店铺全选
+    roleStoreCheckedAll() {
+      if (this.roleStoreChecked) {
+        //全选
+        this.$refs.tree.setCheckedNodes(this.roleStoreList);
+      } else {
+        //取消选中
+        this.$refs.tree.setCheckedKeys([]);
+      }
+    },
     // 查看角色店铺
     roleStore(row) {
       this.id = row.id;
-      this.$http.post(`api/admin/get_group_shop?id=${row.id}`).then((res) => {
+      this.$http.post(`user/get_group_shop?id=${row.id}`).then((res) => {
         this.roleStoreList = res.data.data;
         let arr = res.data.data;
         var temporaryArray = [];
@@ -475,7 +505,7 @@ export default {
         arr: this.pageId,
         id: this.id,
       };
-      this.$http.post(`api/admin/insertgroup_shop`, info).then((res) => {
+      this.$http.post(`user/insertgroup_shop`, info).then((res) => {
         const { code, data } = res.data;
         if (code == 200) {
           this.$message.success(res.data.message);
@@ -491,11 +521,21 @@ export default {
       if (!value) return true;
       return roleWarehouseList.name.indexOf(value) !== -1;
     },
+    //查看角色仓库全选
+    roleWarehouseCheckedAll() {
+      if (this.roleWarehouseChecked) {
+        //全选
+        this.$refs.tree.setCheckedNodes(this.roleWarehouseList);
+      } else {
+        //取消选中
+        this.$refs.tree.setCheckedKeys([]);
+      }
+    },
     // 查看角色仓库
     roleWarehouse(row) {
       this.id = row.id;
       this.roleWarehousePop = true;
-      this.$http.post(`api/admin/get_group_cang?id=${row.id}`).then((res) => {
+      this.$http.post(`user/get_group_cang?id=${row.id}`).then((res) => {
         this.roleWarehouseList = res.data.data;
         let arr = res.data.data;
         var temporaryArray = [];
@@ -516,7 +556,7 @@ export default {
         arr: this.pageId,
         id: this.id,
       };
-      this.$http.post(`api/admin/insertgroup_cang`, info).then((res) => {
+      this.$http.post(`user/insertgroup_cang`, info).then((res) => {
         const { code, data } = res.data;
         if (code == 200) {
           this.$message.success(res.data.message);
@@ -532,35 +572,43 @@ export default {
       if (!value) return true;
       return rolePermissionList.menu.indexOf(value) !== -1;
     },
+    // // 查看角色菜单全选
+    // roleMenuCheckedAll() {
+    //   if (this.roleMenuChecked) {
+    //     //全选
+    //     this.$refs.tree.setCheckedNodes(this.roleMenuList);
+    //   } else {
+    //     //取消选中
+    //     this.$refs.tree.setCheckedKeys([]);
+    //   }
+    // },
     // 查看角色菜单
     roleMenu(row) {
       this.id = row.id;
       this.roleMenuPop = true;
-      this.$http
-        .post(`api/admin/get_group_emploee?id=${row.id}`)
-        .then((res) => {
-          this.roleMenuList = res.data.data;
-          let arr = res.data.data;
-          let temporaryArray = [];
-          for (var i = 0; i < arr.length; i++) {
-            if (arr[i].check != 0) {
-              temporaryArray.push(arr[i].id);
+      this.$http.post(`user/get_group_emploee?id=${row.id}`).then((res) => {
+        this.roleMenuList = res.data.data;
+        let arr = res.data.data;
+        let temporaryArray = [];
+        for (var i = 0; i < arr.length; i++) {
+          if (arr[i].check != 0) {
+            temporaryArray.push(arr[i].id);
+          }
+          let tem2 = arr[i].menuChildrenVo;
+          for (let index = 0; index < tem2.length; index++) {
+            if (tem2[index].check != 0) {
+              temporaryArray.push(tem2[index].id);
             }
-            let tem2 = arr[i].menuChildrenVo;
-            for (let index = 0; index < tem2.length; index++) {
-              if (tem2[index].check != 0) {
-                temporaryArray.push(tem2[index].id);
-              }
-              let tem3 = tem2[index].menuChildrenVo;
-              for (let index1 = 0; index1 < tem3.length; index1++) {
-                if (tem3[index1].check != 0) {
-                  temporaryArray.push(tem3[index1].id);
-                }
+            let tem3 = tem2[index].menuChildrenVo;
+            for (let index1 = 0; index1 < tem3.length; index1++) {
+              if (tem3[index1].check != 0) {
+                temporaryArray.push(tem3[index1].id);
               }
             }
           }
-          this.roleMenuTable = temporaryArray;
-        });
+        }
+        this.roleMenuTable = temporaryArray;
+      });
     },
     // 查看角色菜单确定
     roleMenuConfirmation() {
@@ -571,7 +619,7 @@ export default {
         arr: idsArr,
         id: this.id,
       };
-      this.$http.post(`api/admin/insertgroup_emploee`, info).then((res) => {
+      this.$http.post(`user/insertgroup_emploee`, info).then((res) => {
         const { code, data } = res.data;
         if (code == 200) {
           this.$message.success(res.data.message);
@@ -591,32 +639,30 @@ export default {
     rolePermission(row) {
       this.id = row.id;
       this.rolePermissionPop = true;
-      this.$http
-        .post(`api/admin/get_group_approval?id=${row.id}`)
-        .then((res) => {
-          this.rolePermissionList = res.data.data;
-          let arr = res.data.data;
-          var temporaryArray = [];
-          for (var i = 0; i < arr.length; i++) {
-            if (arr[i].check != 0) {
-              temporaryArray.push(arr[i].id);
+      this.$http.post(`user/get_group_approval?id=${row.id}`).then((res) => {
+        this.rolePermissionList = res.data.data;
+        let arr = res.data.data;
+        var temporaryArray = [];
+        for (var i = 0; i < arr.length; i++) {
+          if (arr[i].check != 0) {
+            temporaryArray.push(arr[i].id);
+          }
+          let tem2 = arr[i].menuChildrenVo;
+          for (let index = 0; index < tem2.length; index++) {
+            if (tem2[index].check != 0) {
+              temporaryArray.push(tem2[index].id);
             }
-            let tem2 = arr[i].menuChildrenVo;
-            for (let index = 0; index < tem2.length; index++) {
-              if (tem2[index].check != 0) {
-                temporaryArray.push(tem2[index].id);
-              }
-              let tem3 = tem2[index].menuChildrenVo;
-              for (let index1 = 0; index1 < tem3.length; index1++) {
-                if (tem3[index1].check != 0) {
-                  temporaryArray.push(tem3[index1].id);
-                }
+            let tem3 = tem2[index].menuChildrenVo;
+            for (let index1 = 0; index1 < tem3.length; index1++) {
+              if (tem3[index1].check != 0) {
+                temporaryArray.push(tem3[index1].id);
               }
             }
           }
-          this.rolePermissionTable = temporaryArray;
-          console.log("rolePermissionTable", this.rolePermissionTable);
-        });
+        }
+        this.rolePermissionTable = temporaryArray;
+        console.log("rolePermissionTable", this.rolePermissionTable);
+      });
     },
     // 查看角色权限确定
     rolePermissionConfirmation() {
@@ -627,7 +673,7 @@ export default {
         arr: idsArr,
         id: this.id,
       };
-      this.$http.post(`api/admin/insertgroup_approval`, info).then((res) => {
+      this.$http.post(`user/insertgroup_approval`, info).then((res) => {
         const { code, data } = res.data;
         if (code == 200) {
           this.$message.success(res.data.message);
@@ -642,20 +688,20 @@ export default {
     editRoleName(row) {
       this.id = row.id;
       this.editRoleNamePop = true;
-      this.$http
-        .post(`api/admin/get_group_from_id?id=${this.id}`)
-        .then((res) => {
-          const { code, data } = res.data;
-          if (code == 200) {
-            this.editRoleNameForm = res.data;
-          }
-        });
+      this.$http.post(`user/get_group_from_id?id=${this.id}`).then((res) => {
+        const { code, data } = res.data;
+        if (code == 200) {
+          this.editRoleNameForm = res.data;
+        } else {
+          this.$message.error(res.data.message);
+        }
+      });
     },
     // 编辑角色名称确定
     editRoleNameConfirmation() {
       this.$http
         .post(
-          `api/admin/up_dedepartment?id=${this.id}&name=${this.editRoleNameForm.data}`
+          `user/up_dedepartment?id=${this.id}&name=${this.editRoleNameForm.data}`
         )
         .then((res) => {
           const { code, data } = res.data;
@@ -664,7 +710,7 @@ export default {
             this.getList();
             // 调用查看部门角色接口，刷新查看部门角色弹窗
             this.$http
-              .post(`api/admin/get_group?id=${this.examineId}`)
+              .post(`user/get_group?id=${this.examineId}`)
               .then((res) => {
                 const { code, data } = res.data;
                 if (code == 200) {

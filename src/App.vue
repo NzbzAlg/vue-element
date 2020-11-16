@@ -29,6 +29,9 @@ export default {
 </script>
 
 <style lang="scss">
+.vxe-toolbar{
+  height: 30px;
+}
 // ::-webkit-scrollbar {
 //     width: 6px;
 //     background-color: #fff;
@@ -53,10 +56,6 @@ export default {
 // .el-table th {
 //   padding: 8px 0 !important;
 // }
-.el-table thead {
-    color: #000;
-    font-weight: 500;
-}
 .el-form-item__error {
   color: #f56c6c;
   font-size: 12px;
@@ -66,18 +65,19 @@ export default {
   top: 100%;
   left: 100px !important;
 }
-// .el-dialog {
-//   position: absolute;
-//   top: 50%;
-//   left: 50%;
-//   margin: 0 !important;
-//   transform: translate(-50%, -50%);
-//   max-height: calc(100% - 330px);
-//   max-width: calc(100% - 30px);
-//   display: flex;
-//   flex-direction: column;
-// }
+.el-dialog {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: 0 !important;
+  transform: translate(-50%, -50%);
+  max-height: calc(100% - 330px);
+  max-width: calc(100% - 30px);
+  display: flex;
+  flex-direction: column;
+}
 .el-dialog__body {
-  padding: 0px 20px !important;
+  overflow: auto;
+  padding: 0px 20px!important;
 }
 </style>

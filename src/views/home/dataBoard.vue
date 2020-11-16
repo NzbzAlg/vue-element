@@ -130,6 +130,7 @@
             <div
               id="profitEcharts"
               :style="{ width: '100%', height: '110%' }"
+              v-on-echart-resize
             ></div>
           </div>
         </div>
@@ -227,6 +228,7 @@
             <div
               id="cpcEcharts"
               :style="{ width: '100%', height: '100%' }"
+              v-on-echart-resize
             ></div>
           </div>
         </div>
@@ -359,6 +361,7 @@
               <div
                 id="compensationEcharts"
                 style="width: 100%; height: 100%"
+                v-on-echart-resize
               ></div>
             </div>
           </div>
@@ -410,6 +413,7 @@
             <div
               id="customerAcquisitionEcharts"
               style="width: 100%; height: 100%"
+              v-on-echart-resize
             ></div>
           </div>
         </div>
@@ -576,6 +580,7 @@
 </template>
 
 <script>
+// import "../../utils/chart.resize";
 import orderAmountEcharts from "./components/orderAmountEcharts"; //订单金额echarts
 import salesVolumeEcharts from "./components/salesVolumeEcharts"; //销售量echarts
 import orderQuantityEcharts from "./components/orderQuantityEcharts"; //订单量echarts
@@ -692,11 +697,11 @@ export default {
     },
     // 近七天利润费用图表
     profitsSevenDays() {
-      let myChart = this.$echarts.init(
+      let sevenDayChart = this.$echarts.init(
         document.getElementById("profitEcharts")
       );
       // 绘制图表
-      myChart.setOption({
+      sevenDayChart.setOption({
         xAxis: {
           type: "category",
           data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
@@ -715,14 +720,14 @@ export default {
           },
         ],
       });
-      // window.onresize = myChart.resize;
+      window.onresize = sevenDayChart.resize;
     },
     // cpc图表
     cpcChart() {
       // 基于准备好的dom，初始化echarts实例
-      let myChart = this.$echarts.init(document.getElementById("cpcEcharts"));
+      let cpcEchart = this.$echarts.init(document.getElementById("cpcEcharts"));
       // 绘制图表
-      myChart.setOption({
+      cpcEchart.setOption({
         title: {},
         tooltip: {
           trigger: "axis",
@@ -765,15 +770,16 @@ export default {
           },
         ],
       });
+      window.onresize = cpcEchart.resize;
     },
     // FBA索赔
     compensationChart() {
       // 基于准备好的dom，初始化echarts实例
-      let myChart = this.$echarts.init(
+      let fbaChart = this.$echarts.init(
         document.getElementById("compensationEcharts")
       );
       // 绘制图表
-      myChart.setOption({
+      fbaChart.setOption({
         // title: {
         //   x:'center',
         //   x:'center',
@@ -818,14 +824,15 @@ export default {
           },
         ],
       });
+      window.onresize = fbaChart.resize
     },
     customerAcquisitionChart() {
       // 基于准备好的dom，初始化echarts实例
-      let myChart = this.$echarts.init(
+      let clientChart = this.$echarts.init(
         document.getElementById("customerAcquisitionEcharts")
       );
       // 绘制图表
-      myChart.setOption({
+      clientChart.setOption({
         tooltip: {
           trigger: "axis",
           axisPointer: {
@@ -878,6 +885,7 @@ export default {
           },
         ],
       });
+      window.onresize = clientChart.resize
     },
   },
 };

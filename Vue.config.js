@@ -27,18 +27,19 @@ module.exports = {
     parallel: require('os').cpus().length > 1,
     // webpack-dev-server 相关配置
     devServer: {
-        open: false,//配置自动启动浏览器
+        open: true,//配置自动启动浏览器
         host: '0.0.0.0',
         port: 8080,
-        https: true,
+        https: false,
         hotOnly: false,
         disableHostCheck:true,
         proxy: {
             "/api":{
-                // target:"https://192.168.10.189:443",//测试服
-                target:"https://192.168.10.141:443",//测试服
-                // target:"http://118.31.72.130:8022",//正式服
-                changeOrigin:true,
+                // target:"http://192.168.10.186:80",//潘文杰测试
+                // target:"http://192.168.10.189:8000",//李亮测试
+                // target:"http://192.168.10.141:8000",//测试服
+                target:"http://api.eterp.cn/",//正式服
+                changeOrigin:true,//允许跨域 
                 pathRewrite:{
                     "^/api":""
                 }

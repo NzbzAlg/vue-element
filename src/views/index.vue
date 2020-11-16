@@ -4,16 +4,38 @@
       <!-- 头部上 -->
       <div class="headetTop">
         <!-- logo -->
-        <div class="header_logo">
+        <div
+          class="header_logo"
+          :class="[
+            'header_logo',
+            isCollapse == true ? 'header_logo_active' : '',
+          ]"
+        >
           <img
-            src="../assets/image/logo.png"
+            src="../assets/image/logo.jpg"
             alt=""
-            style="width: 36px; height: 36px"
+            style="width: 36px; height: 36px; border-radius: 25%"
           />
-          <p>紫缘管理系统</p>
+          <p ref="title">紫缘管理系统</p>
         </div>
         <!-- 个人信息 -->
-        <div class="information">
+        <i
+          :class="[isCollapse == true ? 'el-icon-s-unfold' : 'el-icon-s-fold']"
+          style="
+            font-size: 20px;
+            color: #fff;
+            line-height: 63px;
+            margin-left: 10px;
+            cursor: pointer;
+          "
+          @click="togleCollapse"
+        ></i>
+        <div
+          :class="[
+            'information',
+            isCollapse == true ? 'information_active' : '',
+          ]"
+        >
           <div class="switchStore">
             <div class="switchStore_title">
               <img
@@ -30,67 +52,55 @@
                     <span
                       @click="isActive = 1"
                       :class="{ dayActive: isActive === 1 }"
-                      >按店铺</span
+                      >按国家</span
                     >
                     <span
                       @click="isActive = 2"
                       :class="{ dayActive: isActive === 2 }"
-                      >按国家</span
+                      >按店铺</span
                     >
                     <span
                       @click="isActive = 3"
                       :class="{ dayActive: isActive === 3 }"
-                      >按站点</span
-                    >
-                    <span
-                      @click="isActive = 4"
-                      :class="{ dayActive: isActive === 4 }"
-                      >多选店铺</span
-                    >
-                    <span
-                      @click="isActive = 5"
-                      :class="{ dayActive: isActive === 5 }"
-                      >子账号</span
+                      >按事业部</span
                     >
                   </p>
                 </div>
                 <div class="selectContent" v-show="isActive == 1">
-                  <div class="selectContent_item">
-                    <img
-                      src="https://admin.captainbi.com/statics/amzcaptain/img/country/DE.png"
-                      alt=""
-                    />
-                    <span>tomotime_us</span>
+                  <div class="selectContent_search">
+                    <el-input
+                      class="selectInput"
+                      size="small"
+                      placeholder="查找国家名"
+                    >
+                      <i
+                        slot="prefix"
+                        class="el-input__icon el-icon-search"
+                      ></i>
+                    </el-input>
                   </div>
-                  <div class="selectContent_item">
-                    <img
-                      src="https://admin.captainbi.com/statics/amzcaptain/img/country/DE.png"
-                      alt=""
-                    />
-                    <span>tomotime_us</span>
+                  <div
+                    class="selectContent_item"
+                    v-for="item in countList"
+                    :key="item.id"
+                  >
+                    <img :src="$store.state.url + item.icon" alt="" />
+                    <span>{{ item.countryname }}</span>
                   </div>
-                  <div class="selectContent_item">
-                    <img
-                      src="https://admin.captainbi.com/statics/amzcaptain/img/country/DE.png"
-                      alt=""
-                    />
-                    <span>tomotime_us</span>
-                  </div>
-                  <div class="selectContent_item">
-                    <img
-                      src="https://admin.captainbi.com/statics/amzcaptain/img/country/DE.png"
-                      alt=""
-                    />
-                    <span>tomotime_us</span>
+                  <div class="paging">
+                    <el-pagination
+                      layout="prev, pager, next"
+                      :total="100"
+                      @current-change="changePageNum"
+                    >
+                    </el-pagination>
                   </div>
                 </div>
               </div>
             </div>
           </div>
           <div class="userinfo">
-            <span>
-              <i class="el-icon-user"></i> 登录账户:{{ info.username }}
-            </span>
+            <span> <i class="el-icon-user"></i> 登录账户:{{ info.name }} </span>
             <!-- 系统通知 -->
             <el-popover
               placement="top-start"
@@ -162,7 +172,12 @@
         </div>
       </div>
       <!-- 头部下 -->
-      <div class="headerBottom">
+      <div
+        :class="[
+          'headerBottom',
+          isCollapse == true ? 'headerBottom_active' : '',
+        ]"
+      >
         <el-tabs
           v-model="activePath"
           @tab-click="changetab"
@@ -180,7 +195,7 @@
       </div>
     </el-header>
     <el-container>
-      <el-aside style="width: 11%">
+      <el-aside :width="isCollapse ? '64px' : '11.3%'">
         <el-menu
           background-color="#303133"
           text-color="#fff"
@@ -261,6 +276,34 @@
         </transition>
       </el-main>
     </el-container>
+    <!-- 修改密码弹窗 -->
+    <el-dialog title="修改密码" :visible.sync="changePasswordPop" width="30%">
+      <el-form :model="changePasswordForm">
+        <el-row>
+          <el-col>
+            <el-form-item label="新密码：" label-width="100px">
+              <el-input
+                v-model="changePasswordForm.password"
+                show-password
+              ></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col>
+            <el-form-item label="确认密码：" label-width="100px">
+              <el-input
+                v-model="changePasswordForm.confirmPassword"
+                show-password
+              ></el-input>
+              <!-- @change="confirmPassword($event)" -->
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="changePasswordPop = false">取 消</el-button>
+        <el-button type="primary" @click="changePassword">确 定</el-button>
+      </span>
+    </el-dialog>
   </el-container>
 </template>
 
@@ -273,6 +316,7 @@ export default {
   },
   data() {
     return {
+      isCollapse: false,
       isActive: 1,
       activePath: "",
       editableTabs: [],
@@ -301,18 +345,34 @@ export default {
         162: "el-icon-data-line",
         173: "el-icon-box",
         200: "el-icon-s-home",
+        203: "el-icon-folder-opened",
       },
       list: JSON.parse(window.sessionStorage.getItem("menulist")),
+      changePasswordPop: false, //修改面弹窗
+      changePasswordForm: {
+        password: "", //新密码
+        confirmPassword: "", //确认密码
+      },
+      countList: [], //国家
     };
   },
-  created() {
+  mounted() {
     this.getList();
+    // this.getShopCountries();
     this.activePath = window.sessionStorage.getItem("activePath");
     this.editableTabss = JSON.parse(
       window.sessionStorage.getItem("editableTabs")
     );
   },
   methods: {
+    togleCollapse() {
+      this.isCollapse = !this.isCollapse;
+      if (this.isCollapse) {
+        this.$refs.title.style.display = "none";
+      } else {
+        this.$refs.title.style.display = "block";
+      }
+    },
     handleselect(index) {
       if (index === this.activePath) {
         this.reload();
@@ -320,9 +380,7 @@ export default {
     },
     handleCommand(command) {
       if (command === "updatePass") {
-        // this.$router.push({
-        //   path: "/updatePass",
-        // });
+        this.changePasswordPop = true;
       } else if (command == "logout") {
         this.$confirm("确定要退出登录吗?", "提示", {
           confirmButtonText: "确定",
@@ -348,24 +406,58 @@ export default {
           });
       }
     },
-    MQBox() {},
-    getList() {
-      this.$http
-        .get(`api/login/get_menu`, {
-          params: {},
-        })
-        .then((res) => {
+    // 修改密码确定
+    changePassword() {
+      if (
+        this.changePasswordForm.password !=
+        this.changePasswordForm.confirmPassword
+      ) {
+        this.$message.error("原密码与新密码不一致！");
+      } else {
+        let info = {
+          id: this.info.id,
+          userpwd: this.changePasswordForm.password,
+        };
+        this.$http.post(`user/change_pwd`, info).then((res) => {
           const { code, data } = res.data;
           if (code == 200) {
-            this.menulist = res.data.data;
+            this.$message.success(res.data.message);
+            //清除token
+            sessionStorage.removeItem("token");
+            //清除path
+            sessionStorage.removeItem("activePath");
+            //清除二级菜单
+            sessionStorage.removeItem("activeName");
+            // 清除存储信息
+            sessionStorage.removeItem("info");
+            // 清除面包屑
+            sessionStorage.removeItem("editableTabs");
+            this.$router.push("/login");
           } else {
             this.$message.error(res.data.message);
           }
         });
+      }
     },
-    // 折叠
-    button_menu() {
-      this.isCollapse = !this.isCollapse;
+    // // 确认密码
+    // confirmPassword(event) {
+    //   if (
+    //     this.changePasswordForm.password !=
+    //     this.changePasswordForm.confirmPassword
+    //   ) {
+    //     this.$message.error("原密码与新密码不一致！");
+    //   }
+    // },
+    MQBox() {},
+    getList() {
+      this.$http.get(`admin/get_menu`).then((res) => {
+        const { code, data } = res.data;
+        if (code == 200) {
+          this.menulist = res.data.data;
+        } else {
+          this.$message.error(res.data.message);
+        }
+      });
     },
     //退出
     quit() {
@@ -375,8 +467,8 @@ export default {
         type: "warning",
       })
         .then(() => {
-          // //清除token
-          // sessionStorage.removeItem("token");
+          //清除token
+          sessionStorage.removeItem("token");
           //清除path
           sessionStorage.removeItem("activePath");
           //清除二级菜单
@@ -463,6 +555,21 @@ export default {
       );
       window.sessionStorage.setItem("activePath", this.activePath);
     },
+    // 店铺国家
+    getShopCountries() {
+      this.$http.get(`admin/get_sel_data`).then((res) => {
+        const { code, data } = res.data;
+        if (code == 200) {
+          this.countList = res.data.data.country;
+        } else {
+          this.$message.error(res.data.message);
+        }
+      });
+    },
+    // 店铺国家分页
+    changePageNum(val) {
+      console.log(val);
+    },
   },
 };
 </script>
@@ -503,7 +610,27 @@ export default {
     display: flex;
     justify-content: space-between;
     .header_logo {
-      width: 11%;
+      width: 11.5%;
+      height: 99%;
+      display: flex;
+      justify-content: center;
+      float: left;
+      border-bottom: 1px solid #333;
+      box-shadow: 0 0 3px 2px #000000;
+      img {
+        vertical-align: middle;
+        float: left;
+        margin-top: 11px;
+      }
+      p {
+        float: left;
+        line-height: 60px;
+        color: #c0c4cc;
+        margin-left: 10px;
+      }
+    }
+    .header_logo_active {
+      width: 65px;
       height: 99%;
       display: flex;
       justify-content: center;
@@ -533,7 +660,7 @@ export default {
         float: left;
         height: 100%;
         .switchStore_title {
-          margin-left: 40px;
+          margin-left: 30px;
           position: relative;
           img {
             width: 20px;
@@ -544,22 +671,22 @@ export default {
             font-size: 14px;
             padding-left: 10px;
           }
-
           .hidden_content {
             display: none;
-            width: 400px;
+            width: 480px;
             // height: 100px;
             background: #fff;
-            box-shadow: 0 1px 8px #c2c2c2;
+            box-shadow: 0 4px 10px #c2c2c2;
             position: absolute;
             top: 60px;
-            z-index: 999;
+            z-index: 99999;
+            border-radius: 10px;
             .selectStore {
               // padding:0 20px;
               p {
                 text-align: center;
                 span {
-                  padding: 7px 10px;
+                  padding: 7px 50px;
                   min-width: 50px;
                   text-align: center;
                   color: #27b8d0;
@@ -571,8 +698,14 @@ export default {
                   font-weight: normal;
                   cursor: pointer;
                 }
+                span:nth-of-type(2) {
+                  border-left: none;
+                }
+                span:nth-of-type(3) {
+                  border-left: none;
+                }
                 span:hover {
-                  padding: 7px 10px;
+                  padding: 7px 50px;
                   min-width: 50px;
                   text-align: center;
                   color: #fff;
@@ -586,7 +719,7 @@ export default {
                   background: #27b8d0;
                 }
                 .dayActive {
-                  padding: 7px 10px;
+                  padding: 7px 50px;
                   min-width: 50px;
                   text-align: center;
                   color: #fff;
@@ -603,16 +736,33 @@ export default {
             }
             .selectContent {
               color: #000;
-              padding: 20px;
+              padding: 5px 20px 20px 20px;
               display: flex;
               justify-content: space-between;
               flex-wrap: wrap;
+              .selectContent_search {
+                line-height: 1;
+                width: 100%;
+                height: 35px;
+                box-sizing: border-box;
+                text-align: center;
+                .selectInput {
+                  border: none;
+                  width: 440px;
+                }
+              }
               .selectContent_item {
                 background: #eae7e7;
                 width: 49%;
                 height: 30px;
                 line-height: 30px;
-                margin-top: 5px;
+                margin-top: 10px;
+              }
+              .paging {
+                line-height: 1;
+                text-align: center;
+                width: 100%;
+                margin-top: 10px;
               }
             }
           }
@@ -658,6 +808,9 @@ export default {
         }
       }
     }
+    .information_active {
+      width: 97%;
+    }
   }
   .headerBottom {
     width: 89%;
@@ -689,6 +842,20 @@ export default {
       margin-top: 5px;
       border-radius: 5px;
     }
+    /deep/.el-tabs__item:nth-child(1) {
+      cursor: pointer;
+      background-color: #d9d9d9;
+      color: #4d4d4d;
+      border: 0px;
+      padding-left: 15px;
+      font-size: 14px;
+      box-shadow: 1px 1px 1px 1px #999999;
+      margin-left: 30px;
+      height: 34px;
+      line-height: 34px;
+      margin-top: 5px;
+      border-radius: 5px;
+    }
     /deep/.el-tabs--card > .el-tabs__header .el-tabs__nav {
       border: none;
     }
@@ -715,12 +882,15 @@ export default {
       color: #fff;
     }
   }
+  .headerBottom_active {
+    width: 97%;
+  }
 }
 .el-aside {
   background-color: #303133;
   z-index: 1000;
   margin-top: 60px;
-  box-shadow: 0 3px 3px 2px #000000;
+  box-shadow: 0 0px 3px 0px #000000;
 }
 .el-main {
   background: #f0f2f5;
@@ -735,4 +905,10 @@ export default {
   text-align: center;
   cursor: pointer;
 }
+// @media (max-width:1400px) {
+//   .header_logo{
+//     display: none!important;
+//   }
+// }
+
 </style>

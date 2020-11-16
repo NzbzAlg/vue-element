@@ -9,14 +9,15 @@
         style="width: 200px"
         size="medium"
         v-model="shop"
+        @change="changeSearch()"
       ></el-input>
-      <el-button
+      <!-- <el-button
         type="primary"
         size="medium"
         style="margin-left: 10px"
         @click="grabble"
         >搜索</el-button
-      >
+      > -->
     </div>
     <!-- 表格 -->
     <div class="table">
@@ -52,7 +53,7 @@
         ></el-table-column>
         <el-table-column
           prop="token"
-          label="token"
+          label="Token"
           align="center"
           width="400"
         ></el-table-column>
@@ -225,7 +226,7 @@ export default {
     // 列表数据
     getList() {
       this.$http
-        .get(`api/admin/shop`, {
+        .get(`admin/shop_list`, {
           params: {
             page: this.page,
             limit: this.limit,
@@ -243,7 +244,7 @@ export default {
         });
     },
     // 搜索
-    grabble() {
+    changeSearch() {
       this.getList();
     },
     // 添加弹窗

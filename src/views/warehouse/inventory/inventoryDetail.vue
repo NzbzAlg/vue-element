@@ -11,6 +11,7 @@
         filterable
         size="medium"
         style="width: 150px"
+        @change="changeSearch"
       >
         <el-option
           v-for="item in warehouseDrop"
@@ -27,11 +28,12 @@
         filterable
         size="medium"
         style="width: 150px; margin-left: 10px"
+        @change="changeSearch"
       >
         <el-option
           v-for="item in countryDrop"
           :key="item.id"
-          :label="item.name"
+          :label="item.countryname"
           :value="item.id"
         ></el-option>
       </el-select>
@@ -43,11 +45,12 @@
         filterable
         size="medium"
         style="width: 150px; margin-left: 10px"
+        @change="changeSearch"
       >
         <el-option
           v-for="item in shopDrop"
           :key="item.id"
-          :label="item.name"
+          :label="item.shopname"
           :value="item.id"
         ></el-option>
       </el-select>
@@ -59,11 +62,12 @@
         filterable
         size="medium"
         style="width: 150px; margin-left: 10px"
+        @change="changeSearch"
       >
         <el-option
           v-for="item in classifyDrop"
           :key="item.id"
-          :label="item.name"
+          :label="item.category_name"
           :value="item.id"
         ></el-option>
       </el-select>
@@ -75,27 +79,12 @@
         filterable
         size="medium"
         style="width: 150px; margin-left: 10px"
+        @change="changeSearch"
       >
         <el-option
           v-for="item in brandDrop"
           :key="item.id"
-          :label="item.name"
-          :value="item.id"
-        ></el-option>
-      </el-select>
-      <!-- 负责人 -->
-      <el-select
-        v-model="principal"
-        placeholder="品牌"
-        clearable
-        filterable
-        size="medium"
-        style="width: 150px; margin-left: 10px"
-      >
-        <el-option
-          v-for="item in principalDrop"
-          :key="item.id"
-          :label="item.name"
+          :label="item.brand_name"
           :value="item.id"
         ></el-option>
       </el-select>
@@ -104,16 +93,16 @@
         placeholder="搜索内容"
         v-model="searchContent"
         class="input-with-select"
-        style="width:240px;margin-left:10px"
+        style="width: 240px; margin-left: 10px"
         size="medium"
+        clearable
+        @change="changeSearch"
       >
         <el-select
           v-model="multipleDrop"
-          clearable
-          filterable
           slot="prepend"
           size="medium"
-          style="width: 90px;"
+          style="width: 90px"
         >
           <el-option
             v-for="item in multipleConditions"
@@ -123,27 +112,42 @@
           ></el-option>
         </el-select>
       </el-input>
-      <el-button type="primary" size="medium" style="margin-left: 10px"
+      <!-- <el-button
+        type="primary"
+        size="medium"
+        style="margin-left: 10px"
+        @click="search"
         >搜索</el-button
-      >
+      > -->
     </div>
     <!-- 表格 -->
     <div class="table">
       <div class="table_button">
-        <el-button size="small" type="primary" @click="warehouseInitial"
+        <!-- <el-button size="small" type="primary" @click="warehouseInitial"
           >导入仓库初始值</el-button
-        >
+        > -->
       </div>
-      <el-table :data="tableData" border style="width: 100%">
+      <el-table :data="tableData" border style="width: 100%" height="600">
         <el-table-column
-          prop="number"
+          prop="img"
           label="图片"
           align="center"
+        >
+          <template slot-scope="scope">
+            <img :src="$store.state.url + scope.row.img" alt="" style="width:50px;height:50px">
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="goods_name"
+          label="品名"
+          align="center"
+          width="200"
         ></el-table-column>
         <el-table-column
-          prop="shipment_name"
-          label="品名/SKU"
+          prop="goods_sku"
+          label="SKU"
           align="center"
+          width="120"
         ></el-table-column>
         <el-table-column
           prop="shipment_id"
@@ -151,32 +155,33 @@
           align="center"
         ></el-table-column>
         <el-table-column
-          prop="SKU"
+          prop="warehouse"
           label="仓库"
           align="center"
+          width="200"
         ></el-table-column>
         <el-table-column
-          prop="SKU"
+          prop="goods_commodity"
           label="单位"
           align="center"
         ></el-table-column>
         <el-table-column
-          prop="SKU"
+          prop="available_quantity"
           label="可用量"
           align="center"
         ></el-table-column>
         <el-table-column
-          prop="SKU"
+          prop="deliverd_quantity"
           label="待发货量"
           align="center"
         ></el-table-column>
         <el-table-column
-          prop="SKU"
+          prop="inspected_quantity"
           label="待检量"
           align="center"
         ></el-table-column>
         <el-table-column
-          prop="SKU"
+          prop="defective_quantity"
           label="次品量"
           align="center"
         ></el-table-column>
@@ -186,7 +191,7 @@
           align="center"
         ></el-table-column>
         <el-table-column
-          prop="SKU"
+          prop="total"
           label="实际总量"
           align="center"
         ></el-table-column>
@@ -196,7 +201,7 @@
           align="center"
         ></el-table-column>
         <el-table-column
-          prop="SKU"
+          prop="price"
           label="采购单价"
           align="center"
         ></el-table-column>
@@ -204,9 +209,10 @@
           prop="SKU"
           label="单位库存成本"
           align="center"
+          width="110"
         ></el-table-column>
         <el-table-column
-          prop="SKU"
+          prop="inventory_cost"
           label="库存成本"
           align="center"
         ></el-table-column>
@@ -241,113 +247,118 @@
       </span>
     </el-dialog>
     <!-- 分页 -->
-    <div class="paging">
-      <el-pagination
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page="currentPage1"
-        :page-sizes="[100, 200, 300, 400]"
-        :page-size="100"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="400"
-      ></el-pagination>
-    </div>
+    <pagination
+      :page="page"
+      :total="total"
+      :limit="limit"
+      @handleCurrentChange="handleCurrentChange"
+      @handleSizeChange="handleSizeChange"
+    />
   </div>
 </template>
 
 <script>
+import pagination from "@/components/pagination"; // 分页
 export default {
+  components: {
+    pagination,
+  },
   data() {
     return {
       warehouseInitialPop: false, //导入仓库初始值弹窗
       warehouse: "", //仓库
-      //仓库下拉
-      warehouseDrop: [
-        {
-          id: 1,
-          name: "仓库1",
-        },
-      ],
+      warehouseDrop: [],//仓库下拉
       country: "", //国家
-      //国家下拉
-      countryDrop: [
-        {
-          id: 1,
-          name: "中国",
-        },
-      ],
+      countryDrop: [],//国家下拉
       shop: "", //店铺
-      // 店铺下拉
-      shopDrop: [
-        {
-          id: 1,
-          name: "ST-US",
-        },
-      ],
+      shopDrop: [],// 店铺下拉
       classify: "", //分类
-      // 分类下拉
-      classifyDrop: [
-        {
-          id: 1,
-          name: "分类",
-        },
-      ],
+      classifyDrop: [],// 分类下拉
       brand: "", //品牌
-      // 品牌分类
-      brandDrop: [
-        {
-          id: 1,
-          name: "品牌",
-        },
-      ],
-      principal: "", //负责人
-      // 负责人下拉
-      principalDrop: [
-        {
-          id: 1,
-          name: "负责人",
-        },
-      ],
+      brandDrop: [], // 品牌分类
       searchContent: "", //搜索
-      multipleDrop:'',//多个下拉值
-      multipleConditions:[
-        {
-          id:1,
-          name:'品名'
-        },
-        {
-          id:2,
-          name:'SKU'
-        },
-        {
-          id:3,
-          name:'MSKU'
-        },
-        {
-          id:4,
-          name:'FNSKU'
-        },
-      ],
-      currentPage1: 1,
-      tableData: [
+      multipleDrop: 1, //多个下拉值
+      multipleConditions: [
         {
           id: 1,
-          number: 2,
+          name: "品名",
+        },
+        {
+          id: 2,
+          name: "SKU",
+        },
+        {
+          id: 3,
+          name: "MSKU",
+        },
+        {
+          id: 4,
+          name: "FNSKU",
         },
       ],
+      tableData: [], //列表数据
+      page: 1,
+      limit: 10,
+      total: 0,
     };
   },
+  mounted() {
+    this.getList();
+  },
   methods: {
+    // 列表数据
+    getList() {
+      this.$http
+        .get(`warehouse/warehouse_details`, {
+          params: {
+            page: this.page,
+            limit: this.limit,
+            selcang: this.warehouse,//仓库
+            selcountry: this.country,//国家
+            selshop: this.shop,//店铺
+            seltype: this.classify,//分类
+            selbrand: this.brand,//品牌
+            proname: this.multipleDrop == 1 ? this.searchContent : "",//品名
+            sku: this.multipleDrop == 2 ? this.searchContent : "",//SKU
+            MSKU: this.multipleDrop == 3 ? this.searchContent : "",//MSKU
+            FNSKU: this.multipleDrop == 4 ? this.searchContent : "",//SFNKU
+          },
+        })
+        .then((res) => {
+          const { code, data } = res.data;
+          if (code == 200) {
+            this.tableData = res.data.data.data;
+            this.total = res.data.count;
+            this.warehouseDrop = res.data.data.warehouse; //仓库
+            this.countryDrop = res.data.data.country; //国家
+            this.shopDrop = res.data.data.shop; //店铺
+            this.classifyDrop = res.data.data.type; //分类
+            this.brandDrop = res.data.data.brand; //品牌
+            this.principalDrop = res.data.data.user; //用户
+          } else {
+            this.$message.error(res.data.message);
+          }
+        });
+    },
+    // 搜索
+    changeSearch() {
+      this.page = 1
+      this.getList();
+    },
     // 导入仓库初始值弹窗
     warehouseInitial() {
       this.warehouseInitialPop = true;
     },
-    // 列表详情
-    handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
-    },
+    // 分页下拉
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
+      this.page = val;
+      this.getList();
+    },
+    // 分页右滚
+    handleSizeChange(val) {
+      this.limit = val;
+      this.page = 1;
+      this.getList();
     },
   },
 };
@@ -389,9 +400,5 @@ export default {
       padding-left: 20px;
     }
   }
-}
-.paging {
-  float: right;
-  margin-top: 20px;
 }
 </style>

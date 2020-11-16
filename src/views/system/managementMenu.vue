@@ -51,7 +51,9 @@
                   >三级菜单：{{ itemChild_Child.menu }}
                   <b style="padding: 0 10px">|</b>
                   路由：{{ itemChild_Child.menuUrl }}
-                  <span style="padding-left:10px"> 接口：{{ itemChild_Child.href }} </span>
+                  <span style="padding-left: 10px">
+                    接口：{{ itemChild_Child.href }}
+                  </span>
                 </span>
                 <el-button
                   type="primary"
@@ -244,6 +246,17 @@ export default {
     this.getList();
   },
   methods: {
+    // 列表数据
+    getList() {
+      this.$http.get(`admin/do_menu`).then((res) => {
+        const { code, data } = res.data;
+        if (code == 200) {
+          this.menuList = res.data.data;
+        } else {
+          this.$message.error(res.data.message);
+        }
+      });
+    },
     // 添加一级菜单弹窗
     addOneMenu() {
       this.addOneMenuPop = true;
@@ -256,11 +269,11 @@ export default {
         let info = {
           name: this.levelOneMenu.oneMenuName,
         };
-        this.$http.post(`/api/admin/addrank1`, info).then((res) => {
+        this.$http.post(`admin/addrank1`, info).then((res) => {
           const { code, data } = res.data;
           if (code == 200) {
             this.$message.success(res.data.message);
-            // this.addOneMenuPop = false;
+            this.addOneMenuPop = false;
             this.getList();
           } else {
             this.$message.error(res.data.message);
@@ -272,7 +285,7 @@ export default {
     editLevelMenu(item) {
       this.id = item.id;
       this.editLevelMenuPop = true;
-      this.$http.get(`api/admin/get_menu_name?id=${this.id}`).then((res) => {
+      this.$http.get(`get_menu_name?id=${this.id}`).then((res) => {
         const { code, data } = res.data;
         if (code == 200) {
           this.editLevelOneMenu = res.data.data;
@@ -284,7 +297,7 @@ export default {
     // 编辑一级菜单确定
     editOneMenuDetermine() {
       this.$http
-        .get(`api/admin/update_menu`, {
+        .get(`admin/update_menu`, {
           params: {
             id: this.id,
             name: this.editLevelOneMenu.menu,
@@ -312,12 +325,12 @@ export default {
         this.$message.error("添加二级菜单名称不能为空");
       } else {
         let info = {
-          name1: this.levelTwoMenu.twoMenuName,
+          name: this.levelTwoMenu.twoMenuName,
           href: this.levelTwoMenu.twoMenuPort,
           menuUrl: this.levelTwoMenu.twoMenuUrl,
           id: this.id,
         };
-        this.$http.post(`/api/admin/addrank2`, info).then((res) => {
+        this.$http.post(`admin/addrank2`, info).then((res) => {
           const { code, data } = res.data;
           if (code == 200) {
             this.$message.success(res.data.message);
@@ -333,7 +346,7 @@ export default {
     editTwoMenu(itemChild) {
       this.id = itemChild.id;
       this.editTwoMenuPop = true;
-      this.$http.get(`api/admin/get_menu_name?id=${this.id}`).then((res) => {
+      this.$http.get(`admin/get_menu_name?id=${this.id}`).then((res) => {
         const { code, data } = res.data;
         if (code == 200) {
           this.editLevelTwoMenu = res.data.data;
@@ -346,11 +359,11 @@ export default {
     // 编辑二级菜单确定
     editTwoMenuDetermine() {
       this.$http
-        .get(`api/admin/update_menu`, {
+        .get(`admin/update_menu`, {
           params: {
             id: this.id,
             name: this.editLevelTwoMenu.menu,
-            menuUrl: this.editLevelTwoMenu.menuUrl
+            menuUrl: this.editLevelTwoMenu.menuUrl,
           },
         })
         .then((res) => {
@@ -375,12 +388,12 @@ export default {
         this.$message.error("添加三级菜单名称不能为空");
       } else {
         let info = {
-          name1: this.levelThreeMenu.threeMenuName,
+          name: this.levelThreeMenu.threeMenuName,
           href: this.levelThreeMenu.threeMenuPort,
           menuUrl: this.levelThreeMenu.threeMenuUrl,
           id: this.id,
         };
-        this.$http.post(`/api/admin/addrank3`, info).then((res) => {
+        this.$http.post(`admin/addrank3`, info).then((res) => {
           const { code, data } = res.data;
           if (code == 200) {
             this.$message.success(res.data.message);
@@ -396,7 +409,7 @@ export default {
     editThreeMenu(itemChild_Child) {
       this.editThreeMenuPop = true;
       this.id = itemChild_Child.id;
-      this.$http.get(`api/admin/get_menu_name?id=${this.id}`).then((res) => {
+      this.$http.get(`admin/get_menu_name?id=${this.id}`).then((res) => {
         const { code, data } = res.data;
         if (code == 200) {
           this.editLevelThreeMenu = res.data.data;
@@ -408,7 +421,7 @@ export default {
     //编辑三级菜单确定
     editThreeMenuDetermine() {
       this.$http
-        .get(`api/admin/update_menu`, {
+        .get(`admin/update_menu`, {
           params: {
             id: this.id,
             name: this.editLevelThreeMenu.menu,
@@ -426,17 +439,6 @@ export default {
             this.$message.error(res.data.message);
           }
         });
-    },
-    // 列表数据
-    getList() {
-      this.$http.get(`/api/admin/do_menu`).then((res) => {
-        const { code, data } = res.data;
-        if (code == 200) {
-          this.menuList = res.data.data;
-        } else {
-          this.$message.error(res.data.message);
-        }
-      });
     },
   },
 };
